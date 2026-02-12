@@ -58,7 +58,7 @@ public class NotificationSupport {
     }
 
     public static void showFunctionNotImplemented() {
-        Notification.show("Эта функция еще в разработке", 3000, Notification.Position.BOTTOM_END)
+        Notification.show("Эта функция еще в разработке", 3000, Notification.Position.BOTTOM_STRETCH)
                 .addThemeVariants(NotificationVariant.LUMO_WARNING);
     }
 }

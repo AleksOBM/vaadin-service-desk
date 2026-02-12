@@ -15,7 +15,7 @@ import java.nio.charset.StandardCharsets;
 
 @Route(value = "about",  layout = MainLayout.class)
 @RouteAlias(value = "", layout = MainLayout.class)
-@Menu(order = 4, icon = "vaadin:info", title = "О программе")
+@Menu(order = 5, icon = "vaadin:info-circle", title = "О программе")
 public class AboutView extends BaseView {
 
     public AboutView() {

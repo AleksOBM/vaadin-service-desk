@@ -23,3 +23,10 @@
 /*    overflow-x: auto;  *//* Разрешить горизонтальную прокрутку, если окно меньше */
 /*}*/
 
+vaadin-grid.big-header-grid::part(header-cell) {
+    font-weight: bold;
+}
+
+.order-details {
+
+}

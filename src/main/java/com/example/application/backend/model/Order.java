@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.time.Period;
 
 @Data
 @Entity
@@ -40,6 +41,20 @@ public class Order extends BaseEntity {
 
     public String getServiceDeskNumber() {
         return String.format("SD-%08d", id);
+    }
+
+    public LocalDate getFirstControlLine() {
+        int controlDaysCount = Math.round((float) getDaysCount() / 3);
+        return this.getStartLine().plus(Period.ofDays(controlDaysCount));
+    }
+
+    public LocalDate getSecondControlLine() {
+        int controlDaysCount = Math.round((float) getDaysCount() / 3);
+        return this.getDeadLine().minus(Period.ofDays(controlDaysCount));
+    }
+
+    public int getDaysCount() {
+        return Period.between(this.getStartLine(), this.getDeadLine()).getDays();
     }
 }
 

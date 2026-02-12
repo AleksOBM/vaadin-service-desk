@@ -13,7 +13,7 @@ import com.vaadin.flow.theme.lumo.Lumo;
 @SpringBootApplication
 @StyleSheet(Aura.STYLESHEET)
 @StyleSheet(Lumo.UTILITY_STYLESHEET)
-@ColorScheme(ColorScheme.Value.DARK)
+@ColorScheme(ColorScheme.Value.SYSTEM)
 @StyleSheet("styles.css")
 @PWA(
         name = "Service desk",

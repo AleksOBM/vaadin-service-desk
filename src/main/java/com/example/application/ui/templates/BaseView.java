@@ -12,12 +12,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 
-//@Route(value = "", layout = MainLayout.class)
-//@RouteAlias(value = "orders", layout = MainLayout.class)
-//@PageTitle("Orders")
-//@Menu(order = 3, icon = "vaadin:user", title = "Сотрудники")
-//@SpringComponent
-//@Scope("prototype")
 @Getter
 @FieldDefaults(level = AccessLevel.PROTECTED)
 public class BaseView extends VerticalLayout {
@@ -28,20 +22,21 @@ public class BaseView extends VerticalLayout {
     Button deleteButton;
 
     public BaseView(String title) {
-        filterText.setPlaceholder("Фильтр");
+        filterText.setPlaceholder("Поиск");
+        filterText.setPrefixComponent(new Icon(VaadinIcon.SEARCH));
         filterText.setClearButtonVisible(true);
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
-//        filterText.addValueChangeListener(e -> updateList());
 
         createButton = new Button(new Icon(VaadinIcon.PLUS));
-//        createButton.addClickListener(click -> addAgent());
         createButton.addThemeVariants(ButtonVariant.AURA_TERTIARY);
 
         updateButton = new Button(new Icon(VaadinIcon.WRENCH));
         updateButton.addThemeVariants(ButtonVariant.AURA_TERTIARY);
+        updateButton.setEnabled(false);
 
         deleteButton = new Button(new Icon(VaadinIcon.TRASH));
         deleteButton.addThemeVariants(ButtonVariant.AURA_TERTIARY);
+        deleteButton.setEnabled(false);
 
         var toolbar = new BaseToolbar(title, filterText, createButton, updateButton, deleteButton);
         toolbar.addClassName("toolbar");
