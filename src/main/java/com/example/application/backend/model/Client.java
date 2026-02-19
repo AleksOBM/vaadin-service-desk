@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -20,8 +21,12 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Client extends BaseEntity {
 
-    @NotNull
-    @Column(name = "client_name", length = 70, nullable = false)
+    public Client() {
+        super(EntityType.CLIENT);
+    }
+
+    @NotBlank(message = "Название обязательно")
+    @Column(name = "client_name", length = 70, nullable = false, unique = true)
     String name;
 
     @OneToMany(mappedBy = "client")

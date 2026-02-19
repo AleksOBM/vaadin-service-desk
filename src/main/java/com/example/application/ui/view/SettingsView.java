@@ -1,6 +1,7 @@
 package com.example.application.ui.view;
 
 import com.example.application.ui.templates.BaseView;
+import com.example.application.ui.util.NotificationSupport;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.page.ColorScheme;
@@ -11,8 +12,10 @@ import com.vaadin.flow.router.Route;
 
 @Route("settings")
 @PageTitle("Settings")
-@Menu(order = 4, icon = "vaadin:tools", title = "Настройки")
+@Menu(order = 6, icon = "vaadin:tools", title = "Настройки")
 public class SettingsView extends BaseView {
+
+    // todo: реализовать смену темы, добавить другие настройки
 
     Select<ColorScheme.Value> brightBox = new Select<>();
 
@@ -29,11 +32,11 @@ public class SettingsView extends BaseView {
         add(scroller);
 
         brightBox.addValueChangeListener(event ->
-                        setNewTheme(event.getValue())
-                );
+                NotificationSupport.showFunctionNotImplemented()
+        );
     }
 
-    private void setNewTheme(ColorScheme.Value value) {
+    private void switchTheme(ColorScheme.Value value) {
         UI.getCurrent().getElement().setAttribute("theme", value.getThemeValue());
     }
 
@@ -45,5 +48,4 @@ public class SettingsView extends BaseView {
         brightBox.setLabel("Тема");
         return brightBox;
     }
-
 }

@@ -13,7 +13,7 @@ public class NotificationSupport {
 
         Notification notification = Notification.show(message);
         notification.addThemeVariants(NotificationVariant.LUMO_PRIMARY);
-        notification.setPosition(Notification.Position.TOP_END);
+        notification.setPosition(Notification.Position.BOTTOM_STRETCH);
         notification.setDuration(DEFAULT_INFO_DURATION);
     }
 
@@ -21,7 +21,7 @@ public class NotificationSupport {
 
         Notification notification = Notification.show(message);
         notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-        notification.setPosition(Notification.Position.TOP_END);
+        notification.setPosition(Notification.Position.BOTTOM_STRETCH);
         notification.setDuration(DEFAULT_SUCCESS_DURATION);
     }
 
@@ -29,7 +29,7 @@ public class NotificationSupport {
 
         Notification notification = Notification.show(message);
         notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-        notification.setPosition(Notification.Position.TOP_END);
+        notification.setPosition(Notification.Position.BOTTOM_STRETCH);
         notification.setDuration(duration);
     }
 
@@ -37,7 +37,7 @@ public class NotificationSupport {
 
         Notification notification = Notification.show(message);
         notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
-        notification.setPosition(Notification.Position.TOP_END);
+        notification.setPosition(Notification.Position.BOTTOM_STRETCH);
         notification.setDuration(duration);
     }
 
@@ -53,7 +53,7 @@ public class NotificationSupport {
 
         Notification notification = Notification.show(message);
         notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
-        notification.setPosition(Notification.Position.TOP_END);
+        notification.setPosition(Notification.Position.BOTTOM_STRETCH);
         notification.setDuration(DEFAULT_ERROR_DURATION);
     }
 

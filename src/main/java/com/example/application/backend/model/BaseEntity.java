@@ -1,22 +1,26 @@
 package com.example.application.backend.model;
 
+import com.vaadin.copilot.shaded.checkerframework.common.value.qual.EnumVal;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import tools.jackson.databind.annotation.EnumNaming;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @MappedSuperclass
+@NoArgsConstructor(force = true)
 @EqualsAndHashCode(of = "id")
 @FieldDefaults(level = AccessLevel.PROTECTED)
 public class BaseEntity {
+
+    public BaseEntity(EntityType type) {
+        this.type = type;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,5 +33,13 @@ public class BaseEntity {
     @UpdateTimestamp
     @Column(name = "last_updated", nullable = false)
     LocalDateTime lastUpdated;
+
+    boolean deleted;
+
+    String serviceDeskNumber;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "entity_type")
+    final EntityType type;
 
 }

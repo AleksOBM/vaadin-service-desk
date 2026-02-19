@@ -1,7 +1,9 @@
 package com.example.application.ui.view;
 
 import com.example.application.backend.model.Client;
-import com.example.application.backend.repository.ClientRepository;
+import com.example.application.backend.service.ClientService;
+import com.example.application.ui.dialogs.ClientDialog;
+import com.example.application.ui.templates.BaseDialog;
 import com.example.application.ui.templates.BaseView;
 import com.example.application.ui.util.NotificationSupport;
 import com.vaadin.flow.component.Component;
@@ -15,16 +17,17 @@ import java.util.Collection;
 
 @Route("clients")
 @PageTitle("Client List")
-@Menu(order = 2, icon = "vaadin:user-star", title = "Клиенты")
+@Menu(order = 3, icon = "vaadin:user-star", title = "Клиенты")
 public class ClientsView extends BaseView {
 
-    private final ClientRepository clientRepository;
+    private final ClientService clientService;
     private final Grid<Client> grid = new Grid<>();
 
-    public ClientsView(ClientRepository clientRepository) {
+    public ClientsView(ClientService clientService) {
         super("Клиенты");
+        this.clientService = clientService;
         addClassName("clients-view");
-        this.clientRepository = clientRepository;
+        
         configureView();
         add(getClientsGrid());
     }
@@ -37,7 +40,20 @@ public class ClientsView extends BaseView {
     }
 
     private void createClient() {
-        NotificationSupport.showFunctionNotImplemented();
+        BaseDialog<Client> dialog = new BaseDialog<>(
+                Client.class,
+                "Новый клиент",
+                new ClientDialog(),
+                client -> {
+                    clientService.save(client);
+                    NotificationSupport.showSuccess("Клиент добавлен.");
+                    if (filterText.getValue() == null) {
+                        grid.setItems(clientService.findAll());
+                    }
+                    getGridData();
+                });
+        dialog.setEntity(new Client());
+        dialog.open();
     }
 
     private void updateClient() {
@@ -66,23 +82,23 @@ public class ClientsView extends BaseView {
 
         grid.setSizeFull();
         grid.getStyle().setMarginTop("20px");
-        grid.setItems(clientRepository.findAll());
+        grid.setItems(clientService.findAll());
         return grid;
     }
 
     private String createCountFooter() {
-        return String.format("Всего %s", clientRepository.count());
+        return String.format("Всего %s", clientService.count());
     }
 
     private void getGridData() {
         String value = super.filterText.getValue();
 
         if (value == null || value.isBlank()) {
-            grid.setItems(clientRepository.findAll());
+            grid.setItems(clientService.findAll());
             return;
         }
 
-        Collection<Client> content =  clientRepository.findAll().stream()
+        Collection<Client> content =  clientService.findAll().stream()
                 .filter(client ->
                         client.getName().toLowerCase().contains(value.toLowerCase()) ||
                                 client.getServiceDeskNumber().toLowerCase().contains(value.toLowerCase())

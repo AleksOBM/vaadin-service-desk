@@ -25,7 +25,8 @@ public class MailService {
 }
 
 /*
-⚡️<!-- application.properties -->
+todo: Добавить настройки в application.yaml
+
 spring.mail.host=smtp.gmail.com
 spring.mail.port=587
 spring.mail.username=your_email@gmail.com

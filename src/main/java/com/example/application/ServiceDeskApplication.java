@@ -23,6 +23,9 @@ import com.vaadin.flow.theme.lumo.Lumo;
 )
 public class ServiceDeskApplication implements AppShellConfigurator {
 
+    // todo: Сделать DockerCompose с Postgres на Alpine
+    // todo: Дописать Readme
+
     public static void main(String[] args) {
         SpringApplication.run(ServiceDeskApplication.class, args);
     }

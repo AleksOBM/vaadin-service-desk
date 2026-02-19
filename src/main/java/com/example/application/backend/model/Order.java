@@ -17,6 +17,10 @@ import java.time.Period;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Order extends BaseEntity {
 
+    public Order() {
+        super(EntityType.ORDER);
+    }
+
     @Column(nullable = false, length = 50)
     String title;
 

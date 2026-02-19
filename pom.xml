@@ -138,12 +138,12 @@
             <artifactId>spring-boot-starter-mail</artifactId>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>org.vaadin.addons.themeselect</groupId>
-            <artifactId>themeselect</artifactId>
-            <version>1.0.2</version>
-            <scope>compile</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>io.overcoded</groupId>-->
+<!--            <artifactId>dialog-for-vaadin</artifactId>-->
+<!--            <version>24.3.0</version>-->
+<!--            <scope>compile</scope>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>

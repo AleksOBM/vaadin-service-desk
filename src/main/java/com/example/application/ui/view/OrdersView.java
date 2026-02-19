@@ -1,8 +1,12 @@
 package com.example.application.ui.view;
 
 import com.example.application.backend.model.Order;
-import com.example.application.backend.repository.OrderRepository;
+import com.example.application.backend.service.AgentService;
+import com.example.application.backend.service.ClientService;
+import com.example.application.backend.service.OrderService;
 import com.example.application.ui.details.OrdersDetails;
+import com.example.application.ui.dialogs.OrderDialog;
+import com.example.application.ui.templates.BaseDialog;
 import com.example.application.ui.templates.BaseView;
 import com.example.application.ui.util.NotificationSupport;
 import com.vaadin.flow.component.grid.Grid;
@@ -18,37 +22,64 @@ import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.router.Menu;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import org.hibernate.mapping.Component;
 
-import java.time.LocalDate;
-import java.time.Period;
 import java.util.Collection;
 
 @Route("orders")
 @PageTitle("Order List")
-@Menu(order = 1, icon = "vaadin:calendar-briefcase", title = "Заявки")
+@Menu(order = 2, icon = "vaadin:calendar-briefcase", title = "Заявки")
 public class OrdersView extends BaseView {
 
-    private final OrderRepository orderRepository;
+    // todo: добавить постраничный просмотр
+    // todo: добавить нотификацию при различных действиях
+    // todo: добавить логику светофоров, с учетом выходных
+    // todo: добавить проверки абсурдных случаев при создании заявки
+    // todo: добавить логику отправки новой заявки на почту через MailService
+    // todo: добавить логику редактирования, возможно с использованием OrdersDetails
+
+    private final OrderService orderService;
+    private final ClientService clientService;
+    private final AgentService agentService;
+
     private final Grid<Order> grid = new Grid<>();
 
-    public OrdersView(OrderRepository orderRepository) {
+    public OrdersView(
+            OrderService orderService,
+            ClientService clientService,
+            AgentService agentService
+    ) {
         super("Заявки");
+        this.orderService = orderService;
+        this.clientService = clientService;
+        this.agentService = agentService;
+
         addClassName("orders-view");
-        this.orderRepository = orderRepository;
         configureView();
         add(getOrdersGrid());
     }
 
     private void configureView() {
-        filterText.addValueChangeListener(e -> getGridData());
+        filterText.addValueChangeListener(event -> getGridData());
         createButton.addClickListener(click -> createOrder());
         updateButton.addClickListener(click -> updateOrder());
         deleteButton.addClickListener(click -> deleteOrder());
     }
 
     private void createOrder() {
-        NotificationSupport.showFunctionNotImplemented();
+        BaseDialog<Order> dialog = new BaseDialog<>(
+                Order.class,
+                "Новая заявка",
+                new OrderDialog(clientService.findAll(), agentService.findAll()),
+                order -> {
+                    orderService.save(order);
+                    NotificationSupport.showSuccess("Заявка добавлена.");
+                    if (filterText.getValue() == null) {
+                        updateGrid();
+                    }
+                    getGridData();
+                });
+        dialog.setEntity(new Order());
+        dialog.open();
     }
 
     private void updateOrder() {
@@ -56,12 +87,17 @@ public class OrdersView extends BaseView {
     }
 
     private void deleteOrder() {
-        NotificationSupport.showFunctionNotImplemented();
+        Order order = grid.asSingleSelect().getValue();
+        orderService.markAsDeleted(order);
+        getGridData();
+        NotificationSupport.showInfo("Заявка удалена.");
     }
 
     private Grid<Order> getOrdersGrid() {
         grid.addClassNames("order-grid");
         grid.addClassName("big-header-grid");
+        grid.setSizeFull();
+        grid.getStyle().setMarginTop("20px");
         grid.addThemeVariants(GridVariant.AURA_ROW_STRIPES);
         grid.setEmptyStateText("Данные отсутствуют.");
 
@@ -72,7 +108,8 @@ public class OrdersView extends BaseView {
 
         grid.addComponentColumn(order -> {
             HorizontalLayout layout = new HorizontalLayout();
-            Icon icon = VaadinIcon.USER.create();
+            Icon icon = VaadinIcon.CIRCLE.create();
+            icon.setColor("green");
             Span name = new Span(order.getServiceDeskNumber());
             layout.add(icon, name);
             layout.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
@@ -97,10 +134,7 @@ public class OrdersView extends BaseView {
             deleteButton.setEnabled(enabled);
         });
 
-        grid.setSizeFull();
-        grid.getStyle().setMarginTop("20px");
-        grid.setItems(orderRepository.findAll());
-
+        updateGrid();
         return grid;
     }
 
@@ -134,11 +168,11 @@ public class OrdersView extends BaseView {
         String value = super.filterText.getValue();
 
         if (value == null || value.isBlank()) {
-            grid.setItems(orderRepository.findAll());
+            updateGrid();
             return;
         }
 
-        Collection<Order> content = orderRepository.findAll().stream()
+        Collection<Order> content = orderService.findAll().stream()
                 .filter(order ->
                         order.getTitle().toLowerCase().contains(value.toLowerCase()) ||
                                 order.getServiceDeskNumber().toLowerCase().contains(value.toLowerCase())
@@ -148,7 +182,12 @@ public class OrdersView extends BaseView {
         grid.setItems(content);
     }
 
+    private void updateGrid() {
+        grid.setItems(orderService.findAll().stream()
+                .filter(order -> !order.isDeleted()).toList());
+    }
+
     private String createCountFooter() {
-        return String.format("Всего %s", orderRepository.count());
+        return String.format("Всего %s", orderService.count());
     }
 }

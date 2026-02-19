@@ -15,7 +15,7 @@ import java.nio.charset.StandardCharsets;
 
 @Route(value = "about",  layout = MainLayout.class)
 @RouteAlias(value = "", layout = MainLayout.class)
-@Menu(order = 5, icon = "vaadin:info-circle", title = "О программе")
+@Menu(order = 7, icon = "vaadin:info-circle", title = "О программе")
 public class AboutView extends BaseView {
 
     public AboutView() {
@@ -36,6 +36,9 @@ public class AboutView extends BaseView {
     private String getMarkdownText() {
         try {
             String fileName = "static/about.md";
+
+            // todo: доработать текст описания, добавить инструкции для пользователя
+
             ClassPathResource resource = new ClassPathResource(fileName);
             return StreamUtils.copyToString(
                     resource.getInputStream(), StandardCharsets.UTF_8

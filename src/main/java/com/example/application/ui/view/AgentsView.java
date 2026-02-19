@@ -2,6 +2,9 @@ package com.example.application.ui.view;
 
 import com.example.application.backend.model.Agent;
 import com.example.application.backend.repository.AgentRepository;
+import com.example.application.backend.service.AgentService;
+import com.example.application.ui.dialogs.AgentDialog;
+import com.example.application.ui.templates.BaseDialog;
 import com.example.application.ui.templates.BaseView;
 import com.example.application.ui.util.NotificationSupport;
 import com.vaadin.flow.component.Component;
@@ -15,16 +18,16 @@ import java.util.Collection;
 
 @Route("agents")
 @PageTitle("Agent List")
-@Menu(order = 3, icon = "vaadin:user", title = "Сотрудники")
+@Menu(order = 4, icon = "vaadin:user", title = "Сотрудники")
 public class AgentsView extends BaseView {
 
-    private final AgentRepository agentRepository;
+    private final AgentService agentService;
     private final Grid<Agent> grid = new Grid<>();
 
-    public AgentsView(AgentRepository agentRepository) {
+    public AgentsView(AgentService agentService) {
         super("Сотрудники");
+        this.agentService = agentService;
         addClassName("agents-view");
-        this.agentRepository = agentRepository;
         configureView();
         add(getAgentsGrid());
     }
@@ -37,7 +40,20 @@ public class AgentsView extends BaseView {
     }
 
     private void createAgent() {
-        NotificationSupport.showFunctionNotImplemented();
+        BaseDialog<Agent> dialog = new BaseDialog<>(
+                Agent.class,
+                "Новый сотрудник",
+                new AgentDialog(),
+                agent -> {
+            agentService.save(agent);
+            NotificationSupport.showSuccess("Сотрудник добавлен.");
+            if (filterText.getValue() == null) {
+                grid.setItems(agentService.findAll());
+            }
+            getGridData();
+        });
+        dialog.setEntity(new Agent());
+        dialog.open();
     }
 
     private void updateAgent() {
@@ -66,23 +82,23 @@ public class AgentsView extends BaseView {
 
         grid.setSizeFull();
         grid.getStyle().setMarginTop("20px");
-        grid.setItems(agentRepository.findAll());
+        grid.setItems(agentService.findAll());
         return grid;
     }
 
     private String createCountFooter() {
-        return String.format("Всего %s", agentRepository.count());
+        return String.format("Всего %s", agentService.count());
     }
 
     private void getGridData() {
         String value = super.filterText.getValue();
 
         if (value == null || value.isBlank()) {
-            grid.setItems(agentRepository.findAll());
+            grid.setItems(agentService.findAll());
             return;
         }
 
-        Collection<Agent> content = agentRepository.findAll().stream()
+        Collection<Agent> content = agentService.findAll().stream()
                 .filter(agent ->
                         agent.getName().toLowerCase().contains(value.toLowerCase()) ||
                                 agent.getServiceDeskNumber().toLowerCase().contains(value.toLowerCase())
