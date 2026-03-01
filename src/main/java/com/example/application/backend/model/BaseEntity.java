@@ -1,12 +1,10 @@
 package com.example.application.backend.model;
 
-import com.vaadin.copilot.shaded.checkerframework.common.value.qual.EnumVal;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import tools.jackson.databind.annotation.EnumNaming;
 
 import java.time.LocalDateTime;
 
