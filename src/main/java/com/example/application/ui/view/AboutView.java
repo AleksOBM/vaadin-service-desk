@@ -34,11 +34,8 @@ public class AboutView extends BaseView {
     }
 
     private String getMarkdownText() {
+        String fileName = "static/about.md";
         try {
-            String fileName = "static/about.md";
-
-            // todo: доработать текст описания, добавить инструкции для пользователя
-
             ClassPathResource resource = new ClassPathResource(fileName);
             return StreamUtils.copyToString(
                     resource.getInputStream(), StandardCharsets.UTF_8
@@ -50,5 +47,4 @@ public class AboutView extends BaseView {
                     """;
         }
     }
-
 }

@@ -47,9 +47,8 @@ public class OrdersDetails extends FormLayout {
         startLineField.setValue(order.getStartLine().format(DateTimeFormatter.ISO_DATE));
         firstControlLineField.setValue(order.getFirstControlLine().format(DateTimeFormatter.ISO_DATE));
         secondControlLineField.setValue(order.getSecondControlLine().format(DateTimeFormatter.ISO_DATE));
-        daysCountField.setValue(String.valueOf(order.getDaysCount()));
+        daysCountField.setValue(order.getDaysCount() + " дней");
         deadLineField.setValue(order.getDeadLine().format(DateTimeFormatter.ISO_DATE));
         agentField.setValue(order.getAgent().getName());
     }
-
 }

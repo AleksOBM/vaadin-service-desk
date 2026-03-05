@@ -15,7 +15,7 @@ VALUES 	('CLIENT', 'Lumon Industries', now(), now(), 'false'),
 		('CLIENT', 'REKALL', now(), now(), 'false');
 
 MERGE INTO ORDERS (
-entity_type, title, description, start_line, dead_line, agent_id, client_id, creation_date, last_updated, deleted)
+entity_type, title, description, start_line, dead_line, agent_id, client_id, creation_date, last_updated, deleted, completed_date)
 KEY (title)
 VALUES 	(
             'ORDER',
@@ -27,7 +27,8 @@ VALUES 	(
 			1,
 			now(),
 			now(),
-			'false'
+			'false',
+			null
 		),
 		(
 		    'ORDER',
@@ -39,7 +40,8 @@ VALUES 	(
 			5,
 			now(),
 			now(),
-			'false'
+			'false',
+			TIMESTAMPADD(DAY, 1, NOW())
 		),
 		(
 		    'ORDER',
@@ -51,5 +53,6 @@ VALUES 	(
 			3,
 			now(),
 			now(),
-			'true'
+			'true',
+			null
 		);

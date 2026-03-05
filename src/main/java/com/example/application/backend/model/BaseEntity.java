@@ -39,5 +39,4 @@ public class BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "entity_type")
     final EntityType type;
-
 }

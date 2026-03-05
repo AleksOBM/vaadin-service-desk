@@ -1,11 +1,10 @@
 package com.example.application.ui.view;
 
 import com.example.application.backend.model.*;
-import com.example.application.backend.service.AgentService;
-import com.example.application.backend.service.ClientService;
-import com.example.application.backend.service.OrderService;
+import com.example.application.backend.service.RecycleService;
 import com.example.application.ui.dialogs.DeleteDialog;
 import com.example.application.ui.templates.BaseView;
+import com.example.application.ui.util.NotificationSupport;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -22,7 +21,6 @@ import lombok.experimental.FieldDefaults;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Stream;
 
 @Route("recycle")
 @PageTitle("Recycle")
@@ -30,33 +28,27 @@ import java.util.stream.Stream;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RecycleView extends BaseView {
 
-    final OrderService orderService;
-    final ClientService clientService;
-    final AgentService agentService;
-
-    final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-
+    final RecycleService recycleService;
     final Grid<BaseEntity> grid = new Grid<>();
     final DeleteDialog deleteDialog = new DeleteDialog();
+    final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    int entityCount;
 
-    public RecycleView(
-            OrderService orderService,
-            ClientService clientService,
-            AgentService agentService
-    ) {
+    public RecycleView(RecycleService recycleService) {
         super("Корзина");
-        this.orderService = orderService;
-        this.clientService = clientService;
-        this.agentService = agentService;
+        this.recycleService = recycleService;
         addClassName("recycle-view");
-
         configureView();
         add(getRecycleGrid());
     }
 
     private void configureView() {
         this.createButton.setVisible(false);
+
+        this.updateButton.setTooltipText("Восстановить");
         this.updateButton.setIcon(new Icon(VaadinIcon.REFRESH));
+
+        this.deleteButton.setTooltipText("Удалить навсегда");
         this.deleteButton.setIcon(new Icon(VaadinIcon.RECYCLE));
 
         filterText.addValueChangeListener(event -> getGridData());
@@ -69,6 +61,7 @@ public class RecycleView extends BaseView {
     private Grid<BaseEntity> getRecycleGrid() {
         configureGridStyle();
         configureGridColumns();
+        getGridData();
 
         grid.addSelectionListener(event -> {
             boolean enabled = event.getFirstSelectedItem().isPresent();
@@ -77,6 +70,15 @@ public class RecycleView extends BaseView {
         });
 
         return grid;
+    }
+
+    private void configureGridStyle() {
+        grid.addClassNames("recycle-grid");
+        grid.addClassName("big-header-grid");
+        grid.getStyle().setMarginTop("20px");
+        grid.setSizeFull();
+        grid.addThemeVariants(GridVariant.AURA_ROW_STRIPES);
+        grid.setEmptyStateText("Данные отсутствуют.");
     }
 
     private void configureGridColumns() {
@@ -96,64 +98,32 @@ public class RecycleView extends BaseView {
                 });
 
         grid.setMultiSort(true);
-        GridSortOrder<BaseEntity> sortOrder1 = new GridSortOrder<>(deletionDateColumn, SortDirection.DESCENDING);
-        grid.sort(List.of(sortOrder1));
+        GridSortOrder<BaseEntity> sortOrder = new GridSortOrder<>(deletionDateColumn, SortDirection.DESCENDING);
+        grid.sort(List.of(sortOrder));
+    }
 
+    private void updateFooter() {
         grid.getColumns().stream().findFirst()
-                .orElseThrow().setFooter(createCountFooter());
+                .orElseThrow().setFooter(String.format("Всего %s", entityCount));
     }
 
-    private void configureGridStyle() {
-        grid.addClassNames("recycle-grid");
-        grid.addClassName("big-header-grid");
-        grid.getStyle().setMarginTop("20px");
-        grid.setSizeFull();
-        grid.addThemeVariants(GridVariant.AURA_ROW_STRIPES);
-        grid.setEmptyStateText("Данные отсутствуют.");
-    }
-
-    private String createCountFooter() {
-        return String.format("Всего %s", getGridData());
-    }
-
-    private int getGridData() {
+    private void getGridData() {
         String filter = filterText.getValue();
-
-        Collection<BaseEntity> recycleList = Stream.of(
-                        orderService.findDeleted(),
-                        clientService.findDeleted(),
-                        agentService.findDeleted()
-                )
-                .flatMap(Collection::stream)
-                .map(entity -> (BaseEntity) entity)
-                .filter(entity ->
-                        entity.getServiceDeskNumber().toLowerCase().contains(filter) ||
-                                entity.getCreationDate().format(formatter).contains(filter) ||
-                                entity.getLastUpdated().format(formatter).contains(filter)
-                )
-                .toList();
-
+        Collection<BaseEntity> recycleList = recycleService.getRecycleData(filter);
         grid.setItems(recycleList);
-        return recycleList.size();
+        entityCount = recycleList.size();
+        updateFooter();
     }
 
     private void deleteForever(BaseEntity entity) {
-        EntityType type = entity.getType();
-        switch (type) {
-            case ORDER -> orderService.deleteForever((Order) entity);
-            case CLIENT -> clientService.deleteForever((Client) entity);
-            case AGENT -> agentService.deleteForever((Agent) entity);
-        }
+        recycleService.deleteForever(entity);
         getGridData();
+        NotificationSupport.showInfo("Объект уничножен");
     }
 
     private void restore(BaseEntity entity) {
-        EntityType type = entity.getType();
-        switch (type) {
-            case ORDER -> orderService.restore((Order) entity);
-            case CLIENT -> clientService.restore((Client) entity);
-            case AGENT -> agentService.restore((Agent) entity);
-        }
+        recycleService.restore(entity);
         getGridData();
+        NotificationSupport.showInfo("Объект восстановлен");
     }
 }

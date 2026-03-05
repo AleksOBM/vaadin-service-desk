@@ -1,21 +1,25 @@
 package com.example.application.ui.view;
 
 import com.example.application.backend.model.Order;
+import com.example.application.backend.model.OrderStatus;
 import com.example.application.backend.service.AgentService;
 import com.example.application.backend.service.ClientService;
 import com.example.application.backend.service.OrderService;
+import com.example.application.backend.service.RecycleService;
 import com.example.application.ui.details.OrdersDetails;
 import com.example.application.ui.dialogs.OrderDialog;
 import com.example.application.ui.templates.BaseDialog;
 import com.example.application.ui.templates.BaseView;
 import com.example.application.ui.util.NotificationSupport;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.LitRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
@@ -24,6 +28,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import java.util.Collection;
+import java.util.List;
 
 @Route("orders")
 @PageTitle("Order List")
@@ -31,27 +36,31 @@ import java.util.Collection;
 public class OrdersView extends BaseView {
 
     // todo: добавить постраничный просмотр
-    // todo: добавить нотификацию при различных действиях
-    // todo: добавить логику светофоров, с учетом выходных
-    // todo: добавить проверки абсурдных случаев при создании заявки
-    // todo: добавить логику отправки новой заявки на почту через MailService
-    // todo: добавить логику редактирования, возможно с использованием OrdersDetails
+    // todo: добавить возможность редактирования, возможно с использованием OrdersDetails
 
     private final OrderService orderService;
     private final ClientService clientService;
     private final AgentService agentService;
+    private final RecycleService recycleService;
 
     private final Grid<Order> grid = new Grid<>();
+    private Grid.Column<Order> sdColumn;
+    Grid.Column<Order> statusColumn;
+
+
+    private int ordersCount;
 
     public OrdersView(
             OrderService orderService,
             ClientService clientService,
-            AgentService agentService
+            AgentService agentService,
+            RecycleService recycleService
     ) {
         super("Заявки");
         this.orderService = orderService;
         this.clientService = clientService;
         this.agentService = agentService;
+        this.recycleService = recycleService;
 
         addClassName("orders-view");
         configureView();
@@ -88,7 +97,7 @@ public class OrdersView extends BaseView {
 
     private void deleteOrder() {
         Order order = grid.asSingleSelect().getValue();
-        orderService.markAsDeleted(order);
+        recycleService.markAsDeleted(order);
         getGridData();
         NotificationSupport.showInfo("Заявка удалена.");
     }
@@ -106,18 +115,28 @@ public class OrdersView extends BaseView {
         grid.setDetailsVisibleOnClick(false);
         grid.setItemDetailsRenderer(createPersonDetailsRenderer());
 
-        grid.addComponentColumn(order -> {
+        sdColumn = grid.addComponentColumn(order -> {
             HorizontalLayout layout = new HorizontalLayout();
-            Icon icon = VaadinIcon.CIRCLE.create();
-            icon.setColor("green");
+
+            Icon progressPoint = VaadinIcon.CIRCLE.create();
+            OrderStatus status = orderService.getStatus(order);
+            switch (status) {
+                case IN_PROGRESS -> progressPoint.setColor("green");
+                case FIRST_CONTROL -> progressPoint.setColor("yellow");
+                case SECOND_CONTROL -> progressPoint.setColor("red");
+                case COMPLETED -> progressPoint.setColor("gray");
+            }
+
             Span name = new Span(order.getServiceDeskNumber());
-            layout.add(icon, name);
+            layout.add(progressPoint, name);
             layout.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
             return layout;
         }).setHeader("SD");
 
         grid.addColumn(order -> order.getClient().getName()).setHeader("Клиент");
         grid.addColumn(Order::getTitle).setHeader("Работа");
+        statusColumn = grid.addColumn(orderService::getStatus).setHeader("Статус");
+        statusColumn.setVisible(false);
 
         grid.getColumns().stream().skip(1)
                 .forEach(column -> {
@@ -125,8 +144,9 @@ public class OrdersView extends BaseView {
                     column.setAutoWidth(true);
                 });
 
-        grid.getColumns().stream().skip(1).findFirst()
-                .orElseThrow().setFooter(createCountFooter());
+        applyStandardSorting();
+
+        updateFooter();
 
         grid.addSelectionListener(event -> {
             boolean enabled = event.getFirstSelectedItem().isPresent();
@@ -136,6 +156,12 @@ public class OrdersView extends BaseView {
 
         updateGrid();
         return grid;
+    }
+
+    private void applyStandardSorting() {
+        GridSortOrder<Order> sortOrder1 = new GridSortOrder<>(statusColumn, SortDirection.DESCENDING);
+        GridSortOrder<Order> sortOrder2 = new GridSortOrder<>(sdColumn, SortDirection.ASCENDING);
+        grid.sort(List.of(sortOrder1, sortOrder2));
     }
 
     private ComponentRenderer<OrdersDetails, Order> createPersonDetailsRenderer() {
@@ -165,29 +191,28 @@ public class OrdersView extends BaseView {
     }
 
     private void getGridData() {
-        String value = super.filterText.getValue();
-
-        if (value == null || value.isBlank()) {
+        String text = super.filterText.getValue();
+        if (text == null || text.isBlank()) {
             updateGrid();
             return;
         }
-
-        Collection<Order> content = orderService.findAll().stream()
-                .filter(order ->
-                        order.getTitle().toLowerCase().contains(value.toLowerCase()) ||
-                                order.getServiceDeskNumber().toLowerCase().contains(value.toLowerCase())
-                )
-                .toList();
-
+        Collection<Order> content = orderService.getContent(text);
+        ordersCount = content.size();
         grid.setItems(content);
+        updateFooter();
     }
 
     private void updateGrid() {
-        grid.setItems(orderService.findAll().stream()
-                .filter(order -> !order.isDeleted()).toList());
+        Collection<Order> content = orderService.findAll();
+        grid.setItems(content);
+        ordersCount = content.size();
+        updateFooter();
     }
 
-    private String createCountFooter() {
-        return String.format("Всего %s", orderService.count());
+    private void updateFooter() {
+        grid.getColumns().stream().skip(1).findFirst()
+                .orElseThrow().setFooter(
+                        String.format("Всего %s", ordersCount)
+                );
     }
 }

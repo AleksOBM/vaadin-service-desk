@@ -2,6 +2,7 @@ package com.example.application.ui.templates;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -17,9 +18,9 @@ import lombok.experimental.FieldDefaults;
 public class BaseView extends VerticalLayout {
 
     TextField filterText = new TextField();
-    Button createButton;
-    Button updateButton;
-    Button deleteButton;
+    Button createButton = new Button();
+    Button updateButton = new Button();
+    Button deleteButton = new Button();
 
     public BaseView(String title) {
         filterText.setPlaceholder("Поиск");
@@ -27,14 +28,17 @@ public class BaseView extends VerticalLayout {
         filterText.setClearButtonVisible(true);
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
 
-        createButton = new Button(new Icon(VaadinIcon.PLUS));
+        createButton.setTooltipText("Создать");
+        createButton.setIcon(new Icon(VaadinIcon.PLUS));
         createButton.addThemeVariants(ButtonVariant.AURA_TERTIARY);
 
-        updateButton = new Button(new Icon(VaadinIcon.WRENCH));
+        updateButton.setTooltipText("Редактировать");
+        updateButton.setIcon(new Icon(VaadinIcon.WRENCH));
         updateButton.addThemeVariants(ButtonVariant.AURA_TERTIARY);
         updateButton.setEnabled(false);
 
-        deleteButton = new Button(new Icon(VaadinIcon.TRASH));
+        deleteButton.setTooltipText("Удалить");
+        deleteButton.setIcon(new Icon(VaadinIcon.TRASH));
         deleteButton.addThemeVariants(ButtonVariant.AURA_TERTIARY);
         deleteButton.setEnabled(false);
 
@@ -45,5 +49,4 @@ public class BaseView extends VerticalLayout {
 
         add(toolbar);
     }
-
 }

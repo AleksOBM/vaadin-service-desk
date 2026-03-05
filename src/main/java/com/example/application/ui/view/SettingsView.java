@@ -24,6 +24,7 @@ import com.vaadin.flow.router.Route;
 public class SettingsView extends BaseView {
 
     // todo: реализовать смену темы, добавить другие настройки
+    // todo: расставить подсказки TooltipText на кнопках
 
     Select<ColorScheme.Value> brightBox = new Select<>();
     EmailField targetEmailField = new EmailField("Почта для отчетов");

@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
 
 @Data
@@ -32,6 +33,9 @@ public class Order extends BaseEntity {
 
     @Column(name = "dead_line", nullable = false)
     LocalDate deadLine;
+
+    @Column(name = "completed_date")
+    LocalDateTime completedDate;
 
     @ManyToOne
     @JoinColumn(name = "client_id", nullable = false)
@@ -59,6 +63,10 @@ public class Order extends BaseEntity {
 
     public int getDaysCount() {
         return Period.between(this.getStartLine(), this.getDeadLine()).getDays();
+    }
+
+    public boolean isCompleted() {
+        return completedDate != null;
     }
 }
 

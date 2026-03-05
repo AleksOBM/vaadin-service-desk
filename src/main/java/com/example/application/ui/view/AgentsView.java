@@ -1,7 +1,6 @@
 package com.example.application.ui.view;
 
 import com.example.application.backend.model.Agent;
-import com.example.application.backend.repository.AgentRepository;
 import com.example.application.backend.service.AgentService;
 import com.example.application.ui.dialogs.AgentDialog;
 import com.example.application.ui.templates.BaseDialog;
@@ -107,5 +106,4 @@ public class AgentsView extends BaseView {
 
         grid.setItems(content);
     }
-
 }
