@@ -17,7 +17,7 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class OrderService {
 
-    // todo: добавить логику светофоров, с учетом выходных
+    // todo: добавить в логику светофоров учет выходных
     // todo: добавить валидацию абсурдных случаев при создании заявки
     // todo: добавить логику отправки новой заявки на почту через MailService
 

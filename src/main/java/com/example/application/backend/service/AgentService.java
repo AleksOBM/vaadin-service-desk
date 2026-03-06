@@ -12,6 +12,9 @@ import java.util.Collection;
 @Service
 @RequiredArgsConstructor
 public class AgentService {
+
+    // todo: добавить нотификацию при различных действиях
+
     private final AgentRepository agentRepository;
 
     public void save(Agent agent) {

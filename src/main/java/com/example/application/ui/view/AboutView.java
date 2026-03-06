@@ -7,6 +7,8 @@ import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.router.Menu;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
+import com.vaadin.flow.spring.annotation.RouteScope;
+import com.vaadin.flow.spring.annotation.SpringComponent;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.StreamUtils;
 
@@ -16,6 +18,8 @@ import java.nio.charset.StandardCharsets;
 @Route(value = "about",  layout = MainLayout.class)
 @RouteAlias(value = "", layout = MainLayout.class)
 @Menu(order = 7, icon = "vaadin:info-circle", title = "О программе")
+@SpringComponent
+@RouteScope
 public class AboutView extends BaseView {
 
     public AboutView() {

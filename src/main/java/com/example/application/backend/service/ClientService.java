@@ -12,6 +12,9 @@ import java.util.Collection;
 @Service
 @RequiredArgsConstructor
 public class ClientService {
+
+    // todo: добавить нотификацию при различных действиях
+
     private final ClientRepository clientRepository;
 
     public Collection<Client> findAll() {

@@ -12,13 +12,20 @@ import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.router.Menu;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.spring.annotation.RouteScope;
+import com.vaadin.flow.spring.annotation.SpringComponent;
 
 import java.util.Collection;
 
 @Route("clients")
 @PageTitle("Client List")
 @Menu(order = 3, icon = "vaadin:user-star", title = "Клиенты")
+@SpringComponent
+@RouteScope
 public class ClientsView extends BaseView {
+
+    // todo: добавить возможность удаления
+    // todo: добавить возможность редактирования
 
     private final ClientService clientService;
     private final Grid<Client> grid = new Grid<>();

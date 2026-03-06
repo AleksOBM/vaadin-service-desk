@@ -3,6 +3,7 @@ package com.example.application.backend.service;
 import com.example.application.backend.model.*;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -14,14 +15,13 @@ import java.util.stream.Stream;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class RecycleService {
 
-    // todo: добавить нотификацию при различных действиях
-
     OrderService orderService;
     ClientService clientService;
     AgentService agentService;
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
+    @Autowired
     public RecycleService(OrderService orderService, ClientService clientService, AgentService agentService) {
         this.orderService = orderService;
         this.clientService = clientService;

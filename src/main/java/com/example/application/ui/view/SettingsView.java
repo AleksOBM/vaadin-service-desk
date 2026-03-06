@@ -17,10 +17,14 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Menu;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.spring.annotation.RouteScope;
+import com.vaadin.flow.spring.annotation.SpringComponent;
 
 @Route("settings")
 @PageTitle("Settings")
 @Menu(order = 6, icon = "vaadin:tools", title = "Настройки")
+@SpringComponent
+@RouteScope
 public class SettingsView extends BaseView {
 
     // todo: реализовать смену темы, добавить другие настройки

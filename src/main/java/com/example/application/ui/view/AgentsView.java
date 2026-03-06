@@ -12,13 +12,20 @@ import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.router.Menu;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.spring.annotation.RouteScope;
+import com.vaadin.flow.spring.annotation.SpringComponent;
 
 import java.util.Collection;
 
 @Route("agents")
 @PageTitle("Agent List")
 @Menu(order = 4, icon = "vaadin:user", title = "Сотрудники")
+@SpringComponent
+@RouteScope
 public class AgentsView extends BaseView {
+
+    // todo: добавить возможность удаления
+    // todo: добавить возможность редактирования
 
     private final AgentService agentService;
     private final Grid<Agent> grid = new Grid<>();

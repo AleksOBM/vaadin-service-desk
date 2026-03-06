@@ -15,8 +15,11 @@ import com.vaadin.flow.data.renderer.LocalDateTimeRenderer;
 import com.vaadin.flow.router.Menu;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.spring.annotation.RouteScope;
+import com.vaadin.flow.spring.annotation.SpringComponent;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
@@ -25,6 +28,8 @@ import java.util.List;
 @Route("recycle")
 @PageTitle("Recycle")
 @Menu(order = 5, icon = "vaadin:recycle", title = "Корзина")
+@SpringComponent
+@RouteScope
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RecycleView extends BaseView {
 
@@ -34,6 +39,7 @@ public class RecycleView extends BaseView {
     final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     int entityCount;
 
+    @Autowired
     public RecycleView(RecycleService recycleService) {
         super("Корзина");
         this.recycleService = recycleService;
