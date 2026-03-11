@@ -1,12 +1,11 @@
 package com.example.application.ui.view;
 
 import com.example.application.backend.model.Agent;
-import com.example.application.backend.model.Client;
 import com.example.application.backend.service.AgentService;
 import com.example.application.backend.service.RecycleService;
-import com.example.application.ui.dialogs.AgentDialog;
-import com.example.application.ui.templates.BaseDialog;
-import com.example.application.ui.templates.BaseView;
+import com.example.application.ui.dialog.AgentDialog;
+import com.example.application.ui.template.BaseDialog;
+import com.example.application.ui.template.BaseView;
 import com.example.application.ui.util.NotificationSupport;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.Grid;
@@ -17,7 +16,6 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.RouteScope;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 

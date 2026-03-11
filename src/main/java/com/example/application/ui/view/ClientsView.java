@@ -1,12 +1,11 @@
 package com.example.application.ui.view;
 
-import com.example.application.backend.model.Agent;
 import com.example.application.backend.model.Client;
 import com.example.application.backend.service.ClientService;
 import com.example.application.backend.service.RecycleService;
-import com.example.application.ui.dialogs.ClientDialog;
-import com.example.application.ui.templates.BaseDialog;
-import com.example.application.ui.templates.BaseView;
+import com.example.application.ui.dialog.ClientDialog;
+import com.example.application.ui.template.BaseDialog;
+import com.example.application.ui.template.BaseView;
 import com.example.application.ui.util.NotificationSupport;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.Grid;

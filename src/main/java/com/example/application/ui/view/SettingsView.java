@@ -1,6 +1,6 @@
 package com.example.application.ui.view;
 
-import com.example.application.ui.templates.BaseView;
+import com.example.application.ui.template.BaseView;
 import com.example.application.ui.util.NotificationSupport;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.Unit;

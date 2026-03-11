@@ -1,6 +1,7 @@
 package com.example.application.backend.service;
 
 import com.example.application.backend.model.*;
+import com.example.application.backend.util.enums.EntityType;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;

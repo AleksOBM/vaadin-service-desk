@@ -1,15 +1,15 @@
 package com.example.application.ui.view;
 
 import com.example.application.backend.model.Order;
-import com.example.application.backend.model.OrderStatus;
+import com.example.application.backend.util.enums.OrderStatus;
 import com.example.application.backend.service.AgentService;
 import com.example.application.backend.service.ClientService;
 import com.example.application.backend.service.OrderService;
 import com.example.application.backend.service.RecycleService;
 import com.example.application.ui.details.OrdersDetails;
-import com.example.application.ui.dialogs.OrderDialog;
-import com.example.application.ui.templates.BaseDialog;
-import com.example.application.ui.templates.BaseView;
+import com.example.application.ui.dialog.OrderDialog;
+import com.example.application.ui.template.BaseDialog;
+import com.example.application.ui.template.BaseView;
 import com.example.application.ui.util.NotificationSupport;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridSortOrder;
@@ -26,7 +26,6 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.RouteScope;
 import com.vaadin.flow.spring.annotation.SpringComponent;
-import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;

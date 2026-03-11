@@ -1,8 +1,8 @@
 package com.example.application.ui.view;
 
 import com.example.application.backend.service.DashboardService;
-import com.example.application.ui.charts.ServiceDeskChart;
-import com.example.application.ui.templates.BaseView;
+import com.example.application.ui.chart.ServiceDeskChart;
+import com.example.application.ui.template.BaseView;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.html.Span;

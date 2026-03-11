@@ -1,7 +1,7 @@
 package com.example.application.ui.view;
 
 import com.example.application.ui.MainLayout;
-import com.example.application.ui.templates.BaseView;
+import com.example.application.ui.template.BaseView;
 import com.vaadin.flow.component.markdown.Markdown;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.router.Menu;

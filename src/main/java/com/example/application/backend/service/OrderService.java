@@ -1,9 +1,9 @@
 package com.example.application.backend.service;
 
-import com.example.application.backend.exception.ParameterNotValidException;
+import com.example.application.backend.util.exception.ParameterNotValidException;
 import com.example.application.backend.model.BaseEntity;
 import com.example.application.backend.model.Order;
-import com.example.application.backend.model.OrderStatus;
+import com.example.application.backend.util.enums.OrderStatus;
 import com.example.application.backend.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

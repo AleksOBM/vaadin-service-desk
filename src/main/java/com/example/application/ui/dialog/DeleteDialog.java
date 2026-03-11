@@ -1,4 +1,4 @@
-package com.example.application.ui.dialogs;
+package com.example.application.ui.dialog;
 
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;

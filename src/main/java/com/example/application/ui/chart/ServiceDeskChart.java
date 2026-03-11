@@ -1,4 +1,4 @@
-package com.example.application.ui.charts;
+package com.example.application.ui.chart;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Tag;

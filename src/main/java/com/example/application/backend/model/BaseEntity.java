@@ -1,5 +1,6 @@
 package com.example.application.backend.model;
 
+import com.example.application.backend.util.enums.EntityType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;

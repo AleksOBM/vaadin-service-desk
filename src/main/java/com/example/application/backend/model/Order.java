@@ -1,5 +1,6 @@
 package com.example.application.backend.model;
 
+import com.example.application.backend.util.enums.EntityType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

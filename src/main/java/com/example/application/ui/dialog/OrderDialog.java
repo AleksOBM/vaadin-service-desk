@@ -1,9 +1,9 @@
-package com.example.application.ui.dialogs;
+package com.example.application.ui.dialog;
 
 import com.example.application.backend.model.Agent;
 import com.example.application.backend.model.Client;
 import com.example.application.backend.model.Order;
-import com.example.application.ui.templates.BaseDialog;
+import com.example.application.ui.template.BaseDialog;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
