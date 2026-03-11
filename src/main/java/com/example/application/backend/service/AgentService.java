@@ -12,9 +12,6 @@ import java.util.Collection;
 @Service
 @RequiredArgsConstructor
 public class AgentService {
-
-    // todo: добавить нотификацию при различных действиях
-
     private final AgentRepository agentRepository;
 
     public void save(Agent agent) {
@@ -23,6 +20,16 @@ public class AgentService {
 
     public Collection<Agent> findAll() {
         return agentRepository.findAll().stream().filter(agent -> !agent.isDeleted()).toList();
+    }
+
+    public Collection<Agent> getContent(String text) {
+        return agentRepository.findAll().stream()
+                .filter(agent -> !agent.isDeleted())
+                .filter(agent ->
+                        agent.getName().toLowerCase().contains(text.toLowerCase()) ||
+                                agent.getServiceDeskNumber().toLowerCase().contains(text.toLowerCase())
+                )
+                .toList();
     }
 
     public Collection<Agent> findDeleted() {

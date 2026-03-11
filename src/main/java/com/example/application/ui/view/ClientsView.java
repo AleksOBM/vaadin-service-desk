@@ -1,7 +1,9 @@
 package com.example.application.ui.view;
 
+import com.example.application.backend.model.Agent;
 import com.example.application.backend.model.Client;
 import com.example.application.backend.service.ClientService;
+import com.example.application.backend.service.RecycleService;
 import com.example.application.ui.dialogs.ClientDialog;
 import com.example.application.ui.templates.BaseDialog;
 import com.example.application.ui.templates.BaseView;
@@ -14,6 +16,8 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.RouteScope;
 import com.vaadin.flow.spring.annotation.SpringComponent;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 
 import java.util.Collection;
 
@@ -22,19 +26,20 @@ import java.util.Collection;
 @Menu(order = 3, icon = "vaadin:user-star", title = "Клиенты")
 @SpringComponent
 @RouteScope
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ClientsView extends BaseView {
 
-    // todo: добавить возможность удаления
     // todo: добавить возможность редактирования
 
-    private final ClientService clientService;
-    private final Grid<Client> grid = new Grid<>();
+    ClientService clientService;
+    RecycleService recycleService;
+    Grid<Client> grid = new Grid<>();
 
-    public ClientsView(ClientService clientService) {
+    public ClientsView(ClientService clientService, RecycleService recycleService) {
         super("Клиенты");
         this.clientService = clientService;
+        this.recycleService = recycleService;
         addClassName("clients-view");
-        
         configureView();
         add(getClientsGrid());
     }
@@ -68,7 +73,10 @@ public class ClientsView extends BaseView {
     }
 
     private void deleteClient() {
-        NotificationSupport.showFunctionNotImplemented();
+        Client client = grid.asSingleSelect().getValue();
+        recycleService.markAsDeleted(client);
+        getGridData();
+        NotificationSupport.showInfo("Клиент удален.");
     }
 
     private Component getClientsGrid() {
@@ -85,33 +93,35 @@ public class ClientsView extends BaseView {
             column.setAutoWidth(true);
         });
 
-        grid.getColumns().getFirst().setFooter(createCountFooter());
+        grid.addSelectionListener(event -> {
+            boolean enabled = event.getFirstSelectedItem().isPresent();
+            updateButton.setEnabled(enabled);
+            deleteButton.setEnabled(enabled);
+        });
 
         grid.setSizeFull();
         grid.getStyle().setMarginTop("20px");
-        grid.setItems(clientService.findAll());
+        Collection<Client> content = clientService.findAll();
+        grid.setItems(content);
+        entitiesCount = content.size();
+        updateFooter();
         return grid;
     }
 
-    private String createCountFooter() {
-        return String.format("Всего %s", clientService.count());
+    private void updateFooter() {
+        grid.getColumns().getFirst().setFooter(String.format("Всего %s", entitiesCount));
     }
 
     private void getGridData() {
-        String value = super.filterText.getValue();
-
-        if (value == null || value.isBlank()) {
-            grid.setItems(clientService.findAll());
-            return;
+        String filterText = super.filterText.getValue();
+        Collection<Client> content;
+        if (filterText == null || filterText.isBlank()) {
+            content = clientService.findAll();
+        } else {
+            content = clientService.getContent(filterText);
         }
-
-        Collection<Client> content =  clientService.findAll().stream()
-                .filter(client ->
-                        client.getName().toLowerCase().contains(value.toLowerCase()) ||
-                                client.getServiceDeskNumber().toLowerCase().contains(value.toLowerCase())
-                )
-                .toList();
-
         grid.setItems(content);
+        entitiesCount = content.size();
+        updateFooter();
     }
 }

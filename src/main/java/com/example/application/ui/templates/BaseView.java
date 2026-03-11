@@ -2,7 +2,6 @@ package com.example.application.ui.templates;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -21,6 +20,7 @@ public class BaseView extends VerticalLayout {
     Button createButton = new Button();
     Button updateButton = new Button();
     Button deleteButton = new Button();
+    int entitiesCount;
 
     public BaseView(String title) {
         filterText.setPlaceholder("Поиск");

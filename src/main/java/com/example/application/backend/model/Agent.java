@@ -34,7 +34,6 @@ public class Agent extends BaseEntity {
     public String getServiceDeskNumber() {
         return String.format("AG-%03d", id);
     }
-
 }
 
 

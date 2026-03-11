@@ -12,13 +12,20 @@ import java.util.Collection;
 @Service
 @RequiredArgsConstructor
 public class ClientService {
-
-    // todo: добавить нотификацию при различных действиях
-
     private final ClientRepository clientRepository;
 
     public Collection<Client> findAll() {
         return clientRepository.findAll().stream().filter(client -> !client.isDeleted()).toList();
+    }
+
+    public Collection<Client> getContent(String text) {
+        return clientRepository.findAll().stream()
+                .filter(client -> !client.isDeleted())
+                .filter(client ->
+                        client.getName().toLowerCase().contains(text.toLowerCase()) ||
+                                client.getServiceDeskNumber().toLowerCase().contains(text.toLowerCase())
+                )
+                .toList();
     }
 
     public Collection<Client> findDeleted() {

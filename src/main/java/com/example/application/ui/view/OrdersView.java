@@ -27,6 +27,8 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.RouteScope;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
@@ -37,21 +39,18 @@ import java.util.List;
 @Menu(order = 2, icon = "vaadin:calendar-briefcase", title = "Заявки")
 @SpringComponent
 @RouteScope
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class OrdersView extends BaseView {
 
+    // todo: добавить возможность редактирования
     // todo: добавить постраничный просмотр
-    // todo: добавить возможность редактирования, возможно с использованием OrdersDetails
 
-    private final OrderService orderService;
-    private final ClientService clientService;
-    private final AgentService agentService;
-    private final RecycleService recycleService;
+    OrderService orderService;
+    ClientService clientService;
+    AgentService agentService;
+    RecycleService recycleService;
 
-    private final Grid<Order> grid = new Grid<>();
-    private Grid.Column<Order> statusColumn;
-    private Grid.Column<Order> deadlineColumn;
-    private Grid.Column<Order> sdColumn;
-    private int ordersCount;
+    Grid<Order> grid = new Grid<>();
 
     @Autowired
     public OrdersView(
@@ -120,7 +119,7 @@ public class OrdersView extends BaseView {
         grid.setDetailsVisibleOnClick(false);
         grid.setItemDetailsRenderer(createPersonDetailsRenderer());
 
-        sdColumn = grid.addComponentColumn(order -> {
+        Grid.Column<Order> sdColumn = grid.addComponentColumn(order -> {
             HorizontalLayout layout = new HorizontalLayout();
 
             Icon progressPoint = VaadinIcon.CIRCLE.create();
@@ -141,9 +140,9 @@ public class OrdersView extends BaseView {
         grid.addColumn(order -> order.getClient().getName()).setHeader("Клиент");
         grid.addColumn(Order::getTitle).setHeader("Работа");
 
-        statusColumn = grid.addColumn(orderService::getStatus).setHeader("Статус");
+        Grid.Column<Order> statusColumn = grid.addColumn(orderService::getStatus).setHeader("Статус");
         statusColumn.setVisible(false);
-        deadlineColumn = grid.addColumn(Order::getDeadLine).setHeader("Дедлайн");
+        Grid.Column<Order> deadlineColumn = grid.addColumn(Order::getDeadLine).setHeader("Дедлайн");
         deadlineColumn.setVisible(true);
 
         grid.getColumns().stream().skip(1)
@@ -152,7 +151,11 @@ public class OrdersView extends BaseView {
                     column.setAutoWidth(true);
                 });
 
-        applyStandardSorting();
+        grid.setMultiSort(true);
+        GridSortOrder<Order> sortOrder1 = new GridSortOrder<>(statusColumn, SortDirection.DESCENDING);
+        GridSortOrder<Order> sortOrder2 = new GridSortOrder<>(deadlineColumn, SortDirection.ASCENDING);
+        GridSortOrder<Order> sortOrder3 = new GridSortOrder<>(sdColumn, SortDirection.ASCENDING);
+        grid.sort(List.of(sortOrder1, sortOrder2, sortOrder3));
 
         updateFooter();
 
@@ -163,14 +166,6 @@ public class OrdersView extends BaseView {
         });
 
         return grid;
-    }
-
-    private void applyStandardSorting() {
-        grid.setMultiSort(true);
-        GridSortOrder<Order> sortOrder1 = new GridSortOrder<>(statusColumn, SortDirection.DESCENDING);
-        GridSortOrder<Order> sortOrder2 = new GridSortOrder<>(deadlineColumn, SortDirection.ASCENDING);
-        GridSortOrder<Order> sortOrder3 = new GridSortOrder<>(sdColumn, SortDirection.ASCENDING);
-        grid.sort(List.of(sortOrder1, sortOrder2, sortOrder3));
     }
 
     private ComponentRenderer<OrdersDetails, Order> createPersonDetailsRenderer() {
@@ -206,7 +201,7 @@ public class OrdersView extends BaseView {
             return;
         }
         Collection<Order> content = orderService.getContent(text);
-        ordersCount = content.size();
+        entitiesCount = content.size();
         grid.setItems(content);
         updateFooter();
     }
@@ -214,14 +209,14 @@ public class OrdersView extends BaseView {
     public void updateGrid() {
         Collection<Order> content = orderService.findAll();
         grid.setItems(content);
-        ordersCount = content.size();
+        entitiesCount = content.size();
         updateFooter();
     }
 
     private void updateFooter() {
         grid.getColumns().stream().skip(1).findFirst()
                 .orElseThrow().setFooter(
-                        String.format("Всего %s", ordersCount)
+                        String.format("Всего %s", entitiesCount)
                 );
     }
 }

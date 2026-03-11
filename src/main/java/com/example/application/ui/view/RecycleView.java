@@ -2,6 +2,7 @@ package com.example.application.ui.view;
 
 import com.example.application.backend.model.*;
 import com.example.application.backend.service.RecycleService;
+import com.example.application.backend.service.SessionInitService;
 import com.example.application.ui.dialogs.DeleteDialog;
 import com.example.application.ui.templates.BaseView;
 import com.example.application.ui.util.NotificationSupport;
@@ -19,7 +20,9 @@ import com.vaadin.flow.spring.annotation.RouteScope;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
@@ -29,20 +32,22 @@ import java.util.List;
 @PageTitle("Recycle")
 @Menu(order = 5, icon = "vaadin:recycle", title = "Корзина")
 @SpringComponent
+@Slf4j
 @RouteScope
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class RecycleView extends BaseView {
 
-    final RecycleService recycleService;
-    final Grid<BaseEntity> grid = new Grid<>();
-    final DeleteDialog deleteDialog = new DeleteDialog();
-    final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-    int entityCount;
+    RecycleService recycleService;
+    SessionInitService sessionService;
+    Grid<BaseEntity> grid = new Grid<>();
+    DeleteDialog deleteDialog = new DeleteDialog();
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     @Autowired
-    public RecycleView(RecycleService recycleService) {
+    public RecycleView(RecycleService recycleService, SessionInitService sessionService) {
         super("Корзина");
         this.recycleService = recycleService;
+        this.sessionService = sessionService;
         addClassName("recycle-view");
         configureView();
         add(getRecycleGrid());
@@ -59,8 +64,8 @@ public class RecycleView extends BaseView {
 
         filterText.addValueChangeListener(event -> getGridData());
         updateButton.addClickListener(click -> restore(grid.asSingleSelect().getValue()));
-        deleteButton.addClickListener(click -> deleteDialog.open());
 
+        deleteButton.addClickListener(click -> deleteDialog.open());
         deleteDialog.addConfirmListener(event -> deleteForever(grid.asSingleSelect().getValue()));
     }
 
@@ -110,19 +115,28 @@ public class RecycleView extends BaseView {
 
     private void updateFooter() {
         grid.getColumns().stream().findFirst()
-                .orElseThrow().setFooter(String.format("Всего %s", entityCount));
+                .orElseThrow().setFooter(String.format("Всего %s", entitiesCount));
     }
 
     private void getGridData() {
         String filter = filterText.getValue();
         Collection<BaseEntity> recycleList = recycleService.getRecycleData(filter);
         grid.setItems(recycleList);
-        entityCount = recycleList.size();
+        entitiesCount = recycleList.size();
         updateFooter();
     }
 
     private void deleteForever(BaseEntity entity) {
-        recycleService.deleteForever(entity);
+        try {
+            recycleService.deleteForever(entity);
+        } catch (DataIntegrityViolationException e) {
+            log.error("Ошибка при попытке удаления объекта {}, объект еще используется. Session ID={}",
+                    entity.getServiceDeskNumber(), sessionService.getSessionId()
+            );
+            NotificationSupport.showError("Этот объект еще используется.");
+            getGridData();
+            return;
+        }
         getGridData();
         NotificationSupport.showInfo("Объект уничножен");
     }

@@ -1,7 +1,9 @@
 package com.example.application.ui.view;
 
 import com.example.application.backend.model.Agent;
+import com.example.application.backend.model.Client;
 import com.example.application.backend.service.AgentService;
+import com.example.application.backend.service.RecycleService;
 import com.example.application.ui.dialogs.AgentDialog;
 import com.example.application.ui.templates.BaseDialog;
 import com.example.application.ui.templates.BaseView;
@@ -14,6 +16,10 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.RouteScope;
 import com.vaadin.flow.spring.annotation.SpringComponent;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
 
@@ -22,17 +28,20 @@ import java.util.Collection;
 @Menu(order = 4, icon = "vaadin:user", title = "Сотрудники")
 @SpringComponent
 @RouteScope
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AgentsView extends BaseView {
 
-    // todo: добавить возможность удаления
     // todo: добавить возможность редактирования
 
-    private final AgentService agentService;
-    private final Grid<Agent> grid = new Grid<>();
+    AgentService agentService;
+    RecycleService recycleService;
+    Grid<Agent> grid = new Grid<>();
 
-    public AgentsView(AgentService agentService) {
+    @Autowired
+    public AgentsView(AgentService agentService, RecycleService recycleService) {
         super("Сотрудники");
         this.agentService = agentService;
+        this.recycleService = recycleService;
         addClassName("agents-view");
         configureView();
         add(getAgentsGrid());
@@ -67,7 +76,10 @@ public class AgentsView extends BaseView {
     }
 
     private void deleteAgent() {
-        NotificationSupport.showFunctionNotImplemented();
+        Agent agent = grid.asSingleSelect().getValue();
+        recycleService.markAsDeleted(agent);
+        getGridData();
+        NotificationSupport.showInfo("Сотрудник удален.");
     }
 
     private Component getAgentsGrid() {
@@ -84,33 +96,35 @@ public class AgentsView extends BaseView {
             column.setAutoWidth(true);
         });
 
-        grid.getColumns().getFirst().setFooter(createCountFooter());
+        grid.addSelectionListener(event -> {
+            boolean enabled = event.getFirstSelectedItem().isPresent();
+            updateButton.setEnabled(enabled);
+            deleteButton.setEnabled(enabled);
+        });
 
         grid.setSizeFull();
         grid.getStyle().setMarginTop("20px");
-        grid.setItems(agentService.findAll());
+        Collection<Agent> content = agentService.findAll();
+        grid.setItems(content);
+        entitiesCount = content.size();
+        updateFooter();
         return grid;
     }
 
-    private String createCountFooter() {
-        return String.format("Всего %s", agentService.count());
+    private void updateFooter() {
+        grid.getColumns().getFirst().setFooter(String.format("Всего %s", entitiesCount));
     }
 
     private void getGridData() {
-        String value = super.filterText.getValue();
-
-        if (value == null || value.isBlank()) {
-            grid.setItems(agentService.findAll());
-            return;
+        String filterText = super.filterText.getValue();
+        Collection<Agent> content;
+        if (filterText == null || filterText.isBlank()) {
+            content = agentService.findAll();
+        } else {
+            content = agentService.getContent(filterText);
         }
-
-        Collection<Agent> content = agentService.findAll().stream()
-                .filter(agent ->
-                        agent.getName().toLowerCase().contains(value.toLowerCase()) ||
-                                agent.getServiceDeskNumber().toLowerCase().contains(value.toLowerCase())
-                )
-                .toList();
-
         grid.setItems(content);
+        entitiesCount = content.size();
+        updateFooter();
     }
 }
