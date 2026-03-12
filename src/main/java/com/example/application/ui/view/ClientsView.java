@@ -28,8 +28,6 @@ import java.util.Collection;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ClientsView extends BaseView {
 
-    // todo: добавить возможность редактирования
-
     ClientService clientService;
     RecycleService recycleService;
     Grid<Client> grid = new Grid<>();
@@ -58,17 +56,35 @@ public class ClientsView extends BaseView {
                 client -> {
                     clientService.save(client);
                     NotificationSupport.showSuccess("Клиент добавлен.");
-                    if (filterText.getValue() == null) {
+                    String text = filterText.getValue();
+                    if (text == null || text.isBlank()) {
                         grid.setItems(clientService.findAll());
+                    } else {
+                        getGridData();
                     }
-                    getGridData();
                 });
         dialog.setEntity(new Client());
         dialog.open();
     }
 
     private void updateClient() {
-        NotificationSupport.showFunctionNotImplemented();
+        Client oldClient = grid.asSingleSelect().getValue();
+        BaseDialog<Client> dialog = new BaseDialog<>(
+                Client.class,
+                "Редактировать клиента",
+                new ClientDialog(),
+                client -> {
+                    clientService.save(client);
+                    NotificationSupport.showSuccess("Клиент изменен.");
+                    String text = filterText.getValue();
+                    if (text == null || text.isBlank()) {
+                        grid.setItems(clientService.findAll());
+                    } else {
+                        getGridData();
+                    }
+                });
+        dialog.setEntity(oldClient);
+        dialog.open();
     }
 
     private void deleteClient() {

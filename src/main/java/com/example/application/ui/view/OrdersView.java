@@ -41,7 +41,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class OrdersView extends BaseView {
 
-    // todo: добавить возможность редактирования
+    // todo: добавить фильтр по статусу
     // todo: добавить постраничный просмотр
 
     OrderService orderService;
@@ -85,17 +85,35 @@ public class OrdersView extends BaseView {
                 order -> {
                     orderService.save(order);
                     NotificationSupport.showSuccess("Заявка добавлена.");
-                    if (filterText.getValue() == null) {
+                    String text = filterText.getValue();
+                    if (text == null || text.isBlank()) {
                         updateGrid();
+                    } else {
+                        getGridData();
                     }
-                    getGridData();
                 });
         dialog.setEntity(new Order());
         dialog.open();
     }
 
     private void updateOrder() {
-        NotificationSupport.showFunctionNotImplemented();
+        Order oldOrder = grid.asSingleSelect().getValue();
+        BaseDialog<Order> dialog = new BaseDialog<>(
+                Order.class,
+                "Редактировать заявку",
+                new OrderDialog(clientService.findAll(), agentService.findAll()),
+                order -> {
+                    orderService.save(order);
+                    NotificationSupport.showSuccess("Заявка изменена.");
+                    String text = filterText.getValue();
+                    if (text == null || text.isBlank()) {
+                        updateGrid();
+                    } else {
+                        getGridData();
+                    }
+                });
+        dialog.setEntity(oldOrder);
+        dialog.open();
     }
 
     private void deleteOrder() {
@@ -137,7 +155,7 @@ public class OrdersView extends BaseView {
         }).setHeader("SD");
 
         grid.addColumn(order -> order.getClient().getName()).setHeader("Клиент");
-        grid.addColumn(Order::getTitle).setHeader("Работа");
+        grid.addColumn(Order::getName).setHeader("Работа");
 
         Grid.Column<Order> statusColumn = grid.addColumn(orderService::getStatus).setHeader("Статус");
         statusColumn.setVisible(false);

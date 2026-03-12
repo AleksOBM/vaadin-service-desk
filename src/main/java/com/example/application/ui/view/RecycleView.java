@@ -103,6 +103,9 @@ public class RecycleView extends BaseView {
                 BaseEntity::getLastUpdated, () -> formatter)
         ).setHeader("Дата удаления").setComparator(BaseEntity::getLastUpdated);
 
+        Grid.Column<BaseEntity> nameColumn = grid.addColumn(BaseEntity::getName);
+        nameColumn.setHeader("Наименование");
+
         grid.getColumns().forEach(column -> {
                     column.setSortable(true);
                     column.setAutoWidth(true);

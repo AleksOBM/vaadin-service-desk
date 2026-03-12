@@ -21,7 +21,7 @@ public class BaseDialog<T> extends Dialog {
     public BaseDialog(
             Class<T> beanClass,
             String title,
-            EntityDialog<T> form,
+            EntityDialog form,
             Consumer<T> onSave
     ) {
         this.setMaxWidth(25, Unit.EM);
@@ -59,12 +59,11 @@ public class BaseDialog<T> extends Dialog {
             onSave.accept(entity);
             close();
         } catch (Exception e) {
-            Notification.show("Исправьте ошибки в форме");
+            Notification.show("Обнаружено дублирование данных. Проверте корзину");
         }
     }
 
-    public abstract static class EntityDialog<T> extends FormLayout {
+    public abstract static class EntityDialog extends FormLayout {
     }
-
 }
 

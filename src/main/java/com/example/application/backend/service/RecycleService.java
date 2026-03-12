@@ -47,24 +47,12 @@ public class RecycleService {
 
     public void markAsDeleted(BaseEntity entity) {
         entity.setDeleted(true);
-        entity.setLastUpdated(LocalDateTime.now());
-        EntityType type = entity.getType();
-        switch (type) {
-            case ORDER -> orderService.save((Order) entity);
-            case CLIENT -> clientService.save((Client) entity);
-            case AGENT -> agentService.save((Agent) entity);
-        }
+        saveEntity(entity);
     }
 
     public void restore(BaseEntity entity) {
         entity.setDeleted(false);
-        entity.setLastUpdated(LocalDateTime.now());
-        EntityType type = entity.getType();
-        switch (type) {
-            case ORDER -> orderService.save((Order) entity);
-            case CLIENT -> clientService.save((Client) entity);
-            case AGENT -> agentService.save((Agent) entity);
-        }
+        saveEntity(entity);
     }
 
     public void deleteForever(BaseEntity entity) {
@@ -73,6 +61,15 @@ public class RecycleService {
             case ORDER -> orderService.deleteForever((Order) entity);
             case CLIENT -> clientService.deleteForever((Client) entity);
             case AGENT -> agentService.deleteForever((Agent) entity);
+        }
+    }
+
+    private void saveEntity(BaseEntity entity) {
+        EntityType type = entity.getType();
+        switch (type) {
+            case ORDER -> orderService.save((Order) entity);
+            case CLIENT -> clientService.save((Client) entity);
+            case AGENT -> agentService.save((Agent) entity);
         }
     }
 }

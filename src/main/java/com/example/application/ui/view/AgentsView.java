@@ -29,8 +29,6 @@ import java.util.Collection;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AgentsView extends BaseView {
 
-    // todo: добавить возможность редактирования
-
     AgentService agentService;
     RecycleService recycleService;
     Grid<Agent> grid = new Grid<>();
@@ -58,19 +56,37 @@ public class AgentsView extends BaseView {
                 "Новый сотрудник",
                 new AgentDialog(),
                 agent -> {
-            agentService.save(agent);
-            NotificationSupport.showSuccess("Сотрудник добавлен.");
-            if (filterText.getValue() == null) {
-                grid.setItems(agentService.findAll());
-            }
-            getGridData();
-        });
+                    agentService.save(agent);
+                    NotificationSupport.showSuccess("Сотрудник добавлен.");
+                    String text = filterText.getValue();
+                    if (text == null || text.isBlank()) {
+                        grid.setItems(agentService.findAll());
+                    } else {
+                        getGridData();
+                    }
+                });
         dialog.setEntity(new Agent());
         dialog.open();
     }
 
     private void updateAgent() {
-        NotificationSupport.showFunctionNotImplemented();
+        Agent oldAgent = grid.asSingleSelect().getValue();
+        BaseDialog<Agent> dialog = new BaseDialog<>(
+                Agent.class,
+                "Редактировать сотрудника",
+                new AgentDialog(),
+                agent -> {
+                    agentService.save(agent);
+                    NotificationSupport.showSuccess("Сотрудник изменен.");
+                    String text = filterText.getValue();
+                    if (text == null || text.isBlank()) {
+                        grid.setItems(agentService.findAll());
+                    } else {
+                        getGridData();
+                    }
+                });
+        dialog.setEntity(oldAgent);
+        dialog.open();
     }
 
     private void deleteAgent() {

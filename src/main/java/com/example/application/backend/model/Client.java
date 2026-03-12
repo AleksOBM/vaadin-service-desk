@@ -1,10 +1,7 @@
 package com.example.application.backend.model;
 
 import com.example.application.backend.util.enums.EntityType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -32,8 +29,15 @@ public class Client extends BaseEntity {
     @OneToMany(mappedBy = "client")
     List<Order> orders = new LinkedList<>();
 
+    @Override
     public String getServiceDeskNumber() {
         return String.format("CL-%05d", id);
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+        super.setName(name);
     }
 }
 

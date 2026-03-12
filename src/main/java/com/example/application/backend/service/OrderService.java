@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Period;
 import java.util.Collection;
 
 @Service
@@ -27,6 +26,10 @@ public class OrderService {
         orderRepository.save(order);
     }
 
+    public void update(Order order) {
+//        orderRepository.update(new UpdateSpecification<Order>(sp -> ));
+    }
+
     public Collection<Order> findAll() {
         return orderRepository.findAll().stream().filter(order -> !order.isDeleted()).toList();
     }
@@ -35,7 +38,7 @@ public class OrderService {
         return orderRepository.findAll().stream()
                 .filter(order -> !order.isDeleted())
                 .filter(order ->
-                        order.getTitle().toLowerCase().contains(filterText.toLowerCase()) ||
+                        order.getName().toLowerCase().contains(filterText.toLowerCase()) ||
                                 order.getServiceDeskNumber().toLowerCase().contains(filterText.toLowerCase())
                 )
                 .toList();
@@ -45,24 +48,10 @@ public class OrderService {
         return orderRepository.findAll().stream().filter(BaseEntity::isDeleted).toList();
     }
 
-    public LocalDate getFirstControlLine(Order order) {
-        int controlDaysCount = Math.round((float) getDaysCount(order) / 3);
-        return order.getStartLine().plus(Period.ofDays(controlDaysCount));
-    }
-
-    public LocalDate getSecondControlLine(Order order) {
-        int controlDaysCount = Math.round((float) getDaysCount(order) / 3);
-        return order.getDeadLine().minus(Period.ofDays(controlDaysCount));
-    }
-
-    public int getDaysCount(Order order) {
-        return Period.between(order.getStartLine(), order.getDeadLine()).getDays();
-    }
-
     public OrderStatus getStatus(Order order) {
         LocalDate date = LocalDate.now();
-        LocalDate firstControl = getFirstControlLine(order);
-        LocalDate secondControl = getSecondControlLine(order);
+        LocalDate firstControl = order.getFirstControlLine();
+        LocalDate secondControl = order.getSecondControlLine();
         if (order.isCompleted()) {
             return OrderStatus.COMPLETED;
         } else if (firstControl.isAfter(date)) {

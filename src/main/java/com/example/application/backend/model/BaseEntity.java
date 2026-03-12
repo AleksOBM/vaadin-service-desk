@@ -1,7 +1,9 @@
 package com.example.application.backend.model;
 
 import com.example.application.backend.util.enums.EntityType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
@@ -24,6 +26,9 @@ public class BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+
+    @Transient
+    String name;
 
     @CreationTimestamp
     @Column(name = "creation_date", nullable = false, updatable = false)

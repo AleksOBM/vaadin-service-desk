@@ -23,8 +23,8 @@ public class Order extends BaseEntity {
         super(EntityType.ORDER);
     }
 
-    @Column(nullable = false, length = 50)
-    String title;
+    @Column(name = "title", nullable = false, length = 50)
+    String name;
 
     @Column(length = 200)
     String description;
@@ -48,22 +48,42 @@ public class Order extends BaseEntity {
     @JsonIgnoreProperties({"orders"})
     Agent agent;
 
+    Boolean completed;
+
+    @Override
     public String getServiceDeskNumber() {
         return String.format("SD-%08d", id);
     }
 
+    @Override
+    public void setName(String name) {
+        this.name = name;
+        super.setName(name);
+    }
+
+    // todo: Перенести этот метод в сервис
     public LocalDate getFirstControlLine() {
         int controlDaysCount = Math.round((float) getDaysCount() / 3);
         return this.getStartLine().plus(Period.ofDays(controlDaysCount));
     }
 
+    // todo: Перенести этот метод в сервис
     public LocalDate getSecondControlLine() {
         int controlDaysCount = Math.round((float) getDaysCount() / 3);
         return this.getDeadLine().minus(Period.ofDays(controlDaysCount));
     }
 
+    // todo: Перенести этот метод в сервис
     public int getDaysCount() {
         return Period.between(this.getStartLine(), this.getDeadLine()).getDays();
+    }
+
+    public void setCompleted(boolean status) {
+        if (status) {
+            setCompletedDate(LocalDateTime.now());
+        } else {
+            setCompletedDate(null);
+        }
     }
 
     public boolean isCompleted() {
