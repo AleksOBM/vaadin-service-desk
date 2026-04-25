@@ -7,9 +7,12 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DuplicateKeyException;
 
 import java.util.function.Consumer;
 
+@Slf4j
 public class BaseDialog<T> extends Dialog {
 
     private final Button saveButton = new Button("Сохранить");
@@ -58,8 +61,13 @@ public class BaseDialog<T> extends Dialog {
             binder.writeBean(entity);
             onSave.accept(entity);
             close();
-        } catch (Exception e) {
+        } catch (DuplicateKeyException e) {
             Notification.show("Обнаружено дублирование данных. Проверте корзину");
+            log.error(e.getLocalizedMessage());
+        }
+        catch (Exception e) {
+            Notification.show("Произошла непредвиденная ошибка");
+            log.error(e.getLocalizedMessage());
         }
     }
 

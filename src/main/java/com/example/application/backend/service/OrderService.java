@@ -1,7 +1,6 @@
 package com.example.application.backend.service;
 
 import com.example.application.backend.util.exception.ParameterNotValidException;
-import com.example.application.backend.model.BaseEntity;
 import com.example.application.backend.model.Order;
 import com.example.application.backend.util.enums.OrderStatus;
 import com.example.application.backend.repository.OrderRepository;
@@ -31,21 +30,11 @@ public class OrderService {
     }
 
     public Collection<Order> findAll() {
-        return orderRepository.findAll().stream().filter(order -> !order.isDeleted()).toList();
+        return orderRepository.findAllByDeletedFalse();
     }
 
-    public Collection<Order> getContent(String filterText) {
-        return orderRepository.findAll().stream()
-                .filter(order -> !order.isDeleted())
-                .filter(order ->
-                        order.getName().toLowerCase().contains(filterText.toLowerCase()) ||
-                                order.getServiceDeskNumber().toLowerCase().contains(filterText.toLowerCase())
-                )
-                .toList();
-    }
-
-    public Collection<Order> findDeleted() {
-        return orderRepository.findAll().stream().filter(BaseEntity::isDeleted).toList();
+    public Collection<Order> getContent(String text) {
+        return orderRepository.getContent(text);
     }
 
     public OrderStatus getStatus(Order order) {
@@ -63,10 +52,6 @@ public class OrderService {
         } else {
             throw new ParameterNotValidException("status", "что-то напутано с датами.");
         }
-    }
-
-    public void deleteForever(Order order) {
-        orderRepository.delete(order);
     }
 
     public void restore(Order order) {

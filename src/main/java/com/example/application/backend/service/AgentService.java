@@ -19,29 +19,15 @@ public class AgentService {
     }
 
     public Collection<Agent> findAll() {
-        return agentRepository.findAll().stream().filter(agent -> !agent.isDeleted()).toList();
+        return agentRepository.findAllByDeletedFalse();
     }
 
     public Collection<Agent> getContent(String text) {
-        return agentRepository.findAll().stream()
-                .filter(agent -> !agent.isDeleted())
-                .filter(agent ->
-                        agent.getName().toLowerCase().contains(text.toLowerCase()) ||
-                                agent.getServiceDeskNumber().toLowerCase().contains(text.toLowerCase())
-                )
-                .toList();
-    }
-
-    public Collection<Agent> findDeleted() {
-        return agentRepository.findAll().stream().filter(BaseEntity::isDeleted).toList();
+        return agentRepository.getContent(text);
     }
 
     public long count() {
         return agentRepository.count();
-    }
-
-    public void deleteForever(Agent agent) {
-        agentRepository.delete(agent);
     }
 
     public void restore(Agent agent) {

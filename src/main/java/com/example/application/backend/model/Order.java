@@ -3,19 +3,17 @@ package com.example.application.backend.model;
 import com.example.application.backend.util.enums.EntityType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "orders")
-@EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Order extends BaseEntity {
 
@@ -49,11 +47,6 @@ public class Order extends BaseEntity {
     Agent agent;
 
     Boolean completed;
-
-    @Override
-    public String getServiceDeskNumber() {
-        return String.format("SD-%08d", id);
-    }
 
     @Override
     public void setName(String name) {

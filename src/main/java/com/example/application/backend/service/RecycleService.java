@@ -1,13 +1,16 @@
 package com.example.application.backend.service;
 
 import com.example.application.backend.model.*;
+import com.example.application.backend.repository.AgentRepository;
+import com.example.application.backend.repository.ClientRepository;
+import com.example.application.backend.repository.OrderRepository;
 import com.example.application.backend.util.enums.EntityType;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.stream.Stream;
@@ -16,60 +19,59 @@ import java.util.stream.Stream;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class RecycleService {
 
-    OrderService orderService;
-    ClientService clientService;
-    AgentService agentService;
+    OrderRepository orderRepository;
+    ClientRepository clientRepository;
+    AgentRepository agentRepository;
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     @Autowired
-    public RecycleService(OrderService orderService, ClientService clientService, AgentService agentService) {
-        this.orderService = orderService;
-        this.clientService = clientService;
-        this.agentService = agentService;
+    public RecycleService(OrderRepository orderRepository,
+                          ClientRepository clientRepository,
+                          AgentRepository agentRepository) {
+        this.orderRepository = orderRepository;
+        this.clientRepository = clientRepository;
+        this.agentRepository = agentRepository;
     }
 
     public Collection<BaseEntity> getRecycleData(String text) {
-        return Stream.of(
-                        orderService.findDeleted(),
-                        clientService.findDeleted(),
-                        agentService.findDeleted()
-                )
+        return Stream.of(orderRepository.findAllByDeletedTrue(),
+                        clientRepository.findAllByDeletedTrue(),
+                        agentRepository.findAllByDeletedTrue())
                 .flatMap(Collection::stream)
                 .map(entity -> (BaseEntity) entity)
                 .filter(entity ->
                         entity.getServiceDeskNumber().toLowerCase().contains(text) ||
                                 entity.getCreationDate().format(formatter).contains(text) ||
                                 entity.getLastUpdated().format(formatter).contains(text)
-                )
-                .toList();
+                ).toList();
     }
 
-    public void markAsDeleted(BaseEntity entity) {
+    public void markAsDeleted(@NonNull BaseEntity entity) {
         entity.setDeleted(true);
         saveEntity(entity);
     }
 
-    public void restore(BaseEntity entity) {
+    public void restore(@NonNull BaseEntity entity) {
         entity.setDeleted(false);
         saveEntity(entity);
     }
 
-    public void deleteForever(BaseEntity entity) {
+    public void deleteForever(@NonNull BaseEntity entity) {
         EntityType type = entity.getType();
         switch (type) {
-            case ORDER -> orderService.deleteForever((Order) entity);
-            case CLIENT -> clientService.deleteForever((Client) entity);
-            case AGENT -> agentService.deleteForever((Agent) entity);
+            case ORDER -> orderRepository.delete((Order) entity);
+            case CLIENT -> clientRepository.delete((Client) entity);
+            case AGENT -> agentRepository.delete((Agent) entity);
         }
     }
 
-    private void saveEntity(BaseEntity entity) {
+    private void saveEntity(@NonNull BaseEntity entity) {
         EntityType type = entity.getType();
         switch (type) {
-            case ORDER -> orderService.save((Order) entity);
-            case CLIENT -> clientService.save((Client) entity);
-            case AGENT -> agentService.save((Agent) entity);
+            case ORDER -> orderRepository.save((Order) entity);
+            case CLIENT -> clientRepository.save((Client) entity);
+            case AGENT -> agentRepository.save((Agent) entity);
         }
     }
 }

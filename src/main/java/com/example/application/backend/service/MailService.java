@@ -1,14 +1,23 @@
 package com.example.application.backend.service;
 
+import com.example.application.backend.model.MailEntity;
+import com.example.application.backend.repository.MailRepository;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class MailService {
+
+    MailRepository mailRepository;
 
 //    private final JavaMailSender mailSender;
 
@@ -22,7 +31,17 @@ public class MailService {
         mailMessage.setText(text);
 //        mailSender.send(mailMessage);
     }
+
+    public Optional<MailEntity> getMailEntity() {
+        return mailRepository.findById(1L);
+    }
+
+    public void saveMailEntity(MailEntity mailEntity) {
+        mailRepository.save(mailEntity);
+    }
 }
+
+
 
 /*
 todo: Добавить настройки в application.yaml

@@ -1,6 +1,5 @@
 package com.example.application.backend.service;
 
-import com.example.application.backend.model.BaseEntity;
 import com.example.application.backend.model.Client;
 import com.example.application.backend.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,21 +14,11 @@ public class ClientService {
     private final ClientRepository clientRepository;
 
     public Collection<Client> findAll() {
-        return clientRepository.findAll().stream().filter(client -> !client.isDeleted()).toList();
+        return clientRepository.findAllByDeletedFalse();
     }
 
     public Collection<Client> getContent(String text) {
-        return clientRepository.findAll().stream()
-                .filter(client -> !client.isDeleted())
-                .filter(client ->
-                        client.getName().toLowerCase().contains(text.toLowerCase()) ||
-                                client.getServiceDeskNumber().toLowerCase().contains(text.toLowerCase())
-                )
-                .toList();
-    }
-
-    public Collection<Client> findDeleted() {
-        return clientRepository.findAll().stream().filter(BaseEntity::isDeleted).toList();
+        return clientRepository.getContent(text);
     }
 
     public void save(Client client) {
@@ -38,10 +27,6 @@ public class ClientService {
 
     public long count() {
         return clientRepository.count();
-    }
-
-    public void deleteForever(Client client) {
-        clientRepository.delete(client);
     }
 
     public void restore(Client client) {

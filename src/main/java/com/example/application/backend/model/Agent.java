@@ -3,18 +3,16 @@ package com.example.application.backend.model;
 import com.example.application.backend.util.enums.EntityType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.LinkedList;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "agents")
-@EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Agent extends BaseEntity {
 
@@ -28,11 +26,6 @@ public class Agent extends BaseEntity {
 
     @OneToMany(mappedBy = "agent")
     List<Order> orders = new LinkedList<>();
-
-    @Override
-    public String getServiceDeskNumber() {
-        return String.format("AG-%03d", id);
-    }
 
     @Override
     public void setName(String name) {

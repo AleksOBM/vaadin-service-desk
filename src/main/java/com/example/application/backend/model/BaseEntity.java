@@ -1,11 +1,10 @@
 package com.example.application.backend.model;
 
 import com.example.application.backend.util.enums.EntityType;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -14,8 +13,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @MappedSuperclass
-@NoArgsConstructor(force = true)
-@EqualsAndHashCode(of = "id")
 @FieldDefaults(level = AccessLevel.PROTECTED)
 public class BaseEntity {
 
@@ -40,9 +37,30 @@ public class BaseEntity {
 
     boolean deleted;
 
+    @Column(insertable = false, updatable = false)
     String serviceDeskNumber;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "entity_type")
     final EntityType type;
+
+    @Override
+    public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+
+        if (org.hibernate.Hibernate.getClass(this)
+                != org.hibernate.Hibernate.getClass(o)) {
+            return false;
+        }
+
+        BaseEntity other = (BaseEntity) o;
+
+        return id != null && id.equals(other.id);
+    }
+
+    @Override
+    public final int hashCode() {
+        return org.hibernate.Hibernate.getClass(this).hashCode();
+    }
 }

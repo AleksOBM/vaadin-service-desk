@@ -4,6 +4,7 @@ import com.example.application.backend.model.Order;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import org.jspecify.annotations.NonNull;
 
 import java.time.format.DateTimeFormatter;
 import java.util.stream.Stream;
@@ -20,19 +21,15 @@ public class OrdersDetails extends FormLayout {
     public OrdersDetails() {
         addClassName("order-details");
 
-        Stream.of(
-                        descriptionField, startLineField, firstControlLineField,
-                        secondControlLineField, daysCountField, deadLineField, agentField
-                )
+        Stream.of(descriptionField, startLineField, firstControlLineField,
+                        secondControlLineField, daysCountField, deadLineField, agentField)
                 .forEach(field -> {
                     field.setReadOnly(true);
                     add(field);
                 });
 
-        Stream.of(
-                        startLineField, firstControlLineField,
-                        secondControlLineField, deadLineField
-                )
+        Stream.of(startLineField, firstControlLineField,
+                        secondControlLineField, deadLineField)
                 .forEach(field -> {
                     field.setReadOnly(true);
                     add(field);
@@ -42,7 +39,7 @@ public class OrdersDetails extends FormLayout {
         setColspan(descriptionField, 3);
     }
 
-    public void setOrder(Order order) {
+    public void setOrder(@NonNull Order order) {
         descriptionField.setValue(order.getDescription());
         startLineField.setValue(order.getStartLine().format(DateTimeFormatter.ISO_DATE));
         firstControlLineField.setValue(order.getFirstControlLine().format(DateTimeFormatter.ISO_DATE));

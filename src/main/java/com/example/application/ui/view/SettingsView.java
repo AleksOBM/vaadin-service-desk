@@ -1,16 +1,12 @@
 package com.example.application.ui.view;
 
+import com.example.application.backend.model.MailEntity;
+import com.example.application.backend.service.MailService;
 import com.example.application.ui.template.BaseView;
-import com.example.application.ui.util.NotificationSupport;
-import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.page.ColorScheme;
-import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
@@ -30,7 +26,8 @@ public class SettingsView extends BaseView {
     // todo: реализовать смену темы, добавить другие настройки
     // todo: расставить подсказки TooltipText на кнопках
 
-    Select<ColorScheme.Value> brightBox = new Select<>();
+    private final MailService mailService;
+
     EmailField targetEmailField = new EmailField("Почта для отчетов");
     EmailField homeEmailField = new EmailField("Почта для приложения");
     TextField homeMailHostField = new TextField("Хост почты приложения");
@@ -38,19 +35,57 @@ public class SettingsView extends BaseView {
     PasswordField passwordField = new PasswordField("Пароль почты приложения");
     Checkbox mailSmtpAuth = new Checkbox("mail smtp auth");
     Checkbox mailSmtpStartTls = new Checkbox("mail smtp starttls");
+    VerticalLayout layout = new VerticalLayout();
+    MailEntity mailEntity;
 
-    public SettingsView() {
+    public SettingsView(MailService mailService) {
         super("Настройки");
+        this.mailService = mailService;
         super.filterText.setVisible(false);
+        createButton.setIcon(new Icon(VaadinIcon.ENTER_ARROW));
+        createButton.setEnabled(false);
+        updateButton.setEnabled(true);
+        deleteButton.setEnabled(true);
 
-        this.createButton.setIcon(new Icon(VaadinIcon.ENTER_ARROW));
+        mailEntity = mailService.getMailEntity().orElse(null);
 
-        Scroller scroller = new Scroller();
-        scroller.getStyle().setMarginTop("20px");
+        setValues();
+        configureLayout();
+        configureActions();
+        add(layout);
+    }
 
-        VerticalLayout layout = new VerticalLayout();
+    private void setValues() {
+        if (mailEntity == null) {
+            return;
+        }
+        targetEmailField.setValue(mailEntity.getTargetMail());
+        homeEmailField.setValue(mailEntity.getAppMail());
+        homeMailHostField.setValue(mailEntity.getAppMailHost());
+        homeMailPortField.setValue(mailEntity.getAppMailPort());
+        passwordField.setValue(mailEntity.getAppMailPassword());
+        mailSmtpAuth.setValue(mailEntity.isMailSmtpAuth());
+        mailSmtpStartTls.setValue(mailEntity.isMailSmtpStartTls());
+    }
+
+    private void configureActions() {
+        updateButton.addClickListener(event -> {
+            if (layout.isEnabled()) {
+                layout.setEnabled(false);
+            } else {
+                layout.setEnabled(true);
+                createButton.setEnabled(true);
+            }
+        });
+
+        createButton.addClickListener(event -> {
+            createEntity();
+            layout.setEnabled(false);
+        });
+    }
+
+    private void configureLayout() {
         layout.add(
-                getBrightBox(),
                 targetEmailField,
                 homeEmailField,
                 homeMailHostField,
@@ -60,27 +95,22 @@ public class SettingsView extends BaseView {
                 mailSmtpStartTls
         );
 
-        layout.setWidth(20, Unit.EM);
-
-        scroller.setContent(layout);
-        add(scroller);
-
-        brightBox.addValueChangeListener(event ->
-                NotificationSupport.showFunctionNotImplemented()
-        );
+        layout.setEnabled(false);
+        layout.getStyle().setMarginTop("20px");
+        layout.setSizeFull();
     }
 
-    private void switchTheme(ColorScheme.Value value) {
-        UI.getCurrent().getElement().setAttribute("theme", value.getThemeValue());
-    }
-
-    private Select<ColorScheme.Value> getBrightBox() {
-        brightBox.setItems(ColorScheme.Value.values());
-        brightBox.setEnabled(true);
-        brightBox.setRequiredIndicatorVisible(false);
-        brightBox.setValue(ColorScheme.Value.SYSTEM);
-        brightBox.setLabel("Тема");
-//        brightBox.getStyle().setMarginTop("20px");
-        return brightBox;
+    private void createEntity() {
+        mailEntity = MailEntity.builder()
+                .id(1L)
+                .appMail(homeEmailField.getValue())
+                .targetMail(targetEmailField.getValue())
+                .appMailHost(homeMailHostField.getValue())
+                .appMailPassword(passwordField.getValue())
+                .appMailPort(homeMailPortField.getValue())
+                .mailSmtpAuth(mailSmtpAuth.getValue())
+                .mailSmtpStartTls(mailSmtpStartTls.getValue())
+                .build();
+        mailService.saveMailEntity(mailEntity);
     }
 }
