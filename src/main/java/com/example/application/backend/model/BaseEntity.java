@@ -4,7 +4,6 @@ import com.example.application.backend.util.enums.EntityType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -40,8 +39,7 @@ public class BaseEntity {
     @Column(insertable = false, updatable = false)
     String serviceDeskNumber;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "entity_type")
+    @Transient
     final EntityType type;
 
     @Override

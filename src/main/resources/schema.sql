@@ -5,12 +5,8 @@ CREATE TABLE IF NOT EXISTS public.agents (
     creation_date timestamp(3) without time zone NOT NULL,
     last_updated timestamp(3) without time zone NOT NULL,
     deleted boolean NOT NULL,
-    entity_type varchar(10),
     CONSTRAINT pk_agents PRIMARY KEY (id),
-    CONSTRAINT uk_agents_name UNIQUE (agent_name),
-    CONSTRAINT agents_entity_type_check CHECK (entity_type::text = ANY
-        (ARRAY['ORDER'::character varying, 'CLIENT'::character varying, 'AGENT'::character varying]::text[])
-    )
+    CONSTRAINT uk_agents_name UNIQUE (agent_name)
 );
 
 CREATE TABLE IF NOT EXISTS public.clients (
@@ -20,12 +16,8 @@ CREATE TABLE IF NOT EXISTS public.clients (
     creation_date timestamp(3) without time zone NOT NULL,
     last_updated timestamp(3) without time zone NOT NULL,
     deleted boolean NOT NULL,
-    entity_type varchar(10),
     CONSTRAINT pk_clients PRIMARY KEY (id),
-    CONSTRAINT uk_clients_name UNIQUE (client_name),
-    CONSTRAINT clients_entity_type_check CHECK (entity_type::text = ANY
-        (ARRAY['ORDER'::character varying, 'CLIENT'::character varying, 'AGENT'::character varying]::text[])
-    )
+    CONSTRAINT uk_clients_name UNIQUE (client_name)
 );
 
 CREATE TABLE IF NOT EXISTS public.orders (
@@ -42,7 +34,6 @@ CREATE TABLE IF NOT EXISTS public.orders (
     creation_date timestamp(3) without time zone NOT NULL,
     last_updated timestamp(3) without time zone NOT NULL,
     deleted boolean NOT NULL,
-    entity_type varchar(10),
     CONSTRAINT orders_pkey PRIMARY KEY (id),
     CONSTRAINT fk_orders_client_id FOREIGN KEY (client_id)
         REFERENCES public.clients (id) MATCH SIMPLE
@@ -51,12 +42,7 @@ CREATE TABLE IF NOT EXISTS public.orders (
     CONSTRAINT fk_orders_agent_id FOREIGN KEY (agent_id)
         REFERENCES public.agents (id) MATCH SIMPLE
         ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
-    CONSTRAINT orders_entity_type_check CHECK (entity_type::text = ANY(ARRAY[
-        'ORDER'::character varying,
-        'CLIENT'::character varying,
-        'AGENT'::character varying
-    ]::text[]))
+        ON DELETE NO ACTION
 );
 
 CREATE TABLE IF NOT EXISTS public.mail_data (

@@ -1,26 +1,25 @@
-INSERT INTO agents (entity_type, agent_name, creation_date, last_updated, deleted)
-VALUES 	('AGENT', 'Чарльз Ксавьер', now(), now(), 'false'),
-		('AGENT', 'Скотт Саммерс', now(), now(), 'false'),
-		('AGENT', 'Роберт Дрейк', now(), now(), 'false'),
-		('AGENT', 'Уоррен Уортингтон III', now(), now(), 'false'),
-		('AGENT', 'Генри Маккой', now(), now(), 'false'),
-		('AGENT', 'Джин Грей-Саммерс', now(), now(), 'false')
+INSERT INTO agents (agent_name, creation_date, last_updated, deleted)
+VALUES 	('Чарльз Ксавьер', now(), now(), 'false'),
+		('Скотт Саммерс', now(), now(), 'false'),
+		('Роберт Дрейк', now(), now(), 'false'),
+		('Уоррен Уортингтон III', now(), now(), 'false'),
+		('Генри Маккой', now(), now(), 'false'),
+		('Джин Грей-Саммерс', now(), now(), 'false')
 ON CONFLICT (agent_name)
 DO NOTHING;
 
-INSERT INTO clients (entity_type, client_name, creation_date, last_updated, deleted)
-VALUES 	('CLIENT', 'Lumon Industries', now(), now(), 'false'),
-		('CLIENT', 'Umbrella Corporation', now(), now(), 'false'),
-		('CLIENT', 'E Corp', now(), now(), 'false'),
-		('CLIENT', 'Cyberdyne Systems', now(), now(), 'false'),
-		('CLIENT', 'Universal Dynamics', now(), now(), 'false'),
-		('CLIENT', 'REKALL', now(), now(), 'false')
+INSERT INTO clients (client_name, creation_date, last_updated, deleted)
+VALUES 	('Lumon Industries', now(), now(), 'false'),
+		('Umbrella Corporation', now(), now(), 'false'),
+		('E Corp', now(), now(), 'false'),
+		('Cyberdyne Systems', now(), now(), 'false'),
+		('Universal Dynamics', now(), now(), 'false'),
+		('REKALL', now(), now(), 'false')
 ON CONFLICT (client_name)
 DO NOTHING;
 
 INSERT INTO orders (
 id,
-entity_type,
 title,
 description,
 start_line,
@@ -33,7 +32,6 @@ deleted,
 completed_date)
 VALUES 	(
             1,
-            'ORDER',
 			'Установка лазерных детекторов движения',
 			'Необходим дополнительный ряд лазеров на потолке, а также инфракрасные датчики тепла',
 			DATE_ADD(NOW(), INTERVAL '1 day'),
@@ -47,7 +45,6 @@ VALUES 	(
 		),
 		(
 		    2,
-		    'ORDER',
 			'Замена камер видеонаблюдения',
 			'Камеры должны обладать рентгеновским зрением',
 			DATE_ADD(NOW(), INTERVAL '4 day'),
@@ -61,7 +58,6 @@ VALUES 	(
 		),
 		(
 		    3,
-		    'ORDER',
 			'Настройка оборудования в подземной лаборатории',
 			'Осторожно, там выращивают клонов-мутантов и профессор чекнутый',
 			DATE_ADD(NOW(), INTERVAL '8 day'),
