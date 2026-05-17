@@ -5,6 +5,7 @@ import com.example.application.backend.model.Order;
 import com.example.application.backend.util.enums.OrderStatus;
 import com.example.application.backend.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -37,7 +38,7 @@ public class OrderService {
         return orderRepository.getContent(text);
     }
 
-    public OrderStatus getStatus(Order order) {
+    public OrderStatus getStatus(@NonNull Order order) {
         LocalDate date = LocalDate.now();
         LocalDate firstControl = order.getFirstControlLine();
         LocalDate secondControl = order.getSecondControlLine();
@@ -54,7 +55,7 @@ public class OrderService {
         }
     }
 
-    public void restore(Order order) {
+    public void restore(@NonNull Order order) {
         order.setDeleted(false);
         order.setLastUpdated(LocalDateTime.now());
         orderRepository.save(order);

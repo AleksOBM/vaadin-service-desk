@@ -205,8 +205,8 @@ public class OrdersView extends BaseView {
                         """)
                 .withFunction("handleClick",
                         order -> {
-                    grid.setDetailsVisible(order, !grid.isDetailsVisible(order));
-                    grid.select(order);
+                            grid.setDetailsVisible(order, !grid.isDetailsVisible(order));
+                            grid.select(order);
                         }
                 );
     }

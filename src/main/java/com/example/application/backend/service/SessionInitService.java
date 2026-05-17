@@ -1,6 +1,7 @@
 package com.example.application.backend.service;
 
 import com.vaadin.flow.server.*;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -14,12 +15,12 @@ public class SessionInitService implements VaadinServiceInitListener, SessionIni
     private String sessionId;
 
     @Override
-    public void serviceInit(ServiceInitEvent event) {
+    public void serviceInit(@NonNull ServiceInitEvent event) {
        event.getSource().addSessionInitListener(this);
     }
 
     @Override
-    public void sessionInit(SessionInitEvent event) {
+    public void sessionInit(@NonNull SessionInitEvent event) {
         sessionId = event.getSession().getSession().getId();
         log.info("Новая сессия: {}, ID={}", LocalDateTime.now(), sessionId);
     }

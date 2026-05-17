@@ -19,12 +19,15 @@ public class BaseEntity {
         this.type = type;
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    @Transient
+    final EntityType type;
 
     @Transient
     String name;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
 
     @CreationTimestamp
     @Column(name = "creation_date", nullable = false, updatable = false)
@@ -38,9 +41,6 @@ public class BaseEntity {
 
     @Column(insertable = false, updatable = false)
     String serviceDeskNumber;
-
-    @Transient
-    final EntityType type;
 
     @Override
     public final boolean equals(Object o) {

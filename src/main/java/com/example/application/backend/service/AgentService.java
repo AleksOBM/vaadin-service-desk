@@ -1,9 +1,9 @@
 package com.example.application.backend.service;
 
 import com.example.application.backend.model.Agent;
-import com.example.application.backend.model.BaseEntity;
 import com.example.application.backend.repository.AgentRepository;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -30,7 +30,7 @@ public class AgentService {
         return agentRepository.count();
     }
 
-    public void restore(Agent agent) {
+    public void restore(@NonNull Agent agent) {
         agent.setDeleted(false);
         agent.setLastUpdated(LocalDateTime.now());
         agentRepository.save(agent);

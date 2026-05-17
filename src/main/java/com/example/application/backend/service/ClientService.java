@@ -3,6 +3,7 @@ package com.example.application.backend.service;
 import com.example.application.backend.model.Client;
 import com.example.application.backend.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -29,7 +30,7 @@ public class ClientService {
         return clientRepository.count();
     }
 
-    public void restore(Client client) {
+    public void restore(@NonNull Client client) {
         client.setDeleted(false);
         client.setLastUpdated(LocalDateTime.now());
         clientRepository.save(client);

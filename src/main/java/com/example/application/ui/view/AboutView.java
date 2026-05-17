@@ -9,6 +9,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.spring.annotation.RouteScope;
 import com.vaadin.flow.spring.annotation.SpringComponent;
+import org.jspecify.annotations.NonNull;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.StreamUtils;
 
@@ -37,7 +38,7 @@ public class AboutView extends BaseView {
         add(scroller);
     }
 
-    private String getMarkdownText() {
+    private @NonNull String getMarkdownText() {
         String fileName = "static/about.md";
         try {
             ClassPathResource resource = new ClassPathResource(fileName);
