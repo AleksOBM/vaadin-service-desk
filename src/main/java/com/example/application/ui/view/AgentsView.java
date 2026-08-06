@@ -29,116 +29,117 @@ import java.util.Collection;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AgentsView extends BaseView {
 
-    AgentService agentService;
-    RecycleService recycleService;
-    Grid<Agent> grid = new Grid<>();
+	AgentService agentService;
+	RecycleService recycleService;
+	Grid<Agent> grid = new Grid<>();
 
-    @Autowired
-    public AgentsView(AgentService agentService, RecycleService recycleService) {
-        super("Сотрудники");
-        this.agentService = agentService;
-        this.recycleService = recycleService;
-        addClassName("agents-view");
-        configureView();
-        add(getAgentsGrid());
-    }
+	@Autowired
+	public AgentsView(AgentService agentService, RecycleService recycleService) {
+		super("Сотрудники");
+		this.agentService = agentService;
+		this.recycleService = recycleService;
+		addClassName("agents-view");
+		configureView();
+		add(getAgentsGrid());
+	}
 
-    private void configureView() {
-        filterText.addValueChangeListener(e -> getGridData());
-        createButton.addClickListener(click -> createAgent());
-        updateButton.addClickListener(click -> updateAgent());
-        deleteButton.addClickListener(click -> deleteAgent());
-    }
+	private void configureView() {
+		filterText.addValueChangeListener(
+				e -> getGridData());
+		createButton.addClickListener(click -> createAgent());
+		updateButton.addClickListener(click -> updateAgent());
+		deleteButton.addClickListener(click -> deleteAgent());
+	}
 
-    private void createAgent() {
-        BaseDialog<Agent> dialog = new BaseDialog<>(
-                Agent.class,
-                "Новый сотрудник",
-                new AgentDialog(),
-                agent -> {
-                    agentService.save(agent);
-                    NotificationSupport.showSuccess("Сотрудник добавлен.");
-                    String text = filterText.getValue();
-                    if (text == null || text.isBlank()) {
-                        grid.setItems(agentService.findAll());
-                    } else {
-                        getGridData();
-                    }
-                });
-        dialog.setEntity(new Agent());
-        dialog.open();
-    }
+	private void createAgent() {
+		var dialog = new BaseDialog<>(
+				Agent.class,
+				"Новый сотрудник",
+				new AgentDialog(),
+				agent -> {
+					agentService.save(agent);
+					NotificationSupport.showSuccess("Сотрудник добавлен.");
+					String text = filterText.getValue();
+					if (text == null || text.isBlank()) {
+						grid.setItems(agentService.findAll());
+					} else {
+						getGridData();
+					}
+				});
+		dialog.setEntity(new Agent());
+		dialog.open();
+	}
 
-    private void updateAgent() {
-        Agent oldAgent = grid.asSingleSelect().getValue();
-        BaseDialog<Agent> dialog = new BaseDialog<>(
-                Agent.class,
-                "Редактировать сотрудника",
-                new AgentDialog(),
-                agent -> {
-                    agentService.save(agent);
-                    NotificationSupport.showSuccess("Сотрудник изменен.");
-                    String text = filterText.getValue();
-                    if (text == null || text.isBlank()) {
-                        grid.setItems(agentService.findAll());
-                    } else {
-                        getGridData();
-                    }
-                });
-        dialog.setEntity(oldAgent);
-        dialog.open();
-    }
+	private void updateAgent() {
+		Agent oldAgent = grid.asSingleSelect().getValue();
+		BaseDialog<Agent> dialog = new BaseDialog<>(
+				Agent.class,
+				"Редактировать сотрудника",
+				new AgentDialog(),
+				agent -> {
+					agentService.save(agent);
+					NotificationSupport.showSuccess("Сотрудник изменен.");
+					String text = filterText.getValue();
+					if (text == null || text.isBlank()) {
+						grid.setItems(agentService.findAll());
+					} else {
+						getGridData();
+					}
+				});
+		dialog.setEntity(oldAgent);
+		dialog.open();
+	}
 
-    private void deleteAgent() {
-        Agent agent = grid.asSingleSelect().getValue();
-        recycleService.markAsDeleted(agent);
-        getGridData();
-        NotificationSupport.showInfo("Сотрудник удален.");
-    }
+	private void deleteAgent() {
+		Agent agent = grid.asSingleSelect().getValue();
+		recycleService.markAsDeleted(agent);
+		getGridData();
+		NotificationSupport.showInfo("Сотрудник удален.");
+	}
 
-    private Component getAgentsGrid() {
-        grid.addClassNames("agent-grid");
-        grid.addClassName("big-header-grid");
-        grid.addThemeVariants(GridVariant.AURA_ROW_STRIPES);
-        grid.setEmptyStateText("Данные отсутствуют.");
+	private Component getAgentsGrid() {
+		grid.addClassNames("agent-grid");
+		grid.addClassName("big-header-grid");
+		grid.addThemeVariants(GridVariant.AURA_ROW_STRIPES);
+		grid.setEmptyStateText("Данные отсутствуют.");
 
-        grid.addColumn(Agent::getServiceDeskNumber).setHeader("AG");
-        grid.addColumn(Agent::getName).setHeader("Имя");
+		grid.addColumn(Agent::getServiceDeskNumber).setHeader("AG");
+		grid.addColumn(Agent::getName).setHeader("Имя");
 
-        grid.getColumns().forEach(column -> {
-            column.setSortable(true);
-            column.setAutoWidth(true);
-        });
+		grid.getColumns().forEach(column -> {
+			column.setSortable(true);
+			column.setAutoWidth(true);
+		});
 
-        grid.addSelectionListener(event -> {
-            boolean enabled = event.getFirstSelectedItem().isPresent();
-            updateButton.setEnabled(enabled);
-            deleteButton.setEnabled(enabled);
-        });
+		grid.addSelectionListener(event -> {
+			boolean enabled = event.getFirstSelectedItem().isPresent();
+			updateButton.setEnabled(enabled);
+			deleteButton.setEnabled(enabled);
+		});
 
-        grid.setSizeFull();
-        grid.getStyle().setMarginTop("20px");
-        Collection<Agent> content = agentService.findAll();
-        grid.setItems(content);
-        entitiesCount = content.size();
-        updateFooter();
-        return grid;
-    }
+		grid.setSizeFull();
+		grid.getStyle().setMarginTop("20px");
+		Collection<Agent> content = agentService.findAll();
+		grid.setItems(content);
+		entitiesCount = content.size();
+		updateFooter();
+		return grid;
+	}
 
-    private void updateFooter() {
-        grid.getColumns().getFirst().setFooter(String.format("Всего %s", entitiesCount));
-    }
+	private void updateFooter() {
+		grid.getColumns().getFirst().setFooter(String.format("Всего %s", entitiesCount));
+	}
 
-    private void getGridData() {
-        String filterText = super.filterText.getValue();
-        Collection<Agent> content;
-        if (filterText == null || filterText.isBlank()) {
-            content = agentService.findAll();
-        } else {
-            content = agentService.getContent(filterText);
-        }
-        grid.setItems(content);
-        entitiesCount = content.size();
-        updateFooter();
-    }
+	private void getGridData() {
+		String filterText = super.filterText.getValue();
+		Collection<Agent> content;
+		if (filterText == null || filterText.isBlank()) {
+			content = agentService.findAll();
+		} else {
+			content = agentService.getContent(filterText);
+		}
+		grid.setItems(content);
+		entitiesCount = content.size();
+		updateFooter();
+	}
 }

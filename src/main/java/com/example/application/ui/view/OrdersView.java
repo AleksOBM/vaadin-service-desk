@@ -78,7 +78,7 @@ public class OrdersView extends BaseView {
     }
 
     private void createOrder() {
-        BaseDialog<Order> dialog = new BaseDialog<>(
+        var dialog = new BaseDialog<>(
                 Order.class,
                 "Новая заявка",
                 new OrderDialog(clientService.findAll(), agentService.findAll()),

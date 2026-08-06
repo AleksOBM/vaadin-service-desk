@@ -49,7 +49,7 @@ public class ClientsView extends BaseView {
     }
 
     private void createClient() {
-        BaseDialog<Client> dialog = new BaseDialog<>(
+        var dialog = new BaseDialog<>(
                 Client.class,
                 "Новый клиент",
                 new ClientDialog(),

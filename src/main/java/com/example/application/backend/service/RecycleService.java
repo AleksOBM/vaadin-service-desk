@@ -1,6 +1,9 @@
 package com.example.application.backend.service;
 
-import com.example.application.backend.model.*;
+import com.example.application.backend.model.Agent;
+import com.example.application.backend.model.BaseEntity;
+import com.example.application.backend.model.Client;
+import com.example.application.backend.model.Order;
 import com.example.application.backend.repository.AgentRepository;
 import com.example.application.backend.repository.ClientRepository;
 import com.example.application.backend.repository.OrderRepository;
@@ -19,59 +22,59 @@ import java.util.stream.Stream;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class RecycleService {
 
-    OrderRepository orderRepository;
-    ClientRepository clientRepository;
-    AgentRepository agentRepository;
+	OrderRepository orderRepository;
+	ClientRepository clientRepository;
+	AgentRepository agentRepository;
 
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    @Autowired
-    public RecycleService(OrderRepository orderRepository,
-                          ClientRepository clientRepository,
-                          AgentRepository agentRepository) {
-        this.orderRepository = orderRepository;
-        this.clientRepository = clientRepository;
-        this.agentRepository = agentRepository;
-    }
+	@Autowired
+	public RecycleService(OrderRepository orderRepository,
+	                      ClientRepository clientRepository,
+	                      AgentRepository agentRepository) {
+		this.orderRepository = orderRepository;
+		this.clientRepository = clientRepository;
+		this.agentRepository = agentRepository;
+	}
 
-    public Collection<BaseEntity> getRecycleData(String text) {
-        return Stream.of(orderRepository.findAllByDeletedTrue(),
-                        clientRepository.findAllByDeletedTrue(),
-                        agentRepository.findAllByDeletedTrue())
-                .flatMap(Collection::stream)
-                .map(entity -> (BaseEntity) entity)
-                .filter(entity ->
-                        entity.getServiceDeskNumber().toLowerCase().contains(text) ||
-                                entity.getCreationDate().format(formatter).contains(text) ||
-                                entity.getLastUpdated().format(formatter).contains(text)
-                ).toList();
-    }
+	public Collection<BaseEntity> getRecycleData(String text) {
+		return Stream.of(orderRepository.findAllByDeletedTrue(),
+						clientRepository.findAllByDeletedTrue(),
+						agentRepository.findAllByDeletedTrue())
+				.flatMap(Collection::stream)
+				.map(entity -> (BaseEntity) entity)
+				.filter(entity ->
+						entity.getServiceDeskNumber().toLowerCase().contains(text) ||
+								entity.getCreationDate().format(formatter).contains(text) ||
+								entity.getLastUpdated().format(formatter).contains(text)
+				).toList();
+	}
 
-    public void markAsDeleted(@NonNull BaseEntity entity) {
-        entity.setDeleted(true);
-        saveEntity(entity);
-    }
+	public void markAsDeleted(@NonNull BaseEntity entity) {
+		entity.setDeleted(true);
+		saveEntity(entity);
+	}
 
-    public void restore(@NonNull BaseEntity entity) {
-        entity.setDeleted(false);
-        saveEntity(entity);
-    }
+	public void restore(@NonNull BaseEntity entity) {
+		entity.setDeleted(false);
+		saveEntity(entity);
+	}
 
-    public void deleteForever(@NonNull BaseEntity entity) {
-        EntityType type = entity.getType();
-        switch (type) {
-            case ORDER -> orderRepository.delete((Order) entity);
-            case CLIENT -> clientRepository.delete((Client) entity);
-            case AGENT -> agentRepository.delete((Agent) entity);
-        }
-    }
+	public void deleteForever(@NonNull BaseEntity entity) {
+		EntityType type = entity.getType();
+		switch (type) {
+			case ORDER -> orderRepository.delete((Order) entity);
+			case CLIENT -> clientRepository.delete((Client) entity);
+			case AGENT -> agentRepository.delete((Agent) entity);
+		}
+	}
 
-    private void saveEntity(@NonNull BaseEntity entity) {
-        EntityType type = entity.getType();
-        switch (type) {
-            case ORDER -> orderRepository.save((Order) entity);
-            case CLIENT -> clientRepository.save((Client) entity);
-            case AGENT -> agentRepository.save((Agent) entity);
-        }
-    }
+	private void saveEntity(@NonNull BaseEntity entity) {
+		EntityType type = entity.getType();
+		switch (type) {
+			case ORDER -> orderRepository.save((Order) entity);
+			case CLIENT -> clientRepository.save((Client) entity);
+			case AGENT -> agentRepository.save((Agent) entity);
+		}
+	}
 }
