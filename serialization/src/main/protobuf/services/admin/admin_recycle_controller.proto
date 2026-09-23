@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package sd.services;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+import "messages/manager_messages.proto";
+
+option java_multiple_files = true;
+option java_package = "com.example.vsd.grpc.services.admin";
+option java_outer_classname = "AdminRecycleControllerProto";
+
+service AdminRecycleController {
+  rpc getRecycle (google.protobuf.Empty) returns (sd.messages.GetRecycleResponse);
+}

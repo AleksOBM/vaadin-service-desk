@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package sd.services;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+import "messages/manager_messages.proto";
+
+option java_multiple_files = true;
+option java_package = "com.example.vsd.grpc.services.admin";
+option java_outer_classname = "AdminClientControllerProto";
+
+service AdminClientController {
+  rpc createClient (sd.messages.ClientProto) returns (sd.messages.ClientProto);
+  rpc restoreClient (google.protobuf.Int64Value) returns (google.protobuf.Empty);
+  rpc deleteClientPermanently (google.protobuf.Int64Value) returns (google.protobuf.Empty);
+}

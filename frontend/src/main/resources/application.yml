@@ -1,0 +1,8 @@
+server.port: 8080
+
+spring:
+  grpc:
+    client:
+      channel:
+        backend-service:
+          target: static://localhost:9091

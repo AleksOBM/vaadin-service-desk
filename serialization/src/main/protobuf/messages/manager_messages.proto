@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package sd.messages;
+
+import "google/protobuf/timestamp.proto";
+
+option java_multiple_files = true;
+option java_package = "com.example.vsd.grpc.messages";
+
+message OrderProto {
+  optional int64 id = 1;
+  optional string name = 2;
+  optional string description = 3;
+  optional string start_line = 4;
+  optional string dead_line = 5;
+  optional google.protobuf.Timestamp completed_date = 6;
+  optional OrderStatusProto status = 7;
+  optional ClientProto client = 8;
+  optional AgentProto agent = 9;
+  optional string service_desk_number = 10;
+  optional google.protobuf.Timestamp creation_date = 11;
+  optional google.protobuf.Timestamp lastUpdated = 12;
+  optional bool deleted = 13;
+}
+
+enum OrderStatusProto {
+    COMPLETED = 0;
+    IN_PROGRESS = 1;
+    FIRST_CONTROL = 2;
+    SECOND_CONTROL = 3;
+}
+
+message AgentProto {
+  optional int64 id = 1;
+  optional string name = 2;
+  optional string service_desk_number = 3;
+  optional google.protobuf.Timestamp creation_date = 4;
+  optional google.protobuf.Timestamp lastUpdated = 5;
+  optional bool deleted = 6;
+}
+
+message ClientProto {
+  optional int64 id = 1;
+  optional string name = 2;
+  optional string service_desk_number = 3;
+  optional google.protobuf.Timestamp creation_date = 4;
+  optional google.protobuf.Timestamp lastUpdated = 5;
+  optional bool deleted = 6;
+}
+
+message BaseEntityProto {
+  oneof payload {
+    ClientProto client = 1;
+    AgentProto agent = 2;
+    OrderProto order = 3;
+  }
+}
+
+message GetClientsResponse {
+  repeated ClientProto clients = 1;
+}
+
+message GetAgentsResponse {
+  repeated AgentProto agents = 1;
+}
+
+message GetOrdersResponse {
+  repeated OrderProto orders = 1;
+}
+
+message GetRecycleResponse {
+  repeated BaseEntityProto recycles = 1;
+}

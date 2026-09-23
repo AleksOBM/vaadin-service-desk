@@ -1,0 +1,96 @@
+package com.example.vsd.manager.service.recycle;
+
+import com.example.vsd.grpc.messages.BaseEntityProto;
+import com.example.vsd.manager.enity.Agent;
+import com.example.vsd.manager.enity.Client;
+import com.example.vsd.manager.enity.Order;
+import com.example.vsd.manager.mapper.RecycleMapper;
+import com.example.vsd.manager.model.*;
+import com.example.vsd.manager.repository.AgentRepository;
+import com.example.vsd.manager.repository.ClientRepository;
+import com.example.vsd.manager.repository.OrderRepository;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import org.jspecify.annotations.NonNull;
+import org.springframework.stereotype.Service;
+
+import java.time.format.DateTimeFormatter;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Stream;
+
+@Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+public class RecycleServiceImpl implements RecycleApiService, RecycleService {
+
+	OrderRepository orderRepository;
+	ClientRepository clientRepository;
+	AgentRepository agentRepository;
+
+	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+	@Override
+	public Collection<BaseEntity> getRecycleData(String text) {
+		return getBaseEntities(text);
+	}
+
+	@Override
+	public void markAsDeleted(@NonNull BaseEntity entity) {
+		entity.setDeleted(true);
+		saveEntity(entity);
+	}
+
+	@Override
+	public void restore(@NonNull BaseEntity entity) {
+		entity.setDeleted(false);
+		saveEntity(entity);
+	}
+
+	@Override
+	public void deleteForever(@NonNull BaseEntity entity) {
+		switch (entity) {
+			case Order e -> orderRepository.delete(e);
+			case Client e -> clientRepository.delete(e);
+			case Agent e -> agentRepository.delete(e);
+			default -> throw new IllegalStateException("Unexpected value: " + entity);
+		}
+	}
+
+	@Override
+	public Collection<BaseEntityProto> apiFindAll() {
+		return getBaseEntities("").stream()
+				.sorted(Comparator.comparing(BaseEntity::getLastUpdated).reversed()
+						.thenComparing(e -> ((TypedEntity) e).getType(),
+								Comparator.nullsLast(Comparator.naturalOrder()))
+						.thenComparing(BaseEntity::getId,
+								Comparator.nullsLast(Comparator.naturalOrder()))
+				)
+				.map(RecycleMapper::toProto)
+				.toList();
+	}
+
+	private @NonNull List<BaseEntity> getBaseEntities(@NonNull String text) {
+		return Stream.of(orderRepository.findAllByDeletedTrue(),
+						clientRepository.findAllByDeletedTrue(),
+						agentRepository.findAllByDeletedTrue())
+				.flatMap(Collection::stream)
+				.map(entity -> (BaseEntity) entity)
+				.filter(entity ->
+						entity.getServiceDeskNumber().toLowerCase().contains(text) ||
+								entity.getCreationDate().format(formatter).contains(text) ||
+								entity.getLastUpdated().format(formatter).contains(text)
+				).toList();
+	}
+
+	private void saveEntity(@NonNull BaseEntity entity) {
+		switch (entity) {
+			case Order e -> orderRepository.save(e);
+			case Client e -> clientRepository.save(e);
+			case Agent e -> agentRepository.save(e);
+			default -> throw new IllegalStateException("Unexpected value: " + entity);
+		}
+	}
+}
