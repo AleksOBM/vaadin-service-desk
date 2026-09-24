@@ -3,7 +3,7 @@ package com.example.vsd.manager.controller.admin;
 import com.example.vsd.grpc.messages.BaseEntityProto;
 import com.example.vsd.grpc.messages.GetRecycleResponse;
 import com.example.vsd.grpc.services.admin.AdminRecycleControllerGrpc.AdminRecycleControllerImplBase;
-import com.example.vsd.manager.service.recycle.RecycleApiService;
+import com.example.vsd.manager.service.recycle.RecycleService;
 import com.google.protobuf.Empty;
 import com.google.protobuf.StringValue;
 import io.grpc.Status;
@@ -25,7 +25,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AdminRecycleGrpcController extends AdminRecycleControllerImplBase {
 
-	RecycleApiService recycleApiService;
+	RecycleService recycleService;
 
 	public void getFullRecycle(Empty request,
 	                           StreamObserver<GetRecycleResponse> responseObserver) {
@@ -33,7 +33,7 @@ public class AdminRecycleGrpcController extends AdminRecycleControllerImplBase {
 				Получен gRPC запрос: getRecycle""");
 
 		try {
-			Collection<BaseEntityProto> proto = recycleApiService.apiFindAll();
+			Collection<BaseEntityProto> proto = recycleService.apiFindAll();
 			responseObserver.onNext(GetRecycleResponse.newBuilder()
 					.addAllRecycles(proto)
 					.build());
@@ -55,7 +55,7 @@ public class AdminRecycleGrpcController extends AdminRecycleControllerImplBase {
 				}""", request.getValue());
 
 		try {
-			List<BaseEntityProto> proto = recycleApiService.findRecycle(request.getValue());
+			List<BaseEntityProto> proto = recycleService.findRecycle(request.getValue());
 			responseObserver.onNext(GetRecycleResponse.newBuilder()
 					.addAllRecycles(proto)
 					.build());

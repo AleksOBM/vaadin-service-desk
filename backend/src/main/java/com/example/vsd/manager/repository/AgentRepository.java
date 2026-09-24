@@ -28,8 +28,6 @@ public interface AgentRepository extends
 
 	List<Agent> findAllByDeletedFalse();
 
-	Optional<Agent> findByName(String name);
-
 	boolean existsById(@NonNull Long id);
 
 	@Query("""

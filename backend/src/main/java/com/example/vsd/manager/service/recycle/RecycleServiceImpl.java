@@ -16,7 +16,6 @@ import lombok.experimental.FieldDefaults;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
@@ -24,38 +23,11 @@ import java.util.stream.Stream;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class RecycleServiceImpl implements RecycleApiService, RecycleService {
+public class RecycleServiceImpl implements RecycleService {
 
 	OrderRepository orderRepository;
 	ClientRepository clientRepository;
 	AgentRepository agentRepository;
-
-	@Override
-	public Collection<BaseEntity> getRecycleData(String text) {
-		return getBaseEntities(text);
-	}
-
-	@Override
-	public void markAsDeleted(@NonNull BaseEntity entity) {
-		entity.setDeleted(true);
-		saveEntity(entity);
-	}
-
-	@Override
-	public void restore(@NonNull BaseEntity entity) {
-		entity.setDeleted(false);
-		saveEntity(entity);
-	}
-
-	@Override
-	public void deleteForever(@NonNull BaseEntity entity) {
-		switch (entity) {
-			case Order e -> orderRepository.delete(e);
-			case Client e -> clientRepository.delete(e);
-			case Agent e -> agentRepository.delete(e);
-			default -> throw new IllegalStateException("Unexpected value: " + entity);
-		}
-	}
 
 	@Override
 	public List<BaseEntityProto> apiFindAll() {

@@ -1,21 +1,14 @@
 package com.example.vsd.manager.service.recycle;
 
-import com.example.vsd.manager.enity.BaseEntity;
-import org.jspecify.annotations.NonNull;
+import com.example.vsd.grpc.messages.BaseEntityProto;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
+import java.util.List;
 
-@Transactional
+@Transactional(readOnly = true)
 public interface RecycleService {
 
-	@Transactional(readOnly = true)
-	Collection<BaseEntity> getRecycleData(String text);
+	List<BaseEntityProto> apiFindAll();
 
-	void markAsDeleted(@NonNull BaseEntity entity);
-
-	void restore(@NonNull BaseEntity entity);
-
-	void deleteForever(@NonNull BaseEntity entity);
-
+	List<BaseEntityProto> findRecycle(String text);
 }
