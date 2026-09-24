@@ -49,7 +49,8 @@
 - для остановки `sudo docker stop service-desk`  
 
 ### Схема базы данных (Database map)
-![DatabaseMap](database-map.png "Database map:")
+
+<img alt="database-map.png" src=".img/database-map.png" width="400"/>
 
 #### Архитектурный стиль (Architectural Style)
 - Монолитная архитектура (monolithic)  

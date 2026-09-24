@@ -24,7 +24,7 @@ public class BaseEntityMapper {
 			case AGENT -> BaseEntity.builder()
 					.id(proto.getAgent().getId())
 					.name(proto.getAgent().getName())
-					.type(EntityType.ORDER)
+					.type(EntityType.AGENT)
 					.serviceDeskNumber(proto.getAgent().getServiceDeskNumber())
 					.creationDate(TimestampUtils.toLocalDateTime(proto.getAgent().getCreationDate()))
 					.lastUpdated(TimestampUtils.toLocalDateTime(proto.getAgent().getLastUpdated()))

@@ -4,6 +4,7 @@ import com.example.vsd.frontend.model.Agent;
 import com.example.vsd.frontend.model.Client;
 import com.example.vsd.frontend.model.Order;
 import com.example.vsd.grpc.messages.OrderProto;
+import com.example.vsd.serialization.model.EntityType;
 import com.example.vsd.serialization.model.OrderStatus;
 import com.example.vsd.serialization.timestamp.TimestampUtils;
 import lombok.NonNull;
@@ -53,6 +54,7 @@ public class OrderMapper {
 		return Order.builder()
 				.id(proto.getId())
 				.name(proto.getName())
+				.type(EntityType.ORDER)
 				.description(proto.getDescription())
 				.startLine(TimestampUtils.toLocalDate(proto.getStartLine()))
 				.deadLine(TimestampUtils.toLocalDate(proto.getDeadLine()))
