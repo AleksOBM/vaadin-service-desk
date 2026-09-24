@@ -2,10 +2,11 @@ package com.example.vsd.manager.service.recycle;
 
 import com.example.vsd.grpc.messages.BaseEntityProto;
 import com.example.vsd.manager.enity.Agent;
+import com.example.vsd.manager.enity.BaseEntity;
 import com.example.vsd.manager.enity.Client;
 import com.example.vsd.manager.enity.Order;
 import com.example.vsd.manager.mapper.RecycleMapper;
-import com.example.vsd.manager.model.*;
+import com.example.vsd.manager.model.TypedEntity;
 import com.example.vsd.manager.repository.AgentRepository;
 import com.example.vsd.manager.repository.ClientRepository;
 import com.example.vsd.manager.repository.OrderRepository;
@@ -15,7 +16,6 @@ import lombok.experimental.FieldDefaults;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 
-import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -29,8 +29,6 @@ public class RecycleServiceImpl implements RecycleApiService, RecycleService {
 	OrderRepository orderRepository;
 	ClientRepository clientRepository;
 	AgentRepository agentRepository;
-
-	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
 	@Override
 	public Collection<BaseEntity> getRecycleData(String text) {
@@ -60,8 +58,26 @@ public class RecycleServiceImpl implements RecycleApiService, RecycleService {
 	}
 
 	@Override
-	public Collection<BaseEntityProto> apiFindAll() {
-		return getBaseEntities("").stream()
+	public List<BaseEntityProto> apiFindAll() {
+		return Stream.of(orderRepository.findAllByDeletedTrue(),
+						clientRepository.findAllByDeletedTrue(),
+						agentRepository.findAllByDeletedTrue())
+				.flatMap(List::stream)
+				.map(entity -> (BaseEntity) entity)
+				.sorted(Comparator.comparing(BaseEntity::getLastUpdated).reversed()
+						.thenComparing(e -> ((TypedEntity) e).getType(),
+								Comparator.nullsLast(Comparator.naturalOrder()))
+						.thenComparing(BaseEntity::getId,
+								Comparator.nullsLast(Comparator.naturalOrder()))
+				)
+				.map(RecycleMapper::toProto)
+				.toList();
+	}
+
+	@Override
+	public List<BaseEntityProto> findRecycle(String text) {
+		var entities = getBaseEntities(text);
+		return entities.stream()
 				.sorted(Comparator.comparing(BaseEntity::getLastUpdated).reversed()
 						.thenComparing(e -> ((TypedEntity) e).getType(),
 								Comparator.nullsLast(Comparator.naturalOrder()))
@@ -73,16 +89,15 @@ public class RecycleServiceImpl implements RecycleApiService, RecycleService {
 	}
 
 	private @NonNull List<BaseEntity> getBaseEntities(@NonNull String text) {
+		String lower = text.toLowerCase();
 		return Stream.of(orderRepository.findAllByDeletedTrue(),
 						clientRepository.findAllByDeletedTrue(),
 						agentRepository.findAllByDeletedTrue())
-				.flatMap(Collection::stream)
+				.flatMap(List::stream)
 				.map(entity -> (BaseEntity) entity)
-				.filter(entity ->
-						entity.getServiceDeskNumber().toLowerCase().contains(text) ||
-								entity.getCreationDate().format(formatter).contains(text) ||
-								entity.getLastUpdated().format(formatter).contains(text)
-				).toList();
+				.filter(entity -> entity.getServiceDeskNumber().toLowerCase().contains(lower) ||
+						((TypedEntity) entity).getName().toLowerCase().contains(lower))
+				.toList();
 	}
 
 	private void saveEntity(@NonNull BaseEntity entity) {

@@ -6,9 +6,9 @@ import com.example.vsd.grpc.messages.ClientProto;
 import com.example.vsd.grpc.services.admin.AdminClientControllerGrpc.AdminClientControllerBlockingStub;
 import com.example.vsd.grpc.services.free.FreeControllerGrpc.FreeControllerBlockingStub;
 import com.google.protobuf.Empty;
+import com.google.protobuf.Int64Value;
 import com.google.protobuf.StringValue;
 import lombok.AccessLevel;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
@@ -31,13 +31,14 @@ public class ClientService {
 				.toList();
 	}
 
-	public Client createClient(@NonNull String name) {
-		ClientProto response = adminStub.createClient(
-				ClientProto.newBuilder()
+	public void saveClient(String name) {
+		var result = adminStub.saveClient(ClientProto.newBuilder()
 						.setName(name)
-						.build()
-		);
-		return ClientMapper.toClient(response);
+						.build());
+
+		if (result != null) {
+			log.debug("Client with name {} has been created", name);
+		}
 	}
 
 	public List<Client> getAllClients() {
@@ -48,6 +49,10 @@ public class ClientService {
 	}
 
 	public void markAsDeleted(Long clientId) {
-		// TODO: 23.09.2026
+		Empty result = adminStub.setClientDeleted(Int64Value.of(clientId));
+		if (result != null) {
+			log.debug("Agent with id {} has been deleted", clientId);
+		}
 	}
+
 }

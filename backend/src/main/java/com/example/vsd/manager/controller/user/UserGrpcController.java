@@ -2,7 +2,7 @@ package com.example.vsd.manager.controller.user;
 
 import com.example.vsd.grpc.messages.OrderProto;
 import com.example.vsd.grpc.services.user.UserControllerGrpc.UserControllerImplBase;
-import com.example.vsd.manager.service.order.OrderApiService;
+import com.example.vsd.manager.service.order.OrderService;
 import com.google.protobuf.Empty;
 import com.google.protobuf.Int64Value;
 import io.grpc.Status;
@@ -21,41 +21,16 @@ import org.springframework.grpc.server.service.GrpcService;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserGrpcController extends UserControllerImplBase {
 
-	OrderApiService orderApiService;
+	OrderService orderService;
 
-	public void createOrder(OrderProto request,
-	                        StreamObserver<OrderProto> responseObserver) {
-		log.debug("""
-						Получен gRPC запрос: createOrder
-						{
-							"name": "{}",
-							"description": "{}",
-							"startLine": "{}"
-							"deadLine": "{}"
-							"completedDate": "{}"
-							"client": {
-								"id": {},
-								"name": {}
-							},
-							"agent": {
-								"id": {},
-								"name": {}
-							}
-						}""",
-				request.getName(),
-				request.getDescription(),
-				request.getStartLine(),
-				request.getDeadLine(),
-				request.getCompletedDate(),
-				request.getClient().getId(),
-				request.getClient().getName(),
-				request.getAgent().getId(),
-				request.getAgent().getName()
-		);
+	public void saveOrder(@NonNull OrderProto request,
+	                      StreamObserver<Empty> responseObserver) {
+
+		writeSaveOrderLog(request);
 
 		try {
-			OrderProto proto = orderApiService.apiCreateOrder(request);
-			responseObserver.onNext(proto);
+			orderService.saveOrder(request);
+			responseObserver.onNext(Empty.getDefaultInstance());
 			responseObserver.onCompleted();
 
 		} catch (Exception e) {
@@ -65,10 +40,31 @@ public class UserGrpcController extends UserControllerImplBase {
 		}
 	}
 
-	public void updateOrder(@NonNull OrderProto request,
-	                        StreamObserver<OrderProto> responseObserver) {
+	public void setOrderDeleted(@NonNull Int64Value request,
+	                            StreamObserver<Empty> responseObserver) {
 		log.debug("""
-						Получен gRPC запрос: updateOrder
+						Получен gRPC запрос: setOrderDeleted
+						{
+							"id": {}
+						}""",
+				request.getValue()
+		);
+
+		try {
+			orderService.setOrderDeleted(request.getValue());
+			responseObserver.onNext(Empty.getDefaultInstance());
+			responseObserver.onCompleted();
+
+		} catch (Exception e) {
+			responseObserver.onError(
+					new StatusRuntimeException(Status.fromThrowable(e))
+			);
+		}
+	}
+
+	private void writeSaveOrderLog(@NonNull OrderProto request) {
+		log.debug("""
+						Получен gRPC запрос: saveOrder
 						{
 							"id": {}
 							"name": "{}",
@@ -96,39 +92,6 @@ public class UserGrpcController extends UserControllerImplBase {
 				request.getAgent().getId(),
 				request.getAgent().getName()
 		);
-
-		try {
-			OrderProto proto = orderApiService.apiUpdateOrder(request);
-			responseObserver.onNext(proto);
-			responseObserver.onCompleted();
-
-		} catch (Exception e) {
-			responseObserver.onError(
-					new StatusRuntimeException(Status.fromThrowable(e))
-			);
-		}
-	}
-
-	public void setOrderDeleted(@NonNull Int64Value request,
-	                            StreamObserver<Empty> responseObserver) {
-		log.debug("""
-						Получен gRPC запрос: setOrderDeleted
-						{
-							"id": {}
-						}""",
-				request.getValue()
-		);
-
-		try {
-			orderApiService.apiSetOrderDeleted(request.getValue());
-			responseObserver.onNext(Empty.getDefaultInstance());
-			responseObserver.onCompleted();
-
-		} catch (Exception e) {
-			responseObserver.onError(
-					new StatusRuntimeException(Status.fromThrowable(e))
-			);
-		}
 	}
 
 }

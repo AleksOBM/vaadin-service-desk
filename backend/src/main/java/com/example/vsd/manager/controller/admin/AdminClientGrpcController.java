@@ -2,7 +2,7 @@ package com.example.vsd.manager.controller.admin;
 
 import com.example.vsd.grpc.messages.ClientProto;
 import com.example.vsd.grpc.services.admin.AdminClientControllerGrpc.AdminClientControllerImplBase;
-import com.example.vsd.manager.service.client.ClientApiService;
+import com.example.vsd.manager.service.client.ClientService;
 import com.google.protobuf.Empty;
 import com.google.protobuf.Int64Value;
 import io.grpc.Status;
@@ -21,24 +21,24 @@ import org.springframework.grpc.server.service.GrpcService;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AdminClientGrpcController extends AdminClientControllerImplBase {
 
-	ClientApiService clientService;
+	ClientService clientService;
 
 	@Override
-	public void createClient(@NonNull ClientProto request,
-	                         StreamObserver<ClientProto> responseObserver) {
+	public void saveClient(@NonNull ClientProto request,
+	                       StreamObserver<Empty> responseObserver) {
 		log.debug("""
-						Получен gRPC запрос: createClient
+						Получен gRPC запрос: saveClient
 						{
 							"id": {}
 							"name": "{}"
 						}""",
-				request.getId(),
+				request.hasId() ? request.getId() : "null",
 				request.getName()
 		);
 
 		try {
-			ClientProto proto = clientService.apiCreateClient(request);
-			responseObserver.onNext(proto);
+			clientService.saveClient(request);
+			responseObserver.onNext(Empty.getDefaultInstance());
 			responseObserver.onCompleted();
 
 		} catch (Exception e) {
@@ -46,7 +46,6 @@ public class AdminClientGrpcController extends AdminClientControllerImplBase {
 					new StatusRuntimeException(Status.fromThrowable(e))
 			);
 		}
-
 	}
 
 	@Override
@@ -61,7 +60,7 @@ public class AdminClientGrpcController extends AdminClientControllerImplBase {
 		);
 
 		try {
-			clientService.apiRestoreClient(request.getValue());
+			clientService.restoreClient(request.getValue());
 			responseObserver.onNext(Empty.getDefaultInstance());
 			responseObserver.onCompleted();
 
@@ -84,7 +83,29 @@ public class AdminClientGrpcController extends AdminClientControllerImplBase {
 		);
 
 		try {
-			clientService.apiDeleteClient(request.getValue());
+			clientService.deleteClient(request.getValue());
+			responseObserver.onNext(Empty.getDefaultInstance());
+			responseObserver.onCompleted();
+
+		} catch (Exception e) {
+			responseObserver.onError(
+					new StatusRuntimeException(Status.fromThrowable(e))
+			);
+		}
+	}
+
+	public void setClientDeleted(@NonNull Int64Value request,
+	                             StreamObserver<Empty> responseObserver) {
+		log.debug("""
+						Получен gRPC запрос: setClientDeleted
+						{
+							"id": {}
+						}""",
+				request.getValue()
+		);
+
+		try {
+			clientService.setClientDeleted(request.getValue());
 			responseObserver.onNext(Empty.getDefaultInstance());
 			responseObserver.onCompleted();
 

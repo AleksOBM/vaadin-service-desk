@@ -1,15 +1,24 @@
 package com.example.vsd.manager.service.client;
 
-import com.example.vsd.manager.enity.Client;
+import com.example.vsd.grpc.messages.ClientProto;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
+import java.util.List;
 
-@Transactional(readOnly = true)
+@Transactional
 public interface ClientService {
 
-	Collection<Client> findAll();
+	@Transactional(readOnly = true)
+	List<ClientProto> getAllClients();
 
-	@Transactional
-	void save(Client client);
+	@Transactional(readOnly = true)
+	List<ClientProto> findClients(String text);
+
+	void saveClient(ClientProto request);
+
+	void deleteClient(Long clientId);
+
+	void restoreClient(Long clientId);
+
+	void setClientDeleted(long clientId);
 }

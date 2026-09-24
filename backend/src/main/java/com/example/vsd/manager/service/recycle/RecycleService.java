@@ -1,6 +1,6 @@
 package com.example.vsd.manager.service.recycle;
 
-import com.example.vsd.manager.model.BaseEntity;
+import com.example.vsd.manager.enity.BaseEntity;
 import org.jspecify.annotations.NonNull;
 import org.springframework.transaction.annotation.Transactional;
 

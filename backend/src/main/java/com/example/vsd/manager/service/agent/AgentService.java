@@ -1,16 +1,24 @@
 package com.example.vsd.manager.service.agent;
 
-import com.example.vsd.manager.enity.Agent;
+import com.example.vsd.grpc.messages.AgentProto;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
+import java.util.List;
 
-@Transactional(readOnly = true)
+@Transactional
 public interface AgentService {
 
-	@Transactional
-	void save(Agent agent);
+	@Transactional(readOnly = true)
+	List<AgentProto> getAllAgents();
 
-	Collection<Agent> findAll();
+	@Transactional(readOnly = true)
+	List<AgentProto> findAgents(String text);
 
+	void saveAgent(AgentProto request);
+
+	void deleteAgent(Long agentId);
+
+	void restoreAgent(Long agentId);
+
+	void setAgentDeleted(long agentId);
 }

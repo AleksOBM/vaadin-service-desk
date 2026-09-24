@@ -38,17 +38,12 @@ public class OrderService {
 				.toList();
 	}
 
-	public void createOrder(@NonNull Order order) {
+	public void saveOrder(@NonNull Order order) {
 		OrderProto proto = OrderMapper.toCreatedProto(order);
-		OrderProto response = userStub.createOrder(proto);
-		if (response != null) {
-			log.debug("Order has been created with id {}", response.getId());
+		var result = userStub.saveOrder(proto);
+		if (result != null) {
+			log.debug("Order has been created with name {}", order.getName());
 		}
-	}
-
-	public Order updateOrder(Order order) {
-		var proto = userStub.updateOrder(OrderMapper.toUpdatedProto(order));
-		return OrderMapper.toOrder(proto);
 	}
 
 	public void markAsDeleted(Long orderId) {

@@ -46,6 +46,9 @@ public class TimestampUtils {
 	}
 
 	public LocalDateTime toLocalDateTime(@NonNull Timestamp timestamp) {
+		if (isEmpty(timestamp)) {
+			throw new IllegalArgumentException("Timestamp is empty.");
+		}
 		return LocalDateTime.ofInstant(toInstant(timestamp), zoneId)
 				.truncatedTo(ChronoUnit.MILLIS);
 	}
@@ -77,5 +80,9 @@ public class TimestampUtils {
 
 	public String toString(@NonNull LocalDate localDate) {
 		return localDate.format(DATE_FORMATTER);
+	}
+
+	private boolean isEmpty(@NonNull Timestamp timestamp) {
+		return timestamp.getSeconds() <= 0 && timestamp.getNanos() <= 0;
 	}
 }

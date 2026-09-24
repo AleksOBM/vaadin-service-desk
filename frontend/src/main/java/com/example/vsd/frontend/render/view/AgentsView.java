@@ -1,11 +1,11 @@
 package com.example.vsd.frontend.render.view;
 
-import com.example.vsd.frontend.render.dialog.AgentDialog;
 import com.example.vsd.frontend.grpc.client.AgentService;
 import com.example.vsd.frontend.model.Agent;
+import com.example.vsd.frontend.render.dialog.AgentDialog;
+import com.example.vsd.frontend.render.notification.NotificationSupport;
 import com.example.vsd.frontend.render.template.BaseDialog;
 import com.example.vsd.frontend.render.template.BaseView;
-import com.example.vsd.frontend.render.notification.NotificationSupport;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -19,6 +19,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
+import java.util.List;
 
 @Route("agents")
 @PageTitle("Agent List")
@@ -49,12 +50,9 @@ public class AgentsView extends BaseView {
 	}
 
 	private void createAgent() {
-		var dialog = new BaseDialog<>(
-				Agent.class,
-				"Новый сотрудник",
-				new AgentDialog(),
+		var dialog = new BaseDialog<>(Agent.class, "Новый сотрудник", new AgentDialog(),
 				agent -> {
-					agentService.createAgent(agent.name());
+					agentService.saveAgent(agent.getName());
 					NotificationSupport.showSuccess("Сотрудник добавлен.");
 					String text = filterText.getValue();
 					if (text == null || text.isBlank()) {
@@ -63,63 +61,94 @@ public class AgentsView extends BaseView {
 						getGridData();
 					}
 				});
-		dialog.setEntity(Agent.builder().build());
+		dialog.setEntity(new Agent());
 		dialog.open();
 	}
 
 	private void updateAgent() {
+
+		// Получаем сотрудника из выбранной строки
 		Agent oldAgent = grid.asSingleSelect().getValue();
-		BaseDialog<Agent> dialog = new BaseDialog<>(
-				Agent.class,
-				"Редактировать сотрудника",
-				new AgentDialog(),
+
+		// Создаем диалог
+		var dialog = new BaseDialog<>(Agent.class, "Редактировать сотрудника", new AgentDialog(),
+
+				// Определяем действия для диалога
 				agent -> {
-					agentService.createAgent(agent.name());
+
+					// Сохраняем изменения
+					agentService.saveAgent(agent.getName());
 					NotificationSupport.showSuccess("Сотрудник изменен.");
+
+					// Получаем текст из поля поиска
 					String text = filterText.getValue();
+
+					// Обновляем таблицу после изменения данных
 					if (text == null || text.isBlank()) {
 						grid.setItems(agentService.getAllAgents());
 					} else {
 						getGridData();
 					}
 				});
+
+		// Добавляем данные в диалог
 		dialog.setEntity(oldAgent);
+
+		// Запуск диалога
 		dialog.open();
 	}
 
 	private void deleteAgent() {
+
+		// Получаем сотрудника из выбранной строки
 		Agent agent = grid.asSingleSelect().getValue();
-		agentService.markAsDeleted(agent.id());
+
+		// Помечаем как удаленного
+		agentService.markAsDeleted(agent.getId());
+
+		// Обновляем данные таблицы
 		getGridData();
+
 		NotificationSupport.showInfo("Сотрудник удален.");
 	}
 
 	private Component getAgentsGrid() {
+
+		// Основные параметры таблицы
 		grid.addClassNames("agent-grid");
 		grid.addClassName("big-header-grid");
 		grid.addThemeVariants(GridVariant.ROW_STRIPES);
 		grid.setEmptyStateText("Данные отсутствуют.");
 
-		grid.addColumn(Agent::serviceDeskNumber).setHeader("AG");
-		grid.addColumn(Agent::name).setHeader("Имя");
+		// Колонки таблицы
+		grid.addColumn(Agent::getServiceDeskNumber).setHeader("AG");
+		grid.addColumn(Agent::getName).setHeader("Имя");
 
+		// Настройки колонок
 		grid.getColumns().forEach(column -> {
 			column.setSortable(true);
 			column.setAutoWidth(true);
 		});
 
+		// Слушатель событий таблицы
 		grid.addSelectionListener(event -> {
 			boolean enabled = event.getFirstSelectedItem().isPresent();
 			updateButton.setEnabled(enabled);
 			deleteButton.setEnabled(enabled);
 		});
 
+		// Размеры таблицы
 		grid.setSizeFull();
 		grid.getStyle().setMarginTop("20px");
+
+		// Загрузка данных в таблицу
 		Collection<Agent> content = agentService.getAllAgents();
 		grid.setItems(content);
+
+		// Строка итогов
 		entitiesCount = content.size();
 		updateFooter();
+
 		return grid;
 	}
 
@@ -128,14 +157,23 @@ public class AgentsView extends BaseView {
 	}
 
 	private void getGridData() {
+
+		// Получаем текст из поля поиска
 		String filterText = super.filterText.getValue();
-		Collection<Agent> content;
+
+		List<Agent> content;
 		if (filterText == null || filterText.isBlank()) {
+			// Если поле поиска пустое - грузим всё
 			content = agentService.getAllAgents();
 		} else {
+			// Иначе грузим с фильтром
 			content = agentService.getContent(filterText);
 		}
+
+		// Обновление данных таблицы
 		grid.setItems(content);
+
+		// Обновляем строку итогов
 		entitiesCount = content.size();
 		updateFooter();
 	}

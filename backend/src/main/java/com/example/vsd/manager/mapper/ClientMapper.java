@@ -2,6 +2,7 @@ package com.example.vsd.manager.mapper;
 
 import com.example.vsd.grpc.messages.ClientProto;
 import com.example.vsd.manager.enity.Client;
+import com.example.vsd.serialization.timestamp.TimestampUtils;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
@@ -24,6 +25,9 @@ public class ClientMapper {
 				.setId(entity.getId())
 				.setName(entity.getName())
 				.setServiceDeskNumber(entity.getServiceDeskNumber())
+				.setCreationDate(TimestampUtils.toTimestamp(entity.getCreationDate()))
+				.setLastUpdated(TimestampUtils.toTimestamp(entity.getLastUpdated()))
+				.setDeleted(entity.isDeleted())
 				.build();
 	}
 

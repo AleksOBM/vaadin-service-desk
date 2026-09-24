@@ -11,5 +11,6 @@ option java_package = "com.example.vsd.grpc.services.admin";
 option java_outer_classname = "AdminRecycleControllerProto";
 
 service AdminRecycleController {
-  rpc getRecycle (google.protobuf.Empty) returns (sd.messages.GetRecycleResponse);
+  rpc getFullRecycle (google.protobuf.Empty) returns (sd.messages.GetRecycleResponse);
+  rpc findRecycle (google.protobuf.StringValue) returns (sd.messages.GetRecycleResponse);
 }

@@ -40,11 +40,11 @@ public class OrderDialog extends BaseDialog.EntityDialog {
         deadLine.setRequired(true);
 
         client.setItems(clients);
-        client.setItemLabelGenerator(Client::name);
+        client.setItemLabelGenerator(Client::getName);
         client.setRequired(true);
 
         agent.setItems(agents);
-        agent.setItemLabelGenerator(Agent::name);
+        agent.setItemLabelGenerator(Agent::getName);
         agent.setRequired(true);
         description.setMinHeight(7, Unit.EM);
 

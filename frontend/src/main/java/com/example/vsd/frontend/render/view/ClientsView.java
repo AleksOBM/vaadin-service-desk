@@ -51,7 +51,7 @@ public class ClientsView extends BaseView {
 				"Новый клиент",
 				new ClientDialog(),
 				client -> {
-					clientService.createClient(client.name());
+					clientService.saveClient(client.getName());
 					NotificationSupport.showSuccess("Клиент добавлен.");
 					String text = filterText.getValue();
 					if (text == null || text.isBlank()) {
@@ -60,7 +60,7 @@ public class ClientsView extends BaseView {
 						getGridData();
 					}
 				});
-		dialog.setEntity(Client.builder().build());
+		dialog.setEntity(new Client());
 		dialog.open();
 	}
 
@@ -71,7 +71,7 @@ public class ClientsView extends BaseView {
 				"Редактировать клиента",
 				new ClientDialog(),
 				client -> {
-					clientService.createClient(client.name());
+					clientService.saveClient(client.getName());
 					NotificationSupport.showSuccess("Клиент изменен.");
 					String text = filterText.getValue();
 					if (text == null || text.isBlank()) {
@@ -86,7 +86,7 @@ public class ClientsView extends BaseView {
 
 	private void deleteClient() {
 		Client client = grid.asSingleSelect().getValue();
-		clientService.markAsDeleted(client.id());
+		clientService.markAsDeleted(client.getId());
 		getGridData();
 		NotificationSupport.showInfo("Клиент удален.");
 	}
@@ -97,8 +97,8 @@ public class ClientsView extends BaseView {
 		grid.addThemeVariants(GridVariant.ROW_STRIPES);
 		grid.setEmptyStateText("Данные отсутствуют.");
 
-		grid.addColumn(Client::serviceDeskNumber).setHeader("CL");
-		grid.addColumn(Client::name).setHeader("Название");
+		grid.addColumn(Client::getServiceDeskNumber).setHeader("CL");
+		grid.addColumn(Client::getName).setHeader("Название");
 
 		grid.getColumns().forEach(column -> {
 			column.setSortable(true);

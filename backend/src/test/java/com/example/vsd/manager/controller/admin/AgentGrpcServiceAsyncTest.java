@@ -1,7 +1,7 @@
 package com.example.vsd.manager.controller.admin;
 
 import com.example.vsd.grpc.messages.AgentProto;
-import com.example.vsd.manager.service.agent.AgentApiService;
+import com.example.vsd.manager.service.agent.AgentService;
 import io.grpc.stub.StreamObserver;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 class AgentGrpcServiceAsyncTest {
 
 	@Mock
-	private AgentApiService agentService;
+	private AgentService agentService;
 
 	@InjectMocks
 	AdminAgentGrpcController controller;

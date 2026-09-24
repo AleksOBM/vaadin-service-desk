@@ -1,6 +1,5 @@
 package com.example.vsd.manager.enity;
 
-import com.example.vsd.manager.model.BaseEntity;
 import com.example.vsd.manager.model.TypedEntity;
 import com.example.vsd.serialization.model.EntityType;
 import jakarta.persistence.*;

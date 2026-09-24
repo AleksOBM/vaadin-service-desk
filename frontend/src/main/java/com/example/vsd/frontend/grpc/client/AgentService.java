@@ -6,6 +6,7 @@ import com.example.vsd.grpc.messages.AgentProto;
 import com.example.vsd.grpc.services.admin.AdminAgentControllerGrpc.AdminAgentControllerBlockingStub;
 import com.example.vsd.grpc.services.free.FreeControllerGrpc.FreeControllerBlockingStub;
 import com.google.protobuf.Empty;
+import com.google.protobuf.Int64Value;
 import com.google.protobuf.StringValue;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -30,11 +31,14 @@ public class AgentService {
 				.toList();
 	}
 
-	public void createAgent(String name) {
-		var proto = adminStub.createAgent(AgentProto.newBuilder()
+	public void saveAgent(String name) {
+		var result = adminStub.saveAgent(AgentProto.newBuilder()
 				.setName(name)
 				.build());
-		log.debug(proto.toString());
+
+		if (result != null) {
+			log.debug("Agent with name {} has been created", name);
+		}
 	}
 
 	public List<Agent> getAllAgents() {
@@ -44,7 +48,10 @@ public class AgentService {
 	}
 
 	public void markAsDeleted(Long agentId) {
-		// TODO: 23.09.2026
+		Empty result = adminStub.setAgentDeleted(Int64Value.of(agentId));
+		if (result != null) {
+			log.debug("Agent with id {} has been deleted", agentId);
+		}
 	}
 
 }

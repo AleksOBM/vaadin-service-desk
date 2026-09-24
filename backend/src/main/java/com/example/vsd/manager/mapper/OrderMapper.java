@@ -1,8 +1,11 @@
 package com.example.vsd.manager.mapper;
 
 import com.example.vsd.grpc.messages.OrderProto;
+import com.example.vsd.grpc.messages.OrderStatusProto;
 import com.example.vsd.manager.enity.Order;
 import com.example.vsd.manager.model.OrderData;
+import com.example.vsd.serialization.model.OrderStatus;
+import com.example.vsd.serialization.timestamp.TimestampUtils;
 import com.google.protobuf.Timestamp;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
@@ -27,12 +30,16 @@ public class OrderMapper {
 				.setDescription(entity.getDescription())
 				.setStartLine(entity.getStartLine().format(formatter))
 				.setDeadLine(entity.getDeadLine().format(formatter))
+				.setStatus(OrderStatusProto.valueOf(entity.getStatus().name()))
 				.setAgent(AgentMapper.toProto(entity.getAgent()))
 				.setClient(ClientMapper.toProto(entity.getClient()))
 				.setServiceDeskNumber(entity.getServiceDeskNumber())
+				.setCreationDate(TimestampUtils.toTimestamp(entity.getCreationDate()))
+				.setLastUpdated(TimestampUtils.toTimestamp(entity.getLastUpdated()))
+				.setDeleted(entity.isDeleted())
 				.build();
 
-		if (entity.isCompleted()) {
+		if (entity.getStatus().equals(OrderStatus.COMPLETED)) {
 			proto = proto.toBuilder()
 					.setCompletedDate(toTimestamp(entity.getCompletedDate()))
 					.build();

@@ -33,7 +33,7 @@ public class AdminOrderGrpcController extends AdminOrderControllerImplBase {
 		);
 
 		try {
-			orderService.apiRestoreOrder(request.getValue());
+			orderService.restoreOrder(request.getValue());
 			responseObserver.onNext(Empty.getDefaultInstance());
 			responseObserver.onCompleted();
 
@@ -55,7 +55,7 @@ public class AdminOrderGrpcController extends AdminOrderControllerImplBase {
 		);
 
 		try {
-			orderService.apiDeleteOrder(request.getValue());
+			orderService.deleteOrder(request.getValue());
 			responseObserver.onNext(Empty.getDefaultInstance());
 			responseObserver.onCompleted();
 

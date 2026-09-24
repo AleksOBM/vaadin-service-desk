@@ -8,6 +8,7 @@ import com.example.vsd.grpc.services.admin.AdminOrderControllerGrpc.AdminOrderCo
 import com.example.vsd.grpc.services.admin.AdminRecycleControllerGrpc.AdminRecycleControllerBlockingStub;
 import com.google.protobuf.Empty;
 import com.google.protobuf.Int64Value;
+import com.google.protobuf.StringValue;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -29,37 +30,38 @@ public class RecycleService {
 	AdminOrderControllerBlockingStub adminOrderStub;
 
 	public List<BaseEntity> getContent(String text) {
-		return getRecycle().stream()
-				.filter(e -> e.serviceDeskNumber().toLowerCase().contains(text.toLowerCase()))
-				.filter(e -> e.name().toLowerCase().contains(text.toLowerCase()))
+		return recycleStub.findRecycle(StringValue.of(text))
+				.getRecyclesList().stream()
+				.map(BaseEntityMapper::toEntity)
 				.toList();
 	}
 
 	public List<BaseEntity> getRecycle() {
-		return recycleStub.getRecycle(Empty.getDefaultInstance()).getRecyclesList().stream()
+		return recycleStub.getFullRecycle(Empty.getDefaultInstance())
+				.getRecyclesList().stream()
 				.map(BaseEntityMapper::toEntity)
 				.toList();
 	}
 
 	public void restore(@NonNull BaseEntity entity) {
-		switch (entity.type()) {
-			case CLIENT -> restoreClient(entity.id());
-			case AGENT -> restoreAgent(entity.id());
-			case ORDER -> restoreOrder(entity.id());
+		switch (entity.getType()) {
+			case CLIENT -> restoreClient(entity.getId());
+			case AGENT -> restoreAgent(entity.getId());
+			case ORDER -> restoreOrder(entity.getId());
 		}
 	}
 
 	public void deleteForever(@NonNull BaseEntity entity) {
-		switch (entity.type()) {
-			case CLIENT -> deleteClientPermanently(entity.id());
-			case AGENT -> deleteAgentPermanently(entity.id());
-			case ORDER -> deleteOrderPermanently(entity.id());
+		switch (entity.getType()) {
+			case CLIENT -> deleteClientPermanently(entity.getId());
+			case AGENT -> deleteAgentPermanently(entity.getId());
+			case ORDER -> deleteOrderPermanently(entity.getId());
 		}
 	}
 
 	public void restoreAgent(Long agentId) {
 		Empty result = adminAgentStub
-				.restoreAgent(Int64Value.newBuilder().setValue(agentId).build());
+				.restoreAgent(Int64Value.of(agentId));
 		if (result != null) {
 			log.debug("restore agent {}", agentId);
 		}
@@ -67,7 +69,7 @@ public class RecycleService {
 
 	public void deleteAgentPermanently(Long agentId) {
 		Empty result = adminAgentStub
-				.deleteAgentPermanently(Int64Value.newBuilder().setValue(agentId).build());
+				.deleteAgentPermanently(Int64Value.of(agentId));
 		if (result != null) {
 			log.debug("delete agent {}", agentId);
 		}
@@ -75,7 +77,7 @@ public class RecycleService {
 
 	public void restoreOrder(Long orderId) {
 		Empty result = adminOrderStub
-				.restoreOrder(Int64Value.newBuilder().setValue(orderId).build());
+				.restoreOrder(Int64Value.of(orderId));
 		if (result != null) {
 			log.debug("Order with id {} restored.", orderId);
 		}
@@ -83,7 +85,7 @@ public class RecycleService {
 
 	public void deleteOrderPermanently(Long orderId) {
 		Empty result = adminOrderStub
-				.deleteOrderPermanently(Int64Value.newBuilder().setValue(orderId).build());
+				.deleteOrderPermanently(Int64Value.of(orderId));
 		if (result != null) {
 			log.debug("Order with id {} was deleted.", orderId);
 		}
@@ -91,7 +93,7 @@ public class RecycleService {
 
 	public void restoreClient(Long clientId) {
 		Empty result = adminClientStub
-				.restoreClient(Int64Value.newBuilder().setValue(clientId).build());
+				.restoreClient(Int64Value.of(clientId));
 		if (result != null) {
 			log.debug("restore client with id {}", clientId);
 		}
@@ -99,7 +101,7 @@ public class RecycleService {
 
 	public void deleteClientPermanently(Long clientId) {
 		Empty result = adminClientStub
-				.deleteClientPermanently(Int64Value.newBuilder().setValue(clientId).build());
+				.deleteClientPermanently(Int64Value.of(clientId));
 		if (result != null) {
 			log.debug("delete client with id {}", clientId);
 		}

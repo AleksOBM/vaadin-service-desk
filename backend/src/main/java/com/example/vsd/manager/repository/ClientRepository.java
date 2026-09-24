@@ -34,4 +34,6 @@ public interface ClientRepository extends
 			where c.id = :id
 			""")
 	boolean checkDeleted(@NonNull Long id);
+
+	boolean existsByName(String name);
 }

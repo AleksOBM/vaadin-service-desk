@@ -27,7 +27,6 @@ CREATE TABLE IF NOT EXISTS public.orders (
     description varchar(200),
     start_line date NOT NULL,
     dead_line date NOT NULL,
-    completed boolean,
     completed_date timestamp(3) without time zone,
     order_status varchar(20) check (
         order_status in ('NEW', 'IN_PROGRESS', 'FIRST_CONTROL', 'SECOND_CONTROL', 'COMPLETED')) NOT NULL,

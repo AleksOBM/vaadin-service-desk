@@ -17,21 +17,17 @@ public class BaseEntityMapper {
 					.name(proto.getClient().getName())
 					.type(EntityType.CLIENT)
 					.serviceDeskNumber(proto.getClient().getServiceDeskNumber())
-					.creationDate(TimestampUtils.toLocalDateTime(
-							proto.getClient().getCreationDate()))
-					.lastUpdated(TimestampUtils.toLocalDateTime(
-							proto.getClient().getLastUpdated()))
+					.creationDate(TimestampUtils.toLocalDateTime(proto.getClient().getCreationDate()))
+					.lastUpdated(TimestampUtils.toLocalDateTime(proto.getClient().getLastUpdated()))
 					.deleted(proto.getClient().getDeleted())
 					.build();
 			case AGENT -> BaseEntity.builder()
 					.id(proto.getAgent().getId())
 					.name(proto.getAgent().getName())
-					.type(EntityType.AGENT)
+					.type(EntityType.ORDER)
 					.serviceDeskNumber(proto.getAgent().getServiceDeskNumber())
-					.creationDate(TimestampUtils.toLocalDateTime(
-							proto.getAgent().getCreationDate()))
-					.lastUpdated(TimestampUtils.toLocalDateTime(
-							proto.getAgent().getLastUpdated()))
+					.creationDate(TimestampUtils.toLocalDateTime(proto.getAgent().getCreationDate()))
+					.lastUpdated(TimestampUtils.toLocalDateTime(proto.getAgent().getLastUpdated()))
 					.deleted(proto.getAgent().getDeleted())
 					.build();
 			case ORDER -> BaseEntity.builder()
@@ -39,10 +35,8 @@ public class BaseEntityMapper {
 					.name(proto.getOrder().getName())
 					.type(EntityType.ORDER)
 					.serviceDeskNumber(proto.getOrder().getServiceDeskNumber())
-					.creationDate(TimestampUtils.toLocalDateTime(
-							proto.getOrder().getCreationDate()))
-					.lastUpdated(TimestampUtils.toLocalDateTime(
-							proto.getOrder().getLastUpdated()))
+					.creationDate(TimestampUtils.toLocalDateTime(proto.getOrder().getCreationDate()))
+					.lastUpdated(TimestampUtils.toLocalDateTime(proto.getOrder().getLastUpdated()))
 					.deleted(proto.getOrder().getDeleted())
 					.build();
 			case PAYLOAD_NOT_SET -> throw new IllegalArgumentException("Illegal entity type");

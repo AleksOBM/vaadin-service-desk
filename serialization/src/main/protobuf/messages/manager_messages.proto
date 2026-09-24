@@ -24,10 +24,11 @@ message OrderProto {
 }
 
 enum OrderStatusProto {
-    COMPLETED = 0;
-    IN_PROGRESS = 1;
-    FIRST_CONTROL = 2;
-    SECOND_CONTROL = 3;
+  NEW = 0;
+  IN_PROGRESS = 1;
+  FIRST_CONTROL = 2;
+  SECOND_CONTROL = 3;
+  COMPLETED = 4;
 }
 
 message AgentProto {

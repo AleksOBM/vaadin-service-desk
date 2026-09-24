@@ -1,11 +1,9 @@
 package com.example.vsd.frontend.model;
 
-import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
-@Builder(toBuilder = true)
-public record Client(
-		Long id,
-		String name,
-		String serviceDeskNumber
-) {
+@SuperBuilder
+@NoArgsConstructor
+public class Client extends BaseEntity {
 }

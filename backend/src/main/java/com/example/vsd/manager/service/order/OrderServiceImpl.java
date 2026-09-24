@@ -1,66 +1,63 @@
 package com.example.vsd.manager.service.order;
 
 import com.example.vsd.grpc.messages.OrderProto;
-import com.example.vsd.manager.exception.NotFoundException;
-import com.example.vsd.manager.exception.ValidationException;
-import com.example.vsd.manager.mapper.OrderMapper;
 import com.example.vsd.manager.enity.Agent;
 import com.example.vsd.manager.enity.Client;
 import com.example.vsd.manager.enity.Order;
+import com.example.vsd.manager.exception.NotFoundException;
+import com.example.vsd.manager.exception.ValidationException;
+import com.example.vsd.manager.mapper.OrderMapper;
 import com.example.vsd.manager.model.OrderData;
 import com.example.vsd.manager.repository.AgentRepository;
 import com.example.vsd.manager.repository.ClientRepository;
 import com.example.vsd.manager.repository.OrderRepository;
 import com.example.vsd.serialization.model.OrderStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-public class OrderServiceImpl implements OrderApiService, OrderService {
-
-	// todo: добавить в логику светофоров учет выходных
-	// todo: добавить валидацию абсурдных случаев при создании заявки
-	// todo: добавить логику отправки новой заявки на почту через MailService
+public class OrderServiceImpl implements OrderService {
 
 	private final OrderRepository orderRepository;
 	private final AgentRepository agentRepository;
 	private final ClientRepository clientRepository;
 
 	@Override
-	public void save(Order order) {
-		orderRepository.save(order);
+	public void saveOrder(@NonNull OrderProto proto) {
+		if (proto.hasId()) {
+			var order = updateOrder(proto);
+			log.info("Saving order with id {}", order.getId());
+			return;
+		}
+		var order = createOrder(proto);
+		log.info("Saving order with id {}", order.getId());
 	}
 
 	@Override
-	public Collection<Order> findAll() {
-		return orderRepository.findAllByDeletedFalse();
-	}
-
-	@Override
-	public List<OrderProto> apiFindOrders(String text) {
+	public List<OrderProto> findOrders(String text) {
 		return orderRepository.findOrders(text).stream()
 				.map(OrderMapper::toProto)
 				.toList();
 	}
 
 	@Override
-	public List<OrderProto> apiFindAll() {
+	public List<OrderProto> getAllOrders() {
 		return orderRepository.findAllByDeletedFalse().stream()
 				.sorted(Comparator.comparingLong(Order::getId))
 				.map(OrderMapper::toProto)
 				.toList();
 	}
 
-	@Override
-	public OrderProto apiCreateOrder(@NonNull OrderProto proto) {
+	private OrderProto createOrder(@NonNull OrderProto proto) {
 		Order order = OrderMapper.toEntity(proto);
 
 		if (!order.getStartLine().isBefore(order.getDeadLine())) {
@@ -98,33 +95,7 @@ public class OrderServiceImpl implements OrderApiService, OrderService {
 		return OrderMapper.toProto(orderRepository.save(order));
 	}
 
-	@Override
-	public void apiSetOrderDeleted(Long orderId) {
-		Order order = orderRepository.findById(orderId).orElseThrow(() ->
-				new NotFoundException("Заказ с id=%s не найден".formatted(orderId)));
-		if (order.isDeleted()) {
-			throw new IllegalStateException(
-					"Заказ с id=%s удален. Проверьте корзину.".formatted(orderId));
-		}
-		order.setDeleted(true);
-		orderRepository.save(order);
-	}
-
-	@Override
-	public void apiRestoreOrder(Long orderId) {
-		Order order = orderRepository.findById(orderId).orElseThrow(() ->
-				new NotFoundException("Заказ с id=%s не найден".formatted(orderId)));
-		order.setDeleted(false);
-		orderRepository.save(order);
-	}
-
-	@Override
-	public void apiDeleteOrder(Long orderId) {
-		orderRepository.deleteById(orderId);
-	}
-
-	@Override
-	public OrderProto apiUpdateOrder(@NonNull OrderProto proto) {
+	private OrderProto updateOrder(@NonNull OrderProto proto) {
 		Long orderId = proto.getId();
 
 		Order oldOrder = orderRepository.findById(orderId).orElseThrow(() ->
@@ -134,7 +105,7 @@ public class OrderServiceImpl implements OrderApiService, OrderService {
 					"Заказ с id=%s удален. Проверьте корзину.".formatted(orderId));
 		}
 
-		if (oldOrder.isCompleted()) {
+		if (oldOrder.getStatus().equals(OrderStatus.COMPLETED)) {
 			throw new IllegalStateException("Нельзя изменить завершенный заказ");
 		}
 
@@ -166,6 +137,31 @@ public class OrderServiceImpl implements OrderApiService, OrderService {
 				.build();
 
 		return OrderMapper.toProto(orderRepository.save(OrderMapper.update(oldOrder, orderData)));
+	}
+
+	@Override
+	public void setOrderDeleted(Long orderId) {
+		Order order = orderRepository.findById(orderId).orElseThrow(() ->
+				new NotFoundException("Заказ с id=%s не найден".formatted(orderId)));
+		if (order.isDeleted()) {
+			throw new IllegalStateException(
+					"Заказ с id=%s удален. Проверьте корзину.".formatted(orderId));
+		}
+		order.setDeleted(true);
+		orderRepository.save(order);
+	}
+
+	@Override
+	public void restoreOrder(Long orderId) {
+		Order order = orderRepository.findById(orderId).orElseThrow(() ->
+				new NotFoundException("Заказ с id=%s не найден".formatted(orderId)));
+		order.setDeleted(false);
+		orderRepository.save(order);
+	}
+
+	@Override
+	public void deleteOrder(Long orderId) {
+		orderRepository.deleteById(orderId);
 	}
 
 	private OrderStatus getStatus(@NonNull LocalDate startLine, @NonNull LocalDate deadLine) {

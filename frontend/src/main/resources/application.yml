@@ -6,3 +6,7 @@ spring:
       channel:
         backend-service:
           target: static://localhost:9091
+
+logging:
+  level:
+    com.example.vsd.frontend: debug

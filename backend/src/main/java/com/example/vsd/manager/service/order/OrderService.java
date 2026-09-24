@@ -1,16 +1,25 @@
 package com.example.vsd.manager.service.order;
 
-import com.example.vsd.manager.enity.Order;
+import com.example.vsd.grpc.messages.OrderProto;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
+import java.util.List;
 
-@Transactional(readOnly = true)
+@Transactional
 public interface OrderService {
 
-	@Transactional
-	void save(Order order);
+	@Transactional(readOnly = true)
+	List<OrderProto> getAllOrders();
 
-	Collection<Order> findAll();
+	@Transactional(readOnly = true)
+	List<OrderProto> findOrders(String text);
+
+	void saveOrder(OrderProto proto);
+
+	void setOrderDeleted(Long orderId);
+
+	void restoreOrder(Long orderId);
+
+	void deleteOrder(Long orderId);
 
 }

@@ -41,21 +41,21 @@ public class OrdersDetails extends FormLayout {
 	}
 
 	public void setOrder(@NonNull Order order) {
-		descriptionField.setValue(order.description());
-		startLineField.setValue(order.startLine().format(DateTimeFormatter.ISO_DATE));
-		firstControlLineField.setValue(order.startLine()
+		descriptionField.setValue(order.getDescription());
+		startLineField.setValue(order.getStartLine().format(DateTimeFormatter.ISO_DATE));
+		firstControlLineField.setValue(order.getStartLine()
 				.plus(Period.ofDays(Math.round((float) getDaysCount(order) / 3)))
 				.format(DateTimeFormatter.ISO_DATE));
-		secondControlLineField.setValue(order.deadLine()
+		secondControlLineField.setValue(order.getDeadLine()
 				.minus(Period.ofDays(Math.round((float) getDaysCount(order) / 3)))
 				.format(DateTimeFormatter.ISO_DATE));
 		daysCountField.setValue(getDaysCount(order) + " дней");
-		deadLineField.setValue(order.deadLine().format(DateTimeFormatter.ISO_DATE));
-		agentField.setValue(order.agent().name());
+		deadLineField.setValue(order.getDeadLine().format(DateTimeFormatter.ISO_DATE));
+		agentField.setValue(order.getAgent().getName());
 	}
 
 	public int getDaysCount(@NonNull Order order) {
-		return Period.between(order.startLine(), order.deadLine()).getDays();
+		return Period.between(order.getStartLine(), order.getDeadLine()).getDays();
 	}
 
 }

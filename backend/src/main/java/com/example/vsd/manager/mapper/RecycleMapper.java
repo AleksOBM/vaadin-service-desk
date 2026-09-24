@@ -5,9 +5,10 @@ import com.example.vsd.grpc.messages.BaseEntityProto;
 import com.example.vsd.grpc.messages.ClientProto;
 import com.example.vsd.grpc.messages.OrderProto;
 import com.example.vsd.manager.enity.Agent;
-import com.example.vsd.manager.model.BaseEntity;
+import com.example.vsd.manager.enity.BaseEntity;
 import com.example.vsd.manager.enity.Client;
 import com.example.vsd.manager.enity.Order;
+import com.example.vsd.serialization.timestamp.TimestampUtils;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
@@ -22,6 +23,9 @@ public class RecycleMapper {
 							.setId(entity.getId())
 							.setName(e.getName())
 							.setServiceDeskNumber(entity.getServiceDeskNumber())
+							.setCreationDate(TimestampUtils.toTimestamp(e.getCreationDate()))
+							.setLastUpdated(TimestampUtils.toTimestamp(e.getLastUpdated()))
+							.setDeleted(entity.isDeleted())
 							.build())
 					.build();
 
@@ -30,6 +34,9 @@ public class RecycleMapper {
 							.setId(entity.getId())
 							.setName(a.getName())
 							.setServiceDeskNumber(entity.getServiceDeskNumber())
+							.setCreationDate(TimestampUtils.toTimestamp(a.getCreationDate()))
+							.setLastUpdated(TimestampUtils.toTimestamp(a.getLastUpdated()))
+							.setDeleted(entity.isDeleted())
 							.build())
 					.build();
 
@@ -38,6 +45,9 @@ public class RecycleMapper {
 							.setId(entity.getId())
 							.setName(o.getName())
 							.setServiceDeskNumber(entity.getServiceDeskNumber())
+							.setCreationDate(TimestampUtils.toTimestamp(o.getCreationDate()))
+							.setLastUpdated(TimestampUtils.toTimestamp(o.getLastUpdated()))
+							.setDeleted(entity.isDeleted())
 							.build())
 					.build();
 

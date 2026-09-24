@@ -2,7 +2,7 @@ package com.example.vsd.manager.controller.admin;
 
 import com.example.vsd.grpc.messages.AgentProto;
 import com.example.vsd.grpc.services.admin.AdminAgentControllerGrpc.AdminAgentControllerImplBase;
-import com.example.vsd.manager.service.agent.AgentApiService;
+import com.example.vsd.manager.service.agent.AgentService;
 import com.google.protobuf.Empty;
 import com.google.protobuf.Int64Value;
 import io.grpc.Status;
@@ -21,13 +21,13 @@ import org.springframework.grpc.server.service.GrpcService;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AdminAgentGrpcController extends AdminAgentControllerImplBase {
 
-	AgentApiService agentApiService;
+	AgentService agentService;
 
 	@Override
-	public void createAgent(@NonNull AgentProto request, StreamObserver<AgentProto> responseObserver) {
+	public void saveAgent(@NonNull AgentProto request, StreamObserver<Empty> responseObserver) {
 
 		log.debug("""
-						Получен gRPC запрос: createAgent
+						Получен gRPC запрос: saveAgent
 						{
 							"name": "{}"
 						}""",
@@ -35,8 +35,8 @@ public class AdminAgentGrpcController extends AdminAgentControllerImplBase {
 		);
 
 		try {
-			AgentProto proto = agentApiService.apiCreateAgent(request);
-			responseObserver.onNext(proto);
+			agentService.saveAgent(request);
+			responseObserver.onNext(Empty.getDefaultInstance());
 			responseObserver.onCompleted();
 
 		} catch (Exception e) {
@@ -58,7 +58,7 @@ public class AdminAgentGrpcController extends AdminAgentControllerImplBase {
 		);
 
 		try {
-			agentApiService.apiRestoreAgent(request.getValue());
+			agentService.restoreAgent(request.getValue());
 			responseObserver.onNext(Empty.getDefaultInstance());
 			responseObserver.onCompleted();
 
@@ -81,7 +81,29 @@ public class AdminAgentGrpcController extends AdminAgentControllerImplBase {
 		);
 
 		try {
-			agentApiService.apiDeleteAgent(request.getValue());
+			agentService.deleteAgent(request.getValue());
+			responseObserver.onNext(Empty.getDefaultInstance());
+			responseObserver.onCompleted();
+
+		} catch (Exception e) {
+			responseObserver.onError(
+					new StatusRuntimeException(Status.fromThrowable(e))
+			);
+		}
+	}
+
+	public void setAgentDeleted(@NonNull Int64Value request,
+	                            StreamObserver<Empty> responseObserver) {
+		log.debug("""
+						Получен gRPC запрос: setAgentDeleted
+						{
+							"id": {}
+						}""",
+				request.getValue()
+		);
+
+		try {
+			agentService.setAgentDeleted(request.getValue());
 			responseObserver.onNext(Empty.getDefaultInstance());
 			responseObserver.onCompleted();
 

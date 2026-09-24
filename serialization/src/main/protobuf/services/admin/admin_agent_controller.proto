@@ -11,7 +11,8 @@ option java_package = "com.example.vsd.grpc.services.admin";
 option java_outer_classname = "AdminAgentControllerProto";
 
 service AdminAgentController {
-  rpc createAgent (sd.messages.AgentProto) returns (sd.messages.AgentProto);
+  rpc saveAgent (sd.messages.AgentProto) returns (google.protobuf.Empty);
+  rpc setAgentDeleted (google.protobuf.Int64Value) returns (google.protobuf.Empty);
   rpc restoreAgent (google.protobuf.Int64Value) returns (google.protobuf.Empty);
   rpc deleteAgentPermanently (google.protobuf.Int64Value) returns (google.protobuf.Empty);
 }

@@ -24,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.format.DateTimeFormatter;
-import java.util.Collection;
 import java.util.List;
 
 @Route("recycle")
@@ -53,6 +52,8 @@ public class RecycleView extends BaseView {
     }
 
     private void configureView() {
+
+        // Конфигурируем кнопки
         this.createButton.setVisible(false);
 
         this.updateButton.setTooltipText("Восстановить");
@@ -61,6 +62,7 @@ public class RecycleView extends BaseView {
         this.deleteButton.setTooltipText("Удалить навсегда");
         this.deleteButton.setIcon(new Icon(VaadinIcon.RECYCLE));
 
+        // Конфигурируем слушатели
         filterText.addValueChangeListener(_ -> getGridData());
         updateButton.addClickListener(_ -> restore(grid.asSingleSelect().getValue()));
 
@@ -69,10 +71,13 @@ public class RecycleView extends BaseView {
     }
 
     private Grid<BaseEntity> getRecycleGrid() {
+
+        // Конфигурируем таблицу
         configureGridStyle();
         configureGridColumns();
         getGridData();
 
+        // Добавляем активацию кнопок
         grid.addSelectionListener(event -> {
             boolean enabled = event.getFirstSelectedItem().isPresent();
             this.updateButton.setEnabled(enabled);
@@ -92,17 +97,19 @@ public class RecycleView extends BaseView {
     }
 
     private void configureGridColumns() {
-        grid.addColumn(BaseEntity::serviceDeskNumber).setHeader("ID");
+
+        // Настраиваем колонки таблицы
+        grid.addColumn(BaseEntity::getServiceDeskNumber).setHeader("ID");
 
         grid.addColumn(new LocalDateTimeRenderer<>(
-                BaseEntity::creationDate, () -> formatter)
-        ).setHeader("Дата создания").setComparator(BaseEntity::creationDate);
+                BaseEntity::getCreationDate, () -> formatter)
+        ).setHeader("Дата создания").setComparator(BaseEntity::getCreationDate);
 
         Grid.Column<BaseEntity> deletionDateColumn = grid.addColumn(new LocalDateTimeRenderer<>(
-                BaseEntity::lastUpdated, () -> formatter)
-        ).setHeader("Дата удаления").setComparator(BaseEntity::lastUpdated);
+                BaseEntity::getLastUpdated, () -> formatter)
+        ).setHeader("Дата удаления").setComparator(BaseEntity::getLastUpdated);
 
-        Grid.Column<BaseEntity> nameColumn = grid.addColumn(BaseEntity::name);
+        Grid.Column<BaseEntity> nameColumn = grid.addColumn(BaseEntity::getName);
         nameColumn.setHeader("Наименование");
 
         grid.getColumns().forEach(column -> {
@@ -110,6 +117,7 @@ public class RecycleView extends BaseView {
                     column.setAutoWidth(true);
                 });
 
+        // Настраиваем сортировку
         grid.setMultiSort(true);
         GridSortOrder<BaseEntity> sortOrder = new GridSortOrder<>(
                 deletionDateColumn, SortDirection.DESCENDING);
@@ -122,10 +130,15 @@ public class RecycleView extends BaseView {
     }
 
     private void getGridData() {
-        String filter = filterText.getValue();
-        Collection<BaseEntity> recycleList = recycleService.getContent(filter);
-        grid.setItems(recycleList);
-        entitiesCount = recycleList.size();
+        String filterText = super.filterText.getValue();
+        List<BaseEntity> content;
+        if (filterText == null || filterText.isBlank()) {
+            content = recycleService.getRecycle();
+        } else {
+            content = recycleService.getContent(filterText);
+        }
+        grid.setItems(content);
+        entitiesCount = content.size();
         updateFooter();
     }
 
@@ -134,7 +147,7 @@ public class RecycleView extends BaseView {
             recycleService.deleteForever(entity);
         } catch (Exception e) {
             log.error("Ошибка при попытке удаления объекта {}, объект еще используется. Session ID={}",
-                    entity.serviceDeskNumber(), sessionService.getSessionId()
+                    entity.getServiceDeskNumber(), sessionService.getSessionId()
             );
             NotificationSupport.showError("Этот объект еще используется.");
             getGridData();

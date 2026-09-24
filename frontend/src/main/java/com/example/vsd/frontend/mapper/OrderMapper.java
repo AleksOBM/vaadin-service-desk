@@ -14,31 +14,37 @@ public class OrderMapper {
 
 	public OrderProto toCreatedProto(@NonNull Order order) {
 		return OrderProto.newBuilder()
-				.setName(order.name())
-				.setDescription(order.description())
-				.setStartLine(TimestampUtils.toString(order.startLine()))
-				.setDeadLine(TimestampUtils.toString(order.deadLine()))
-				.setClient(ClientMapper.toProto(order.client()))
-				.setAgent(AgentMapper.toProto(order.agent()))
-				.setCompletedDate(TimestampUtils.toTimestamp(order.completedDate()))
+				.setName(order.getName())
+				.setDescription(order.getDescription())
+				.setStartLine(TimestampUtils.toString(order.getStartLine()))
+				.setDeadLine(TimestampUtils.toString(order.getDeadLine()))
+				.setClient(ClientMapper.toProto(order.getClient()))
+				.setAgent(AgentMapper.toProto(order.getAgent()))
+				.setCompletedDate(TimestampUtils.toTimestamp(order.getCompletedDate()))
 				.setDeleted(false)
 				.build();
 	}
 
 	public OrderProto toUpdatedProto(@NonNull Order order) {
-		if (order.id() == null) {
+		if (order.getId() == null) {
 			throw new IllegalArgumentException("Order id cannot be null");
 		}
 		return OrderProto.newBuilder()
-				.setId(order.id())
-				.setName(order.name() == null ? null : order.name())
-				.setDescription(order.description() == null ? null : order.description())
-				.setStartLine(order.startLine() == null ? null : TimestampUtils.toString(order.startLine()))
-				.setDeadLine(order.deadLine() == null ? null : TimestampUtils.toString(order.deadLine()))
-				.setClient(order.client() == null ? null : ClientMapper.toProto(order.client()))
-				.setAgent(order.agent() == null ? null : AgentMapper.toProto(order.agent()))
-				.setCompletedDate(order.completedDate() == null
-						? null : TimestampUtils.toTimestamp(order.completedDate()))
+				.setId(order.getId())
+				.setName(order.getName() == null
+						? null : order.getName())
+				.setDescription(order.getDescription() == null
+						? null : order.getDescription())
+				.setStartLine(order.getStartLine() == null
+						? null : TimestampUtils.toString(order.getStartLine()))
+				.setDeadLine(order.getDeadLine() == null
+						? null : TimestampUtils.toString(order.getDeadLine()))
+				.setClient(order.getClient() == null
+						? null : ClientMapper.toProto(order.getClient()))
+				.setAgent(order.getAgent() == null
+						? null : AgentMapper.toProto(order.getAgent()))
+				.setCompletedDate(order.getCompletedDate() == null
+						? null : TimestampUtils.toTimestamp(order.getCompletedDate()))
 				.setDeleted(false)
 				.build();
 	}
@@ -50,21 +56,31 @@ public class OrderMapper {
 				.description(proto.getDescription())
 				.startLine(TimestampUtils.toLocalDate(proto.getStartLine()))
 				.deadLine(TimestampUtils.toLocalDate(proto.getDeadLine()))
-				.completedDate(TimestampUtils.toLocalDateTime(proto.getCompletedDate()))
+				.completedDate(proto.hasCompletedDate()
+						? TimestampUtils.toLocalDateTime(proto.getCompletedDate()) : null)
 				.status(OrderStatus.valueOf(proto.getStatus().name()))
 				.client(Client.builder()
 						.id(proto.getClient().getId())
 						.name(proto.getClient().getName())
 						.serviceDeskNumber(proto.getClient().getServiceDeskNumber())
+						.creationDate(TimestampUtils.toLocalDateTime(proto.getClient().getCreationDate()))
+						.lastUpdated(TimestampUtils.toLocalDateTime(proto.getClient().getLastUpdated()))
+						.deleted(proto.getClient().getDeleted())
 						.build()
 				)
 				.agent(Agent.builder()
 						.id(proto.getAgent().getId())
 						.name(proto.getAgent().getName())
 						.serviceDeskNumber(proto.getAgent().getServiceDeskNumber())
+						.creationDate(TimestampUtils.toLocalDateTime(proto.getAgent().getCreationDate()))
+						.lastUpdated(TimestampUtils.toLocalDateTime(proto.getAgent().getLastUpdated()))
+						.deleted(proto.getAgent().getDeleted())
 						.build()
 				)
 				.serviceDeskNumber(proto.getServiceDeskNumber())
+				.creationDate(TimestampUtils.toLocalDateTime(proto.getCreationDate()))
+				.lastUpdated(TimestampUtils.toLocalDateTime(proto.getLastUpdated()))
+				.deleted(proto.getDeleted())
 				.build();
 	}
 }

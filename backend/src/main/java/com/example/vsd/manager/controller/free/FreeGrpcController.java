@@ -2,9 +2,9 @@ package com.example.vsd.manager.controller.free;
 
 import com.example.vsd.grpc.messages.*;
 import com.example.vsd.grpc.services.free.FreeControllerGrpc.FreeControllerImplBase;
-import com.example.vsd.manager.service.agent.AgentApiService;
-import com.example.vsd.manager.service.client.ClientApiService;
-import com.example.vsd.manager.service.order.OrderApiService;
+import com.example.vsd.manager.service.agent.AgentService;
+import com.example.vsd.manager.service.client.ClientService;
+import com.example.vsd.manager.service.order.OrderService;
 import com.google.protobuf.Empty;
 import com.google.protobuf.StringValue;
 import io.grpc.Status;
@@ -25,9 +25,9 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class FreeGrpcController extends FreeControllerImplBase {
 
-	ClientApiService clientService;
-	AgentApiService agentService;
-	OrderApiService orderService;
+	ClientService clientService;
+	AgentService agentService;
+	OrderService orderService;
 
 	public void getAllClients(Empty request,
 	                       StreamObserver<GetClientsResponse> responseObserver) {
@@ -35,7 +35,7 @@ public class FreeGrpcController extends FreeControllerImplBase {
 				Получен gRPC запрос: getClients""");
 
 		try {
-			List<ClientProto> proto = clientService.apiFindAll();
+			List<ClientProto> proto = clientService.getAllClients();
 			responseObserver.onNext(GetClientsResponse.newBuilder()
 					.addAllClients(proto)
 					.build());
@@ -54,7 +54,7 @@ public class FreeGrpcController extends FreeControllerImplBase {
 				Получен gRPC запрос: getAgents""");
 
 		try {
-			List<AgentProto> proto = agentService.apiFindAll();
+			List<AgentProto> proto = agentService.getAllAgents();
 			responseObserver.onNext(GetAgentsResponse.newBuilder()
 					.addAllAgents(proto)
 					.build());
@@ -73,7 +73,7 @@ public class FreeGrpcController extends FreeControllerImplBase {
 				Получен gRPC запрос: getOrders""");
 
 		try {
-			List<OrderProto> proto = orderService.apiFindAll();
+			List<OrderProto> proto = orderService.getAllOrders();
 			responseObserver.onNext(GetOrdersResponse.newBuilder()
 					.addAllOrders(proto)
 					.build());
@@ -139,7 +139,7 @@ public class FreeGrpcController extends FreeControllerImplBase {
 				}""", request.getValue());
 
 		try {
-			List<OrderProto> proto = orderService.apiFindOrders(request.getValue());
+			List<OrderProto> proto = orderService.findOrders(request.getValue());
 			responseObserver.onNext(GetOrdersResponse.newBuilder()
 					.addAllOrders(proto)
 					.build());

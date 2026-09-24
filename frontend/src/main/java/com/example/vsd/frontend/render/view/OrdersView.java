@@ -1,14 +1,14 @@
 package com.example.vsd.frontend.render.view;
 
-import com.example.vsd.frontend.render.details.OrdersDetails;
-import com.example.vsd.frontend.render.dialog.OrderDialog;
 import com.example.vsd.frontend.grpc.client.AgentService;
 import com.example.vsd.frontend.grpc.client.ClientService;
 import com.example.vsd.frontend.grpc.client.OrderService;
 import com.example.vsd.frontend.model.Order;
+import com.example.vsd.frontend.render.details.OrdersDetails;
+import com.example.vsd.frontend.render.dialog.OrderDialog;
+import com.example.vsd.frontend.render.notification.NotificationSupport;
 import com.example.vsd.frontend.render.template.BaseDialog;
 import com.example.vsd.frontend.render.template.BaseView;
-import com.example.vsd.frontend.render.notification.NotificationSupport;
 import com.example.vsd.serialization.model.OrderStatus;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridSortOrder;
@@ -81,7 +81,7 @@ public class OrdersView extends BaseView {
 				"Новая заявка",
 				new OrderDialog(clientService.getAllClients(), agentService.getAllAgents()),
 				order -> {
-					orderService.createOrder(order);
+					orderService.saveOrder(order);
 					NotificationSupport.showSuccess("Заявка добавлена.");
 					String text = filterText.getValue();
 					if (text == null || text.isBlank()) {
@@ -90,7 +90,7 @@ public class OrdersView extends BaseView {
 						getGridData();
 					}
 				});
-		dialog.setEntity(Order.builder().build());
+		dialog.setEntity(new Order());
 		dialog.open();
 	}
 
@@ -101,7 +101,7 @@ public class OrdersView extends BaseView {
 				"Редактировать заявку",
 				new OrderDialog(clientService.getAllClients(), agentService.getAllAgents()),
 				order -> {
-					orderService.createOrder(order);
+					orderService.saveOrder(order);
 					NotificationSupport.showSuccess("Заявка изменена.");
 					String text = filterText.getValue();
 					if (text == null || text.isBlank()) {
@@ -116,7 +116,7 @@ public class OrdersView extends BaseView {
 
 	private void deleteOrder() {
 		Order order = grid.asSingleSelect().getValue();
-		orderService.markAsDeleted(order.id());
+		orderService.markAsDeleted(order.getId());
 		getGridData();
 		NotificationSupport.showInfo("Заявка удалена.");
 	}
@@ -137,27 +137,29 @@ public class OrdersView extends BaseView {
 		Grid.Column<Order> sdColumn = grid.addComponentColumn(order -> {
 			HorizontalLayout layout = new HorizontalLayout();
 
+			// Светофоры
 			Icon progressPoint = VaadinIcon.CIRCLE.create();
-			OrderStatus status = order.status();
+			OrderStatus status = order.getStatus();
 			switch (status) {
+				case NEW -> progressPoint.setColor("blue");
 				case IN_PROGRESS -> progressPoint.setColor("green");
 				case FIRST_CONTROL -> progressPoint.setColor("yellow");
 				case SECOND_CONTROL -> progressPoint.setColor("red");
 				case COMPLETED -> progressPoint.setColor("gray");
 			}
 
-			Span name = new Span(order.serviceDeskNumber());
+			Span name = new Span(order.getServiceDeskNumber());
 			layout.add(progressPoint, name);
 			layout.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
 			return layout;
 		}).setHeader("SD");
 
-		grid.addColumn(order -> order.client().name()).setHeader("Клиент");
-		grid.addColumn(Order::name).setHeader("Работа");
+		grid.addColumn(order -> order.getClient().getName()).setHeader("Клиент");
+		grid.addColumn(Order::getName).setHeader("Работа");
 
-		Grid.Column<Order> statusColumn = grid.addColumn(Order::status).setHeader("Статус");
+		Grid.Column<Order> statusColumn = grid.addColumn(Order::getStatus).setHeader("Статус");
 		statusColumn.setVisible(false);
-		Grid.Column<Order> deadlineColumn = grid.addColumn(Order::deadLine).setHeader("Дедлайн");
+		Grid.Column<Order> deadlineColumn = grid.addColumn(Order::getDeadLine).setHeader("Дедлайн");
 		deadlineColumn.setVisible(true);
 
 		grid.getColumns().stream().skip(1)
@@ -187,6 +189,7 @@ public class OrdersView extends BaseView {
 		return new ComponentRenderer<>(OrdersDetails::new, OrdersDetails::setOrder);
 	}
 
+	// Раскрывающийся список параметров заявки
 	private Renderer<Order> createToggleDetailsRenderer(Grid<Order> grid) {
 		return LitRenderer
 				.<Order>of("""
@@ -222,7 +225,7 @@ public class OrdersView extends BaseView {
 	}
 
 	public void updateGrid() {
-		Collection<Order> content = orderService.getAllOrders();
+		List<Order> content = orderService.getAllOrders();
 		grid.setItems(content);
 		entitiesCount = content.size();
 		updateFooter();

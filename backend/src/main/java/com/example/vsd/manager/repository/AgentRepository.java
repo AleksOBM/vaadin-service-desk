@@ -37,4 +37,6 @@ public interface AgentRepository extends
 			where a.id = :id
 			""")
 	boolean checkDeleted(@NonNull Long id);
+
+	boolean existsByName(String name);
 }

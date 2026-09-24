@@ -1,4 +1,4 @@
-package com.example.vsd.manager.model;
+package com.example.vsd.manager.enity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
