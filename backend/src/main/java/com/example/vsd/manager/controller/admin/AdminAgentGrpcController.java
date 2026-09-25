@@ -40,6 +40,7 @@ public class AdminAgentGrpcController extends AdminAgentControllerImplBase {
 			responseObserver.onCompleted();
 
 		} catch (Exception e) {
+			log.debug(e.getMessage(), e);
 			responseObserver.onError(
 					new StatusRuntimeException(Status.fromThrowable(e))
 			);
@@ -63,6 +64,7 @@ public class AdminAgentGrpcController extends AdminAgentControllerImplBase {
 			responseObserver.onCompleted();
 
 		} catch (Exception e) {
+			log.debug(e.getMessage(), e);
 			responseObserver.onError(
 					new StatusRuntimeException(Status.fromThrowable(e))
 			);
@@ -86,6 +88,7 @@ public class AdminAgentGrpcController extends AdminAgentControllerImplBase {
 			responseObserver.onCompleted();
 
 		} catch (Exception e) {
+			log.debug(e.getMessage(), e);
 			responseObserver.onError(
 					new StatusRuntimeException(Status.fromThrowable(e))
 			);
@@ -108,6 +111,7 @@ public class AdminAgentGrpcController extends AdminAgentControllerImplBase {
 			responseObserver.onCompleted();
 
 		} catch (Exception e) {
+			log.debug(e.getMessage(), e);
 			responseObserver.onError(
 					new StatusRuntimeException(Status.fromThrowable(e))
 			);

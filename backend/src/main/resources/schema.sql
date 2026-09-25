@@ -28,8 +28,6 @@ CREATE TABLE IF NOT EXISTS public.orders (
     start_line date NOT NULL,
     dead_line date NOT NULL,
     completed_date timestamp(3) without time zone,
-    order_status varchar(20) check (
-        order_status in ('NEW', 'IN_PROGRESS', 'FIRST_CONTROL', 'SECOND_CONTROL', 'COMPLETED')) NOT NULL,
     agent_id bigint NOT NULL,
     client_id bigint NOT NULL,
     creation_date timestamp(3) without time zone NOT NULL,

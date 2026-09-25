@@ -47,7 +47,7 @@ public class SettingsView extends BaseView {
         updateButton.setEnabled(true);
         deleteButton.setEnabled(true);
 
-        mailEntity = mailService.getMailEntity().orElse(null);
+        mailEntity = mailService.getMailEntity().orElse(MailEntity.builder().build());
 
         setValues();
         configureLayout();
@@ -56,16 +56,16 @@ public class SettingsView extends BaseView {
     }
 
     private void setValues() {
-        if (mailEntity == null) {
-            return;
-        }
-        targetEmailField.setValue(mailEntity.getTargetMail());
-        homeEmailField.setValue(mailEntity.getAppMail());
-        homeMailHostField.setValue(mailEntity.getAppMailHost());
-        homeMailPortField.setValue(mailEntity.getAppMailPort());
-        passwordField.setValue(mailEntity.getAppMailPassword());
-        mailSmtpAuth.setValue(mailEntity.getMailSmtpAuth());
-        mailSmtpStartTls.setValue(mailEntity.getMailSmtpStartTls());
+//        if (mailEntity == null) {
+//            return;
+//        }
+//        targetEmailField.setValue(mailEntity.getTargetMail());
+//        homeEmailField.setValue(mailEntity.getAppMail());
+//        homeMailHostField.setValue(mailEntity.getAppMailHost());
+//        homeMailPortField.setValue(mailEntity.getAppMailPort());
+//        passwordField.setValue(mailEntity.getAppMailPassword());
+//        mailSmtpAuth.setValue(mailEntity.getMailSmtpAuth());
+//        mailSmtpStartTls.setValue(mailEntity.getMailSmtpStartTls());
     }
 
     private void configureActions() {
@@ -102,14 +102,14 @@ public class SettingsView extends BaseView {
 
     private void createEntity() {
         mailEntity = MailEntity.builder()
-                .id(1L)
-                .appMail(homeEmailField.getValue())
-                .targetMail(targetEmailField.getValue())
-                .appMailHost(homeMailHostField.getValue())
-                .appMailPassword(passwordField.getValue())
-                .appMailPort(homeMailPortField.getValue())
-                .mailSmtpAuth(mailSmtpAuth.getValue())
-                .mailSmtpStartTls(mailSmtpStartTls.getValue())
+//                .id(1L)
+//                .appMail(homeEmailField.getValue())
+//                .targetMail(targetEmailField.getValue())
+//                .appMailHost(homeMailHostField.getValue())
+//                .appMailPassword(passwordField.getValue())
+//                .appMailPort(homeMailPortField.getValue())
+//                .mailSmtpAuth(mailSmtpAuth.getValue())
+//                .mailSmtpStartTls(mailSmtpStartTls.getValue())
                 .build();
         mailService.saveMailEntity(mailEntity);
     }

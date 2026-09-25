@@ -40,12 +40,11 @@ public class BaseDialog<T> extends Dialog {
 
 		saveButton.setEnabled(false);
 
-		binder.addStatusChangeListener(e ->
-				saveButton.setEnabled(binder.isValid())
-		);
+		binder.addStatusChangeListener(_ -> saveButton
+				.setEnabled(binder.isValid()));
 
-		saveButton.addClickListener(e -> save(onSave));
-		cancelButton.addClickListener(e -> close());
+		saveButton.addClickListener(_ -> save(onSave));
+		cancelButton.addClickListener(_ -> close());
 		HorizontalLayout buttonLayout = new HorizontalLayout(cancelButton, saveButton);
 		buttonLayout.getStyle().setMarginTop("20px");
 		add(buttonLayout);

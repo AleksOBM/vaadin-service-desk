@@ -1,4 +1,4 @@
-package com.example.vsd.serialization.model;
+package com.example.vsd.frontend.model;
 
 public enum OrderStatus {
     NEW,

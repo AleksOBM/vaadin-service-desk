@@ -16,6 +16,7 @@ public class OrderDialog extends BaseDialog.EntityDialog {
     private final Collection<Client> clients;
     private final Collection<Agent> agents;
 
+    // Элементы диалога байндятся по названиям полей класса
     private final TextField name = new TextField("Название");
     private final TextArea description = new TextArea("Описание");
     private final ComboBox<Client> client = new ComboBox<>("Клиент");

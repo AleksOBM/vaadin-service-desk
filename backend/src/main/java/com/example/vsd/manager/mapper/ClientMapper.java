@@ -20,6 +20,7 @@ public class ClientMapper {
 				.build();
 	}
 
+	@NonNull
 	public ClientProto toProto(@NonNull Client entity) {
 		return ClientProto.newBuilder()
 				.setId(entity.getId())

@@ -21,6 +21,7 @@ public class AgentMapper {
 				.build();
 	}
 
+	@NonNull
 	public AgentProto toProto(@NonNull Agent entity) {
 		return AgentProto.newBuilder()
 				.setId(entity.getId())

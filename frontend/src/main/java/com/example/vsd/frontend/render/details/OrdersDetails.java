@@ -6,7 +6,6 @@ import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import org.jspecify.annotations.NonNull;
 
-import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.stream.Stream;
 
@@ -43,19 +42,11 @@ public class OrdersDetails extends FormLayout {
 	public void setOrder(@NonNull Order order) {
 		descriptionField.setValue(order.getDescription());
 		startLineField.setValue(order.getStartLine().format(DateTimeFormatter.ISO_DATE));
-		firstControlLineField.setValue(order.getStartLine()
-				.plus(Period.ofDays(Math.round((float) getDaysCount(order) / 3)))
-				.format(DateTimeFormatter.ISO_DATE));
-		secondControlLineField.setValue(order.getDeadLine()
-				.minus(Period.ofDays(Math.round((float) getDaysCount(order) / 3)))
-				.format(DateTimeFormatter.ISO_DATE));
-		daysCountField.setValue(getDaysCount(order) + " дней");
+		firstControlLineField.setValue(order.getFirstControlLine().format(DateTimeFormatter.ISO_DATE));
+		secondControlLineField.setValue(order.getSeondControlLine().format(DateTimeFormatter.ISO_DATE));
+		daysCountField.setValue(order.getDaysCount() + " дней");
 		deadLineField.setValue(order.getDeadLine().format(DateTimeFormatter.ISO_DATE));
 		agentField.setValue(order.getAgent().getName());
-	}
-
-	public int getDaysCount(@NonNull Order order) {
-		return Period.between(order.getStartLine(), order.getDeadLine()).getDays();
 	}
 
 }

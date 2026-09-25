@@ -3,9 +3,9 @@ package com.example.vsd.frontend.mapper;
 import com.example.vsd.frontend.model.Agent;
 import com.example.vsd.frontend.model.Client;
 import com.example.vsd.frontend.model.Order;
+import com.example.vsd.frontend.model.OrderStatus;
 import com.example.vsd.grpc.messages.OrderProto;
 import com.example.vsd.serialization.model.EntityType;
-import com.example.vsd.serialization.model.OrderStatus;
 import com.example.vsd.serialization.timestamp.TimestampUtils;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
@@ -14,40 +14,48 @@ import lombok.experimental.UtilityClass;
 public class OrderMapper {
 
 	public OrderProto toCreatedProto(@NonNull Order order) {
-		return OrderProto.newBuilder()
+		OrderProto.Builder builder = OrderProto.newBuilder()
 				.setName(order.getName())
 				.setDescription(order.getDescription())
-				.setStartLine(TimestampUtils.toString(order.getStartLine()))
-				.setDeadLine(TimestampUtils.toString(order.getDeadLine()))
+				.setStartLine(TimestampUtils.toDate(order.getStartLine()))
+				.setDeadLine(TimestampUtils.toDate(order.getDeadLine()))
 				.setClient(ClientMapper.toProto(order.getClient()))
 				.setAgent(AgentMapper.toProto(order.getAgent()))
-				.setCompletedDate(TimestampUtils.toTimestamp(order.getCompletedDate()))
-				.setDeleted(false)
-				.build();
+				.setDeleted(false);
+
+		if (order.getStatus() == OrderStatus.COMPLETED) {
+			builder.setCompletedDate(TimestampUtils.toTimestamp(order.getCompletedDate()));
+		}
+
+		return builder.build();
 	}
 
 	public OrderProto toUpdatedProto(@NonNull Order order) {
 		if (order.getId() == null) {
 			throw new IllegalArgumentException("Order id cannot be null");
 		}
-		return OrderProto.newBuilder()
+		OrderProto.Builder builder = OrderProto.newBuilder()
+
 				.setId(order.getId())
 				.setName(order.getName() == null
 						? null : order.getName())
 				.setDescription(order.getDescription() == null
 						? null : order.getDescription())
 				.setStartLine(order.getStartLine() == null
-						? null : TimestampUtils.toString(order.getStartLine()))
+						? null : TimestampUtils.toDate(order.getStartLine()))
 				.setDeadLine(order.getDeadLine() == null
-						? null : TimestampUtils.toString(order.getDeadLine()))
+						? null : TimestampUtils.toDate(order.getDeadLine()))
 				.setClient(order.getClient() == null
 						? null : ClientMapper.toProto(order.getClient()))
 				.setAgent(order.getAgent() == null
 						? null : AgentMapper.toProto(order.getAgent()))
-				.setCompletedDate(order.getCompletedDate() == null
-						? null : TimestampUtils.toTimestamp(order.getCompletedDate()))
-				.setDeleted(false)
-				.build();
+				.setDeleted(false);
+
+		if (order.getCompletedDate() != null) {
+			builder.setCompletedDate(TimestampUtils.toTimestamp(order.getCompletedDate()));
+		}
+
+		return builder.build();
 	}
 
 	public Order toOrder(@NonNull OrderProto proto) {
@@ -58,6 +66,9 @@ public class OrderMapper {
 				.description(proto.getDescription())
 				.startLine(TimestampUtils.toLocalDate(proto.getStartLine()))
 				.deadLine(TimestampUtils.toLocalDate(proto.getDeadLine()))
+				.firstControlLine(TimestampUtils.toLocalDate(proto.getFirstControlLine()))
+				.seondControlLine(TimestampUtils.toLocalDate(proto.getSecondControlLine()))
+				.daysCount(proto.getDaysCount())
 				.completedDate(proto.hasCompletedDate()
 						? TimestampUtils.toLocalDateTime(proto.getCompletedDate()) : null)
 				.status(OrderStatus.valueOf(proto.getStatus().name()))

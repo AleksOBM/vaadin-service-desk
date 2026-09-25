@@ -6,5 +6,4 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 public class Agent extends BaseEntity {
-
 }

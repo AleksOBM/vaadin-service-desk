@@ -2,7 +2,6 @@ package com.example.vsd.manager.enity;
 
 import com.example.vsd.manager.model.TypedEntity;
 import com.example.vsd.serialization.model.EntityType;
-import com.example.vsd.serialization.model.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
@@ -38,11 +37,6 @@ public class Order extends BaseEntity implements TypedEntity {
 	LocalDate deadLine;
 
 	@Builder.Default
-	@Enumerated(EnumType.STRING)
-	@Column(name = "order_status")
-	OrderStatus status = OrderStatus.NEW;
-
-	@Builder.Default
 	@Column(name = "completed_date")
 	LocalDateTime completedDate = null;
 
@@ -55,14 +49,4 @@ public class Order extends BaseEntity implements TypedEntity {
 	@JoinColumn(name = "agent_id", nullable = false)
 	@JsonIgnoreProperties({"orders"})
 	Agent agent;
-
-	public void setCompleted(boolean status) {
-		if (status) {
-			setCompletedDate(LocalDateTime.now());
-			setStatus(OrderStatus.COMPLETED);
-		} else {
-			setCompletedDate(null);
-		}
-	}
 }
-

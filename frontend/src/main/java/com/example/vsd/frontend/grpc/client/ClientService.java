@@ -2,12 +2,13 @@ package com.example.vsd.frontend.grpc.client;
 
 import com.example.vsd.frontend.mapper.ClientMapper;
 import com.example.vsd.frontend.model.Client;
-import com.example.vsd.grpc.messages.ClientProto;
+import com.example.vsd.grpc.messages.GetClientsResponse;
 import com.example.vsd.grpc.services.admin.AdminClientControllerGrpc.AdminClientControllerBlockingStub;
 import com.example.vsd.grpc.services.free.FreeControllerGrpc.FreeControllerBlockingStub;
 import com.google.protobuf.Empty;
 import com.google.protobuf.Int64Value;
 import com.google.protobuf.StringValue;
+import io.grpc.StatusRuntimeException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -26,32 +27,49 @@ public class ClientService {
 	FreeControllerBlockingStub freeStub;
 
 	public List<Client> getContent(String text) {
-		return freeStub.findClients(StringValue.of(text)).getClientsList().stream()
+		GetClientsResponse response;
+		try {
+			response = freeStub.findClients(StringValue.of(text));
+			log.debug("Found {} agents by text '{}'", text, response.getClientsList().size());
+		} catch (StatusRuntimeException e) {
+			log.error("Error while fetching agents by text '{}'", text, e);
+			throw e;
+		}
+		return response.getClientsList().stream()
 				.map(ClientMapper::toClient)
 				.toList();
 	}
 
-	public void saveClient(String name) {
-		var result = adminStub.saveClient(ClientProto.newBuilder()
-						.setName(name)
-						.build());
-
-		if (result != null) {
-			log.debug("Client with name {} has been created", name);
+	public void saveClient(Client client) {
+		try {
+			var _ = adminStub.saveClient(ClientMapper.toProto(client));
+			log.debug("Client with name {} has been saved", client.getName());
+		} catch (StatusRuntimeException e) {
+			log.error("Error while saving client with name {}", client.getName(), e);
 		}
 	}
 
 	public List<Client> getAllClients() {
-		var response = freeStub.getAllClients(Empty.getDefaultInstance());
+		GetClientsResponse response;
+		try {
+			response = freeStub.getAllClients(Empty.getDefaultInstance());
+			log.debug("Found {} clients", response.getClientsList().size());
+		} catch (StatusRuntimeException e) {
+			log.error("Error while fetching agents", e);
+			throw e;
+		}
 		return response.getClientsList().stream()
 				.map(ClientMapper::toClient)
 				.toList();
 	}
 
 	public void markAsDeleted(Long clientId) {
-		Empty result = adminStub.setClientDeleted(Int64Value.of(clientId));
-		if (result != null) {
-			log.debug("Agent with id {} has been deleted", clientId);
+		try {
+			var _ = adminStub.setClientDeleted(Int64Value.of(clientId));
+			log.debug("Client with id {} has been deleted", clientId);
+		} catch (StatusRuntimeException e) {
+			log.error("Error while saving client with id {}", clientId, e);
+			throw e;
 		}
 	}
 

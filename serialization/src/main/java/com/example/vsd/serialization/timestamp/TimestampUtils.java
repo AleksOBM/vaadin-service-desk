@@ -1,8 +1,8 @@
 package com.example.vsd.serialization.timestamp;
 
 import com.google.protobuf.Timestamp;
-import lombok.NonNull;
-import lombok.experimental.UtilityClass;
+import com.google.type.Date;
+import org.jspecify.annotations.NonNull;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -11,41 +11,60 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
-@UtilityClass
 @SuppressWarnings("unused")
-public class TimestampUtils {
+public final class TimestampUtils {
 
-	private final ZoneId zoneId = ZoneId.systemDefault();
+	private TimestampUtils() {
+	}
 
-	public final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter
+	private static final ZoneId zoneId = ZoneId.systemDefault();
+
+	public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter
 			.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
 
-	public final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter
+	public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter
 			.ofPattern("yyyy-MM-dd");
 
-	public Timestamp toTimestamp(@NonNull Instant instant) {
+	@NonNull
+	public static Timestamp toTimestamp(@NonNull Instant instant) {
 		return Timestamp.newBuilder()
 				.setSeconds(instant.getEpochSecond())
 				.setNanos(instant.getNano())
 				.build();
 	}
 
-	public Timestamp toTimestamp(@NonNull LocalDateTime localDateTime) {
+	@NonNull
+	public static Timestamp toTimestamp(@NonNull LocalDateTime localDateTime) {
 		return toTimestamp(localDateTime.atZone(zoneId).toInstant());
 	}
 
-	public Instant toInstant(@NonNull Timestamp timestamp) {
+	@NonNull
+	public static LocalDate toLocalDate(@NonNull Date date) {
+		return LocalDate.of(date.getYear(), date.getMonth(), date.getDay());
+	}
+
+	@NonNull
+	public static Date toDate(@NonNull LocalDate localDate) {
+		return Date.newBuilder()
+				.setYear(localDate.getYear())
+				.setMonth(localDate.getMonth().getValue())
+				.setDay(localDate.getDayOfMonth())
+				.build();
+	}
+
+	public static Instant toInstant(@NonNull Timestamp timestamp) {
 		return Instant.ofEpochSecond(
 				timestamp.getSeconds(),
 				timestamp.getNanos()
 		);
 	}
 
-	public Instant toInstant(@NonNull LocalDateTime localDateTime) {
+	public static Instant toInstant(@NonNull LocalDateTime localDateTime) {
 		return toInstant(toTimestamp(localDateTime));
 	}
 
-	public LocalDateTime toLocalDateTime(@NonNull Timestamp timestamp) {
+	@NonNull
+	public static LocalDateTime toLocalDateTime(@NonNull Timestamp timestamp) {
 		if (isEmpty(timestamp)) {
 			throw new IllegalArgumentException("Timestamp is empty.");
 		}
@@ -53,36 +72,42 @@ public class TimestampUtils {
 				.truncatedTo(ChronoUnit.MILLIS);
 	}
 
-	public LocalDateTime toLocalDateTime(long timestamp) {
+	@NonNull
+	public static LocalDateTime toLocalDateTime(long timestamp) {
 		return toLocalDateTime(toTimestamp(Instant.ofEpochSecond(timestamp)))
 				.truncatedTo(ChronoUnit.MILLIS);
 	}
 
-	public LocalDateTime toLocalDateTime(@NonNull Instant instant) {
+	@NonNull
+	public static LocalDateTime toLocalDateTime(@NonNull Instant instant) {
 		return toLocalDateTime(toTimestamp(instant));
 	}
 
-	public LocalDate toLocalDate(@NonNull Timestamp timestamp) {
+	public static LocalDate toLocalDate(@NonNull Timestamp timestamp) {
 		return toLocalDateTime(timestamp).toLocalDate();
 	}
 
-	public LocalDate toLocalDate(@NonNull String str) {
+	@NonNull
+	public static LocalDate toLocalDate(@NonNull String str) {
 		return LocalDate.parse(str, DATE_FORMATTER);
 	}
 
-	public String toString(@NonNull Timestamp timestamp) {
+	@NonNull
+	public static String toString(@NonNull Timestamp timestamp) {
 		return DATE_TIME_FORMATTER.format(toLocalDateTime(timestamp));
 	}
 
-	public String toString(long longTimestamp) {
+	@NonNull
+	public static String toString(long longTimestamp) {
 		return toString(toTimestamp(Instant.ofEpochSecond(longTimestamp).atZone(zoneId).toInstant()));
 	}
 
-	public String toString(@NonNull LocalDate localDate) {
+	@NonNull
+	public static String toString(@NonNull LocalDate localDate) {
 		return localDate.format(DATE_FORMATTER);
 	}
 
-	private boolean isEmpty(@NonNull Timestamp timestamp) {
+	private static boolean isEmpty(@NonNull Timestamp timestamp) {
 		return timestamp.getSeconds() <= 0 && timestamp.getNanos() <= 0;
 	}
 }

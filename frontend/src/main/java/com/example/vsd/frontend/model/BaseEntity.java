@@ -21,4 +21,8 @@ public class BaseEntity {
 	LocalDateTime creationDate;
 	LocalDateTime lastUpdated;
 	boolean deleted;
+
+	public boolean hasId() {
+		return id != null;
+	}
 }

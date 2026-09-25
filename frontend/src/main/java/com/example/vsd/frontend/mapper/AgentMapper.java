@@ -4,20 +4,22 @@ import com.example.vsd.frontend.model.Agent;
 import com.example.vsd.grpc.messages.AgentProto;
 import com.example.vsd.serialization.model.EntityType;
 import com.example.vsd.serialization.timestamp.TimestampUtils;
-import lombok.NonNull;
-import lombok.experimental.UtilityClass;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-@UtilityClass
-public class AgentMapper {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class AgentMapper {
 
-	public AgentProto toProto(@NonNull Agent agent) {
-		return AgentProto.newBuilder()
-				.setId(agent.getId())
-				.setName(agent.getName())
-				.build();
+	public static AgentProto toProto(Agent agent) {
+		AgentProto.Builder builder = AgentProto.newBuilder()
+				.setName(agent.getName());
+		if (agent.hasId()) {
+			builder.setId(agent.getId());
+		}
+		return builder.build();
 	}
 
-	public Agent toAgent(@NonNull AgentProto proto) {
+	public static Agent toAgent(AgentProto proto) {
 		return Agent.builder()
 				.id(proto.getId())
 				.name(proto.getName())

@@ -4,13 +4,13 @@ import com.example.vsd.frontend.model.BaseEntity;
 import com.example.vsd.grpc.messages.BaseEntityProto;
 import com.example.vsd.serialization.model.EntityType;
 import com.example.vsd.serialization.timestamp.TimestampUtils;
-import lombok.NonNull;
-import lombok.experimental.UtilityClass;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-@UtilityClass
-public class BaseEntityMapper {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class BaseEntityMapper {
 
-	public BaseEntity toEntity(@NonNull BaseEntityProto proto) {
+	public static BaseEntity toEntity(BaseEntityProto proto) {
 		return switch (proto.getPayloadCase()) {
 			case CLIENT -> BaseEntity.builder()
 					.id(proto.getClient().getId())

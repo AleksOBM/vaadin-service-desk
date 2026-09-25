@@ -9,7 +9,7 @@ import com.example.vsd.frontend.render.dialog.OrderDialog;
 import com.example.vsd.frontend.render.notification.NotificationSupport;
 import com.example.vsd.frontend.render.template.BaseDialog;
 import com.example.vsd.frontend.render.template.BaseView;
-import com.example.vsd.serialization.model.OrderStatus;
+import com.example.vsd.frontend.model.OrderStatus;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -76,9 +76,7 @@ public class OrdersView extends BaseView {
 	}
 
 	private void createOrder() {
-		var dialog = new BaseDialog<>(
-				Order.class,
-				"Новая заявка",
+		var dialog = new BaseDialog<>(Order.class, "Новая заявка",
 				new OrderDialog(clientService.getAllClients(), agentService.getAllAgents()),
 				order -> {
 					orderService.saveOrder(order);
@@ -96,9 +94,7 @@ public class OrdersView extends BaseView {
 
 	private void updateOrder() {
 		Order oldOrder = grid.asSingleSelect().getValue();
-		BaseDialog<Order> dialog = new BaseDialog<>(
-				Order.class,
-				"Редактировать заявку",
+		var dialog = new BaseDialog<>(Order.class, "Редактировать заявку",
 				new OrderDialog(clientService.getAllClients(), agentService.getAllAgents()),
 				order -> {
 					orderService.saveOrder(order);

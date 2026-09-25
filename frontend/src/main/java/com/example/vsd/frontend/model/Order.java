@@ -1,6 +1,6 @@
 package com.example.vsd.frontend.model;
 
-import com.example.vsd.serialization.model.OrderStatus;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,11 +17,41 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Order extends BaseEntity {
+
 	String description;
+
+	@NotNull(message = "Укажите дату начала")
 	LocalDate startLine;
+
+	@NotNull(message = "Укажите дедлайн")
 	LocalDate deadLine;
+
+	LocalDate firstControlLine;
+
+	LocalDate seondControlLine;
+
+	Integer daysCount;
+
 	LocalDateTime completedDate;
+
+	@NotNull(message = "Выберите клиента")
 	Client client;
+
+	@NotNull(message = "Выберите сотрудника")
 	Agent agent;
+
 	OrderStatus status;
+
+	public boolean getCompleted() {
+		return status == OrderStatus.COMPLETED;
+	}
+
+	public void setCompleted(boolean status) {
+		if (status) {
+			setCompletedDate(LocalDateTime.now());
+			setStatus(OrderStatus.COMPLETED);
+		} else {
+			setCompletedDate(null);
+		}
+	}
 }

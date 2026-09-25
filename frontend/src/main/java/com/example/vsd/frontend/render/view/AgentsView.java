@@ -52,7 +52,7 @@ public class AgentsView extends BaseView {
 	private void createAgent() {
 		var dialog = new BaseDialog<>(Agent.class, "Новый сотрудник", new AgentDialog(),
 				agent -> {
-					agentService.saveAgent(agent.getName());
+					agentService.saveAgent(agent);
 					NotificationSupport.showSuccess("Сотрудник добавлен.");
 					String text = filterText.getValue();
 					if (text == null || text.isBlank()) {
@@ -77,7 +77,7 @@ public class AgentsView extends BaseView {
 				agent -> {
 
 					// Сохраняем изменения
-					agentService.saveAgent(agent.getName());
+					agentService.saveAgent(agent);
 					NotificationSupport.showSuccess("Сотрудник изменен.");
 
 					// Получаем текст из поля поиска

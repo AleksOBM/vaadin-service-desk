@@ -3,6 +3,7 @@ syntax = "proto3";
 package sd.messages;
 
 import "google/protobuf/timestamp.proto";
+import "google/type/date.proto";
 
 option java_multiple_files = true;
 option java_package = "com.example.vsd.grpc.messages";
@@ -11,16 +12,19 @@ message OrderProto {
   optional int64 id = 1;
   optional string name = 2;
   optional string description = 3;
-  optional string start_line = 4;
-  optional string dead_line = 5;
-  optional google.protobuf.Timestamp completed_date = 6;
-  optional OrderStatusProto status = 7;
-  optional ClientProto client = 8;
-  optional AgentProto agent = 9;
-  optional string service_desk_number = 10;
-  optional google.protobuf.Timestamp creation_date = 11;
-  optional google.protobuf.Timestamp lastUpdated = 12;
-  optional bool deleted = 13;
+  optional google.type.Date start_line = 4;
+  optional google.type.Date dead_line = 5;
+  optional google.type.Date first_control_line = 6;
+  optional google.type.Date second_control_line = 7;
+  optional int32 days_count = 8;
+  optional google.protobuf.Timestamp completed_date = 9;
+  optional OrderStatusProto status = 10;
+  optional ClientProto client = 11;
+  optional AgentProto agent = 12;
+  optional string service_desk_number = 13;
+  optional google.protobuf.Timestamp creation_date = 14;
+  optional google.protobuf.Timestamp last_updated = 15;
+  optional bool deleted = 16;
 }
 
 enum OrderStatusProto {

@@ -1,10 +1,7 @@
 package com.example.vsd.manager.service.recycle;
 
 import com.example.vsd.grpc.messages.BaseEntityProto;
-import com.example.vsd.manager.enity.Agent;
 import com.example.vsd.manager.enity.BaseEntity;
-import com.example.vsd.manager.enity.Client;
-import com.example.vsd.manager.enity.Order;
 import com.example.vsd.manager.mapper.RecycleMapper;
 import com.example.vsd.manager.model.TypedEntity;
 import com.example.vsd.manager.repository.AgentRepository;
@@ -60,7 +57,8 @@ public class RecycleServiceImpl implements RecycleService {
 				.toList();
 	}
 
-	private @NonNull List<BaseEntity> getBaseEntities(@NonNull String text) {
+	@NonNull
+	private List<BaseEntity> getBaseEntities(@NonNull String text) {
 		String lower = text.toLowerCase();
 		return Stream.of(orderRepository.findAllByDeletedTrue(),
 						clientRepository.findAllByDeletedTrue(),
@@ -72,12 +70,4 @@ public class RecycleServiceImpl implements RecycleService {
 				.toList();
 	}
 
-	private void saveEntity(@NonNull BaseEntity entity) {
-		switch (entity) {
-			case Order e -> orderRepository.save(e);
-			case Client e -> clientRepository.save(e);
-			case Agent e -> agentRepository.save(e);
-			default -> throw new IllegalStateException("Unexpected value: " + entity);
-		}
-	}
 }

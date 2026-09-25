@@ -34,6 +34,7 @@ public class UserGrpcController extends UserControllerImplBase {
 			responseObserver.onCompleted();
 
 		} catch (Exception e) {
+			log.debug(e.getMessage(), e);
 			responseObserver.onError(
 					new StatusRuntimeException(Status.fromThrowable(e))
 			);
@@ -56,6 +57,7 @@ public class UserGrpcController extends UserControllerImplBase {
 			responseObserver.onCompleted();
 
 		} catch (Exception e) {
+			log.debug(e.getMessage(), e);
 			responseObserver.onError(
 					new StatusRuntimeException(Status.fromThrowable(e))
 			);

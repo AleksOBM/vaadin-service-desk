@@ -1,78 +1,67 @@
 package com.example.vsd.manager.mapper;
 
 import com.example.vsd.grpc.messages.OrderProto;
-import com.example.vsd.grpc.messages.OrderStatusProto;
 import com.example.vsd.manager.enity.Order;
-import com.example.vsd.manager.model.OrderData;
-import com.example.vsd.serialization.model.OrderStatus;
+import com.example.vsd.manager.model.OrderGetData;
+import com.example.vsd.manager.model.OrderUpdateData;
 import com.example.vsd.serialization.timestamp.TimestampUtils;
-import com.google.protobuf.Timestamp;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
+import static com.example.vsd.grpc.messages.OrderStatusProto.*;
 
 @UtilityClass
 public class OrderMapper {
 
-	private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-	private final ZoneId zoneId = ZoneId.systemDefault();
-
-	public OrderProto toProto(@NonNull Order entity) {
-		OrderProto proto = OrderProto.newBuilder()
+	public OrderProto toProto(@NonNull Order entity, @NonNull OrderGetData data) {
+		OrderProto.Builder builder = OrderProto.newBuilder()
 				.setId(entity.getId())
 				.setName(entity.getName())
 				.setDescription(entity.getDescription())
-				.setStartLine(entity.getStartLine().format(formatter))
-				.setDeadLine(entity.getDeadLine().format(formatter))
-				.setStatus(OrderStatusProto.valueOf(entity.getStatus().name()))
+				.setStartLine(TimestampUtils.toDate(entity.getStartLine()))
+				.setDeadLine(TimestampUtils.toDate(entity.getDeadLine()))
+				.setFirstControlLine(TimestampUtils.toDate(data.firstControlLine()))
+				.setSecondControlLine(TimestampUtils.toDate(data.secondControlLine()))
+				.setDaysCount(data.daysCount())
+				.setStatus(data.status())
 				.setAgent(AgentMapper.toProto(entity.getAgent()))
 				.setClient(ClientMapper.toProto(entity.getClient()))
 				.setServiceDeskNumber(entity.getServiceDeskNumber())
 				.setCreationDate(TimestampUtils.toTimestamp(entity.getCreationDate()))
 				.setLastUpdated(TimestampUtils.toTimestamp(entity.getLastUpdated()))
-				.setDeleted(entity.isDeleted())
-				.build();
+				.setDeleted(entity.isDeleted());
 
-		if (entity.getStatus().equals(OrderStatus.COMPLETED)) {
-			proto = proto.toBuilder()
-					.setCompletedDate(toTimestamp(entity.getCompletedDate()))
-					.build();
+		if (data.status().equals(COMPLETED)) {
+			builder.setCompletedDate(TimestampUtils.toTimestamp(entity.getCompletedDate()));
 		}
 
-		return proto;
+		return builder.build();
 	}
 
 	public Order toEntity(@NonNull OrderProto proto) {
 		return Order.builder()
 				.name(proto.hasName() ? proto.getName() : null)
 				.description(proto.getDescription())
-				.startLine(LocalDate.parse(proto.getStartLine()))
-				.deadLine(LocalDate.parse(proto.getDeadLine()))
-				.completedDate(proto.hasCompletedDate() ? toLocalDateTime(proto.getCompletedDate()) : null)
+				.startLine(TimestampUtils.toLocalDate(proto.getStartLine()))
+				.deadLine(TimestampUtils.toLocalDate(proto.getDeadLine()))
+				.completedDate(proto.hasCompletedDate()
+						? TimestampUtils.toLocalDateTime(proto.getCompletedDate()) : null)
 				.agent(AgentMapper.toEntity(proto.getAgent()))
 				.client(ClientMapper.toEntity(proto.getClient()))
 				.deleted(false)
 				.build();
 	}
 
-	public Order update(@NonNull Order oldOrder, @NonNull OrderData data) {
+	public Order toUpdatedOrder(@NonNull Order oldOrder, @NonNull OrderUpdateData data) {
 
 		return Order.builder()
 
 				// Эти поля остаются как были
 				.id(oldOrder.getId())
 				.creationDate(oldOrder.getCreationDate())
+				.lastUpdated(oldOrder.getLastUpdated())
 				.serviceDeskNumber(oldOrder.getServiceDeskNumber())
 				.deleted(false)
-
-				// Это поле всегда обновляется
-				.status(data.status())
 
 				// Проверяемые поля
 				.name(data.hasName() ? data.name() : oldOrder.getName())
@@ -88,33 +77,6 @@ public class OrderMapper {
 				.client(data.hasClient() ? data.client() : oldOrder.getClient())
 
 				.build();
-	}
-
-	@NonNull
-	private Timestamp toTimestamp(@NonNull LocalDateTime localDateTime) {
-		return toTimestamp(localDateTime.atZone(zoneId).toInstant());
-	}
-
-	@NonNull
-	private LocalDateTime toLocalDateTime(@NonNull Timestamp timestamp) {
-		return LocalDateTime.ofInstant(toInstant(timestamp), zoneId)
-				.truncatedTo(ChronoUnit.MILLIS);
-	}
-
-	@NonNull
-	private Timestamp toTimestamp(@NonNull Instant instant) {
-		return Timestamp.newBuilder()
-				.setSeconds(instant.getEpochSecond())
-				.setNanos(instant.getNano())
-				.build();
-	}
-
-	@NonNull
-	private Instant toInstant(@NonNull Timestamp timestamp) {
-		return Instant.ofEpochSecond(
-				timestamp.getSeconds(),
-				timestamp.getNanos()
-		);
 	}
 
 }

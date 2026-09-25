@@ -51,7 +51,7 @@ public class ClientsView extends BaseView {
 				"Новый клиент",
 				new ClientDialog(),
 				client -> {
-					clientService.saveClient(client.getName());
+					clientService.saveClient(client);
 					NotificationSupport.showSuccess("Клиент добавлен.");
 					String text = filterText.getValue();
 					if (text == null || text.isBlank()) {
@@ -71,7 +71,7 @@ public class ClientsView extends BaseView {
 				"Редактировать клиента",
 				new ClientDialog(),
 				client -> {
-					clientService.saveClient(client.getName());
+					clientService.saveClient(client);
 					NotificationSupport.showSuccess("Клиент изменен.");
 					String text = filterText.getValue();
 					if (text == null || text.isBlank()) {

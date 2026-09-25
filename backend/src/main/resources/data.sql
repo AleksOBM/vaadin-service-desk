@@ -19,12 +19,10 @@ ON CONFLICT (client_name)
 DO NOTHING;
 
 INSERT INTO orders (
-id,
 title,
 description,
 start_line,
 dead_line,
-order_status,
 agent_id,
 client_id,
 creation_date,
@@ -32,12 +30,10 @@ last_updated,
 deleted,
 completed_date)
 VALUES 	(
-            1,
 			'Установка лазерных детекторов движения',
 			'Необходим дополнительный ряд лазеров на потолке, а также инфракрасные датчики тепла',
 			CURRENT_DATE,
 			CURRENT_DATE + INTERVAL '12 day',
-			'IN_PROGRESS',
 			2,
 			1,
 			NOW(),
@@ -46,12 +42,10 @@ VALUES 	(
 			null
 		),
 		(
-		    2,
 			'Замена камер видеонаблюдения',
 			'Камеры должны обладать рентгеновским зрением',
 			CURRENT_DATE - INTERVAL '4 day',
 			CURRENT_DATE + INTERVAL '10 day',
-			'COMPLETED',
 			4,
 			5,
 			NOW(),
@@ -60,12 +54,10 @@ VALUES 	(
 			NOW() - INTERVAL '1 day'
 		),
 		(
-		    3,
 			'Настройка оборудования в подземной лаборатории',
 			'Осторожно, там выращивают клонов-мутантов и профессор чекнутый',
 			CURRENT_DATE + INTERVAL '8 day',
 			CURRENT_DATE + INTERVAL '27 day',
-			'NEW',
 			1,
 			3,
 			NOW(),
