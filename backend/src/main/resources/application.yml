@@ -1,0 +1,48 @@
+spring:
+  grpc:
+    server:
+      port: 9091
+      health:
+        enabled: true
+        actuator:
+          enabled: true
+          update-overall-health: true
+  application:
+    name: vsd-backend
+  main:
+    log-startup-info: false
+  output:
+    ansi:
+      enabled: ALWAYS
+  jackson:
+    serialization.INDENT_OUTPUT: true
+  sql:
+    init:
+      mode: ALWAYS
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5433}/service-desk
+    username: dbuser
+    password: 12345
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+hibernate:
+  default-schema: public
+  show-sql: true
+  format-sql: true
+  enable-lazy-load-no-trans: true
+
+logging:
+  level:
+    com.example.vsd.manager: debug
+    org:
+      springframework: info
+#      # Логирование внутренних событий gRPC (серверная часть)
+#      springframework.grpc: DEBUG
+#    io:
+#      # Логирование транспорта Netty (если используется Netty)
+#      grpc.netty: DEBUG
+#      # Логирование самого фреймворка gRPC (очень подробно, может быть шумно)
+#      grpc: DEBUG

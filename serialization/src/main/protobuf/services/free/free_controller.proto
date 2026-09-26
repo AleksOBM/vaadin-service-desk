@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package sd.services;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+import "messages/manager_messages.proto";
+
+option java_multiple_files = true;
+option java_package = "com.example.vsd.grpc.services.free";
+option java_outer_classname = "FreeControllerProto";
+
+service FreeController {
+  rpc getAllClients (google.protobuf.Empty) returns (sd.messages.GetClientsResponse);
+  rpc getAllAgents (google.protobuf.Empty) returns (sd.messages.GetAgentsResponse);
+  rpc getAllOrders (google.protobuf.Empty) returns (sd.messages.GetOrdersResponse);
+
+  rpc findClients (google.protobuf.StringValue) returns (sd.messages.GetClientsResponse);
+  rpc findAgents (google.protobuf.StringValue) returns (sd.messages.GetAgentsResponse);
+  rpc findOrders (google.protobuf.StringValue) returns (sd.messages.GetOrdersResponse);
+}
