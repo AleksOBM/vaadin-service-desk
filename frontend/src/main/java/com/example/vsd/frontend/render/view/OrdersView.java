@@ -4,12 +4,12 @@ import com.example.vsd.frontend.grpc.client.AgentService;
 import com.example.vsd.frontend.grpc.client.ClientService;
 import com.example.vsd.frontend.grpc.client.OrderService;
 import com.example.vsd.frontend.model.Order;
+import com.example.vsd.frontend.model.OrderStatus;
 import com.example.vsd.frontend.render.details.OrdersDetails;
 import com.example.vsd.frontend.render.dialog.OrderDialog;
 import com.example.vsd.frontend.render.notification.NotificationSupport;
 import com.example.vsd.frontend.render.template.BaseDialog;
 import com.example.vsd.frontend.render.template.BaseView;
-import com.example.vsd.frontend.model.OrderStatus;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -27,6 +27,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.RouteScope;
 import com.vaadin.flow.spring.annotation.SpringComponent;
+import com.vaadin.flow.theme.lumo.LumoIcon;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,9 +42,6 @@ import java.util.List;
 @RouteScope
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class OrdersView extends BaseView {
-
-	// todo: добавить фильтр по статусу
-	// todo: добавить постраничный просмотр
 
 	OrderService orderService;
 	ClientService clientService;
@@ -61,6 +59,9 @@ public class OrdersView extends BaseView {
 		this.orderService = orderService;
 		this.clientService = clientService;
 		this.agentService = agentService;
+
+		LumoIcon.ANGLE_DOWN.create();
+		LumoIcon.ANGLE_RIGHT.create();
 
 		addClassName("orders-view");
 		configureView();
@@ -193,14 +194,14 @@ public class OrdersView extends BaseView {
 						        theme="tertiary icon"
 						        aria-label="Toggle details"
 						        aria-expanded="${model.detailsOpened ? 'true' : 'false'}"
-						        @click="${handleClick}"
+						        @click="${toggleDetails}"
 						    >
 						        <vaadin-icon
 						        .icon="${model.detailsOpened ? 'lumo:angle-down' : 'lumo:angle-right'}"
 						        ></vaadin-icon>
 						    </vaadin-button>
 						""")
-				.withFunction("handleClick",
+				.withFunction("toggleDetails",  // ← Другое имя, не handleClick
 						order -> {
 							grid.setDetailsVisible(order, !grid.isDetailsVisible(order));
 							grid.select(order);

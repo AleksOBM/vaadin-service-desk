@@ -2,8 +2,13 @@ spring:
   grpc:
     server:
       port: 9091
+      health:
+        enabled: true
+        actuator:
+          enabled: true
+          update-overall-health: true
   application:
-    name: vsd-otm
+    name: vsd-backend
   main:
     log-startup-info: false
   output:
@@ -16,7 +21,7 @@ spring:
       mode: ALWAYS
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5433/service-desk
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5433}/service-desk
     username: dbuser
     password: 12345
   jpa:

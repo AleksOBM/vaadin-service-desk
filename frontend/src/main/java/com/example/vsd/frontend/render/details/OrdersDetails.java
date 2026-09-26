@@ -21,6 +21,11 @@ public class OrdersDetails extends FormLayout {
 	public OrdersDetails() {
 		addClassName("order-details");
 
+		Stream.of(agentField, daysCountField, startLineField, firstControlLineField,
+						secondControlLineField, deadLineField)
+				.forEach(field -> field.getStyle()
+						.set("--vaadin-input-field-value-font-size", "13px"));
+
 		Stream.of(descriptionField, startLineField, firstControlLineField,
 						secondControlLineField, daysCountField, deadLineField, agentField)
 				.forEach(field -> {
