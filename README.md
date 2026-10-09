@@ -57,13 +57,13 @@
 **1. Склонировать проект**
 
 ```bash
-git clone <URL_репозитория>
+git clone https://github.com/AleksOBM/vaadin-service-desk.git
 ```
 
 **2. Перейти в корень проекта**
 
 ```bash
-cd <имя_проекта>
+cd vaadin-service-desk
 ```
 
 **3. Запуск**
@@ -81,19 +81,25 @@ docker compose up --build -d
 
 **5. Остановка**
 
-Без сохранения данных
-
-```bash
-docker compose down -v
-```
-
 С сохранением данных
 
 ```bash
 docker compose down
 ```
 
-**6. Полное удаление**
+Без сохранения данных
+
+```bash
+docker compose down -v
+```
+
+**6. Повторный запуск**
+
+```bash
+docker compose up -d
+```
+
+**7. Полное удаление**
 
 ```bash
 docker compose down -v --rmi all
