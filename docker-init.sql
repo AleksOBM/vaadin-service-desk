@@ -1,1 +1,3 @@
-CREATE DATABASE "service-desk";
+\c "service-desk"
+CREATE SCHEMA IF NOT EXISTS sd;
+GRANT ALL PRIVILEGES ON SCHEMA sd TO dbuser;
