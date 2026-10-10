@@ -3,7 +3,6 @@ package com.example.vsd.frontend.render.view;
 import com.example.vsd.frontend.render.dialog.DeleteDialog;
 import com.example.vsd.frontend.grpc.client.RecycleService;
 import com.example.vsd.frontend.model.BaseEntity;
-import com.example.vsd.frontend.service.SessionInitService;
 import com.example.vsd.frontend.render.template.BaseView;
 import com.example.vsd.frontend.render.notification.NotificationSupport;
 import com.vaadin.flow.component.grid.Grid;
@@ -36,16 +35,14 @@ import java.util.List;
 public class RecycleView extends BaseView {
 
     RecycleService recycleService;
-    SessionInitService sessionService;
     Grid<BaseEntity> grid = new Grid<>();
     DeleteDialog deleteDialog = new DeleteDialog();
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     @Autowired
-    public RecycleView(RecycleService recycleService, SessionInitService sessionService) {
+    public RecycleView(RecycleService recycleService) {
         super("Корзина");
         this.recycleService = recycleService;
-        this.sessionService = sessionService;
         addClassName("recycle-view");
         configureView();
         add(getRecycleGrid());
@@ -146,8 +143,8 @@ public class RecycleView extends BaseView {
         try {
             recycleService.deleteForever(entity);
         } catch (Exception e) {
-            log.error("Ошибка при попытке удаления объекта {}, объект еще используется. Session ID={}",
-                    entity.getServiceDeskNumber(), sessionService.getSessionId()
+            log.error("Ошибка при попытке удаления объекта {}, объект еще используется.",
+                    entity.getServiceDeskNumber()
             );
             NotificationSupport.showError("Этот объект еще используется.");
             getGridData();

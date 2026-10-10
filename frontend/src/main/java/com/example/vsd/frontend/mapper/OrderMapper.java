@@ -5,6 +5,7 @@ import com.example.vsd.frontend.model.Client;
 import com.example.vsd.frontend.model.Order;
 import com.example.vsd.frontend.model.OrderStatus;
 import com.example.vsd.grpc.messages.OrderProto;
+import com.example.vsd.grpc.messages.OrderStatusProto;
 import com.example.vsd.serialization.model.EntityType;
 import com.example.vsd.serialization.timestamp.TimestampUtils;
 import lombok.NonNull;
@@ -14,7 +15,7 @@ import lombok.experimental.UtilityClass;
 public class OrderMapper {
 
 	public OrderProto toCreatedProto(@NonNull Order order) {
-		OrderProto.Builder builder = OrderProto.newBuilder()
+		OrderProto.Builder builder =  OrderProto.newBuilder()
 				.setName(order.getName())
 				.setDescription(order.getDescription())
 				.setStartLine(TimestampUtils.toDate(order.getStartLine()))
@@ -23,7 +24,8 @@ public class OrderMapper {
 				.setAgent(AgentMapper.toProto(order.getAgent()))
 				.setDeleted(false);
 
-		if (order.getStatus() == OrderStatus.COMPLETED) {
+		if (order.isCompleted()) {
+			builder.setStatus(OrderStatusProto.COMPLETED);
 			builder.setCompletedDate(TimestampUtils.toTimestamp(order.getCompletedDate()));
 		}
 
@@ -34,25 +36,34 @@ public class OrderMapper {
 		if (order.getId() == null) {
 			throw new IllegalArgumentException("Order id cannot be null");
 		}
+
 		OrderProto.Builder builder = OrderProto.newBuilder()
+				.setId(order.getId());
 
-				.setId(order.getId())
-				.setName(order.getName() == null
-						? null : order.getName())
-				.setDescription(order.getDescription() == null
-						? null : order.getDescription())
-				.setStartLine(order.getStartLine() == null
-						? null : TimestampUtils.toDate(order.getStartLine()))
-				.setDeadLine(order.getDeadLine() == null
-						? null : TimestampUtils.toDate(order.getDeadLine()))
-				.setClient(order.getClient() == null
-						? null : ClientMapper.toProto(order.getClient()))
-				.setAgent(order.getAgent() == null
-						? null : AgentMapper.toProto(order.getAgent()))
-				.setDeleted(false);
-
+		if (order.getName() != null) {
+			builder.setName(order.getName());
+		}
+		if (order.getDescription() != null) {
+			builder.setDescription(order.getDescription());
+		}
+		if (order.getStartLine() != null) {
+			builder.setStartLine(TimestampUtils.toDate(order.getStartLine()));
+		}
+		if (order.getDeadLine() != null) {
+			builder.setDeadLine(TimestampUtils.toDate(order.getDeadLine()));
+		}
 		if (order.getCompletedDate() != null) {
 			builder.setCompletedDate(TimestampUtils.toTimestamp(order.getCompletedDate()));
+		}
+		if (order.getStatus().equals(OrderStatus.COMPLETED)) {
+			builder.setStatus(OrderStatusProto.COMPLETED);
+		}
+
+		if (order.getClient() != null) {
+			builder.setClient(ClientMapper.toProto(order.getClient()));
+		}
+		if (order.getAgent() != null) {
+			builder.setAgent(AgentMapper.toProto(order.getAgent()));
 		}
 
 		return builder.build();

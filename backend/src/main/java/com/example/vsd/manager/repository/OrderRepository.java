@@ -19,7 +19,9 @@ public interface OrderRepository extends
 			where o.deleted = false
 			and(
 			lower(o.serviceDeskNumber) like lower(concat('%', :text, '%')) or
-			lower(o.name) like lower(concat('%', :text, '%')))
+			lower(o.name) like lower(concat('%', :text, '%')) or
+			lower(o.description) like lower(concat('%', :text, '%')) or
+			lower(o.agent.name) like lower(concat('%', :text, '%')))
 			""")
 	List<Order> findOrders(String text);
 

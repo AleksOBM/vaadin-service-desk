@@ -42,12 +42,12 @@ public class Order extends BaseEntity {
 
 	OrderStatus status;
 
-	public boolean getCompleted() {
+	public boolean isCompleted() {
 		return status == OrderStatus.COMPLETED;
 	}
 
-	public void setCompleted(boolean status) {
-		if (status) {
+	public void setCompleted(boolean completed) {
+		if (completed) {
 			setCompletedDate(LocalDateTime.now());
 			setStatus(OrderStatus.COMPLETED);
 		} else {

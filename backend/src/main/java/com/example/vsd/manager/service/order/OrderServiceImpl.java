@@ -20,6 +20,7 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.List;
 
@@ -109,6 +110,10 @@ public class OrderServiceImpl implements OrderService {
 		order.setClient(client);
 		order.setAgent(agent);
 
+		if (proto.hasStatus() && proto.getStatus().equals(COMPLETED)) {
+			order.setCompletedDate(TimestampUtils.toLocalDateTime(proto.getCompletedDate()));
+		}
+
 		return OrderMapper.toProto(
 				orderRepository.save(order),
 				OrderGetData.builder()
@@ -147,11 +152,23 @@ public class OrderServiceImpl implements OrderService {
 		Client client = clientId == null ? null : clientRepository.findById(clientId).orElseThrow(
 				() -> new IllegalStateException("Клиент с id=%s не найден.".formatted(clientId)));
 
+		LocalDateTime completedDate;
+		if (proto.hasCompletedDate()) {
+			completedDate = TimestampUtils.toLocalDateTime(proto.getCompletedDate());
+		} else {
+			if (proto.hasStatus() && proto.getStatus() == OrderStatusProto.COMPLETED) {
+				completedDate = null;
+			} else {
+				completedDate = oldOrder.getCompletedDate();
+			}
+		}
+
 		var orderData = OrderUpdateData.builder()
 				.name(proto.getName())
 				.description(proto.getDescription())
 				.startLine(startLine)
 				.deadLine(deadLine)
+				.completedDate(completedDate)
 				.client(client)
 				.agent(agent)
 				.build();
@@ -262,20 +279,20 @@ public class OrderServiceImpl implements OrderService {
 				request.getId(),
 				request.getName(),
 				request.getDescription(),
-				request.getStartLine(),
-				request.getDeadLine(),
-				request.getFirstControlLine(),
-				request.getSecondControlLine(),
+				request.hasStartLine() ? TimestampUtils.toLocalDate(request.getStartLine()) : null,
+				request.hasDeadLine() ? TimestampUtils.toLocalDate(request.getDeadLine()) : null,
+				request.hasFirstControlLine() ? TimestampUtils.toLocalDate(request.getFirstControlLine()) : null,
+				request.hasSecondControlLine() ? TimestampUtils.toLocalDate(request.getSecondControlLine()) : null,
 				request.getDaysCount(),
-				request.getCompletedDate(),
+				request.hasCompletedDate() ? TimestampUtils.toLocalDateTime(request.getCompletedDate()) : null,
 				request.getStatus(),
 				request.getClient().getId(),
 				request.getClient().getName(),
 				request.getAgent().getId(),
 				request.getAgent().getName(),
 				request.getServiceDeskNumber(),
-				request.getCreationDate(),
-				request.getLastUpdated(),
+				request.hasCreationDate() ? TimestampUtils.toLocalDate(request.getCreationDate()) : null,
+				request.hasLastUpdated() ? TimestampUtils.toLocalDate(request.getLastUpdated()) : null,
 				request.getDeleted()
 		);
 	}

@@ -71,8 +71,7 @@ public class OrderMapper {
 						? data.startLine() : oldOrder.getStartLine())
 				.deadLine(data.hasDeadLine()
 						? data.deadLine() : oldOrder.getDeadLine())
-				.completedDate(data.hasCompletedDate() ?
-						data.completedDate() : oldOrder.getCompletedDate())
+				.completedDate(data.completedDate())
 				.agent(data.hasAgent() ? data.agent() : oldOrder.getAgent())
 				.client(data.hasClient() ? data.client() : oldOrder.getClient())
 

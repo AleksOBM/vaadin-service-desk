@@ -33,10 +33,6 @@ public record OrderUpdateData(
 		return deadLine != null;
 	}
 
-	public boolean hasCompletedDate() {
-		return completedDate != null;
-	}
-
 	public boolean hasClient() {
 		return client != null;
 	}

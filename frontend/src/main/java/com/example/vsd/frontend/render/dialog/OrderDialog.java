@@ -2,6 +2,7 @@ package com.example.vsd.frontend.render.dialog;
 
 import com.example.vsd.frontend.model.Agent;
 import com.example.vsd.frontend.model.Client;
+import com.example.vsd.frontend.model.Order;
 import com.example.vsd.frontend.render.template.BaseDialog;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -9,6 +10,7 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
 
 import java.util.Collection;
 
@@ -23,7 +25,8 @@ public class OrderDialog extends BaseDialog.EntityDialog {
     private final ComboBox<Agent> agent = new ComboBox<>("Сотрудник");
     private final DatePicker startLine = new DatePicker("Дата начала");
     private final DatePicker deadLine = new DatePicker("Дедлайн");
-    private final Checkbox completed = new Checkbox("Отметка о выполнении");
+
+    private final Checkbox completedCheckbox = new Checkbox("Отметка о выполнении");
 
     public OrderDialog(Collection<Client> clients, Collection<Agent> agents) {
         this.clients = clients;
@@ -56,7 +59,15 @@ public class OrderDialog extends BaseDialog.EntityDialog {
                 agent,
                 startLine,
                 deadLine,
-                completed
+                completedCheckbox
         );
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void bind(Binder<?> binder) {
+        Binder<Order> b = (Binder<Order>) binder;
+        b.forField(completedCheckbox)
+                .bind(Order::isCompleted, Order::setCompleted);
     }
 }
