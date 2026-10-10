@@ -39,11 +39,11 @@
 Взаимодействие модулей между собой осуществляется по gRPC (HTTP-2)
 
 ### Статусы светофоров (Color-coded statuses)
-- <font color="#4a6fa5">Синий</font> - Новая заявка (NEW)
-- <font color="#4a8f5b">Зеленый</font> - Пришло время начать выполнение (IN PROGRESS)
-- <font color="#b8952e">Желтый</font> - Пришло время проконтролировать начальную стадию (FIRST CONTROL)
-- <font color="#a94a4a">Красный</font> - Пришло время проконтролировать завершающую стадию (SECOND CONTROL)
-- <font color="#7a7a7a">Серый</font> - Работа по заявке окончена (COMPLETED)
+- ![Синий](https://img.shields.io/badge/-Синий-4a6fa5) Новая заявка (NEW)
+- ![Зеленый](https://img.shields.io/badge/-Зеленый-4a8f5b) Пришло время начать выполнение (IN PROGRESS)
+- ![Желтый](https://img.shields.io/badge/-Желтый-b8952e) Пришло время проконтролировать начальную стадию (FIRST CONTROL)
+- ![Красный](https://img.shields.io/badge/-Красный-a94a4a) Пришло время проконтролировать завершающую стадию (SECOND CONTROL)
+- ![Серый](https://img.shields.io/badge/-Серый-7a7a7a) Работа по заявке окончена (COMPLETED)
 
 ### Требования для запуска (Environmental Requirements)
 Перед началом убедитесь, что установлено:
