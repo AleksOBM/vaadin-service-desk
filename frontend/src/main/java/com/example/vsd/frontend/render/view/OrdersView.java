@@ -138,11 +138,11 @@ public class OrdersView extends BaseView {
 			Icon progressPoint = VaadinIcon.CIRCLE.create();
 			OrderStatus status = order.getStatus();
 			switch (status) {
-				case NEW -> progressPoint.setColor("blue");
-				case IN_PROGRESS -> progressPoint.setColor("green");
-				case FIRST_CONTROL -> progressPoint.setColor("yellow");
-				case SECOND_CONTROL -> progressPoint.setColor("red");
-				case COMPLETED -> progressPoint.setColor("gray");
+				case NEW -> progressPoint.setColor("#4a6fa5");
+				case IN_PROGRESS -> progressPoint.setColor("#4a8f5b");
+				case FIRST_CONTROL -> progressPoint.setColor("#b8952e");
+				case SECOND_CONTROL -> progressPoint.setColor("#a94a4a");
+				case COMPLETED -> progressPoint.setColor("#7a7a7a");
 			}
 
 			Span name = new Span(order.getServiceDeskNumber());
