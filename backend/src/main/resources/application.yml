@@ -1,9 +1,4 @@
 spring:
-  grpc:
-    server:
-      port: 9091
-      health:
-        enabled: true
   application:
     name: vsd-backend
   main:
@@ -12,24 +7,41 @@ spring:
     ansi:
       enabled: ALWAYS
   jackson:
-    serialization.INDENT_OUTPUT: true
-  sql:
-    init:
-      mode: ALWAYS
+    serialization:
+      INDENT_OUTPUT: true
+
+  grpc:
+    server:
+      port: 9091
+      health:
+        enabled: true
+
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/service-desk?currentSchema=sd
-    username: dbuser
-    password: 12345
+    username: ${DB_USER:dbuser}
+    password: ${DB_PASSWORD:12345}
+
   jpa:
     hibernate:
       ddl-auto: validate
+#    show-sql: true
+    properties:
+      hibernate:
+        default_schema: sd
+#        format_sql: true
 
-hibernate:
-  default-schema: sd
-  show-sql: true
-  format-sql: true
-  enable-lazy-load-no-trans: true
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    schemas: sd
+    create-schemas: true
+    baseline-on-migrate: true
+    baseline-version: 0
+
+  sql:
+    init:
+      mode: never
 
 logging:
   level:

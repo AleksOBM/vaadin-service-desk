@@ -5,6 +5,7 @@
 ![Static Badge](https://img.shields.io/badge/Vaadin-25.2.8-blue)
 ![Static Badge](https://img.shields.io/badge/PostgreSQL-17-blue)
 ![Static Badge](https://img.shields.io/badge/Hibernate-4e7a62)
+![Static Badge](https://img.shields.io/badge/Flyway-CC0202)
 ![Static Badge](https://img.shields.io/badge/Protobuf-blue)
 ![Static Badge](https://img.shields.io/badge/gRPC-4e7a62)
 ![Static Badge](https://img.shields.io/badge/Maven-orange)
