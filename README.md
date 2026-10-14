@@ -10,7 +10,6 @@
 ![Static Badge](https://img.shields.io/badge/gRPC-4e7a62)
 ![Static Badge](https://img.shields.io/badge/Maven-orange)
 ![Static Badge](https://img.shields.io/badge/Docker-blue)
-![Static Badge](https://img.shields.io/badge/Microservice-red)
 ![Static Badge](https://img.shields.io/badge/Crossplatform-8512cb)
 
 Это приложение для работы с базой данных небольшой компании, занимающейся обслуживанием заявок клиентов.
