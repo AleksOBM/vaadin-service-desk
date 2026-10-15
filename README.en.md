@@ -24,12 +24,18 @@ Distributed web application SPA + API for managing orders, clients, employees, a
 
 ### UI screenshots
 
+<details>
+
+<summary>Look</summary>
+
 <img alt="1.png" src=".img/1.png" width="600"/>
 <img alt="1.1.png" src=".img/1.1.png" width="600"/>
 <img alt="2.png" src=".img/2.png" width="600"/>
 <img alt="3.png" src=".img/3.png" width="600"/>
 <img alt="4.png" src=".img/4.png" width="600"/>
 <img alt="5.png" src=".img/5.png" width="600"/>
+
+</details>
 
 ### Main functions
 Only the checked ones have been implemented
