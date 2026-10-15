@@ -12,7 +12,13 @@
 ![Static Badge](https://img.shields.io/badge/Docker-blue)
 ![Static Badge](https://img.shields.io/badge/Crossplatform-8512cb)
 
-Это приложение для работы с базой данных небольшой компании, занимающейся обслуживанием заявок клиентов.
+<span>
+Русский | <a href="./README.en.md">English</a>
+</span>
+
+Распределённое веб-приложение SPA + API для учёта заказов, клиентов, сотрудников, а также осуществления трёхступенчатого контроля дедлайнов.
+
+### Скриншоты пользовательского интерфейса
 
 <img alt="1.png" src=".img/1.png" width="600"/>
 <img alt="1.1.png" src=".img/1.1.png" width="600"/>
@@ -21,7 +27,7 @@
 <img alt="4.png" src=".img/4.png" width="600"/>
 <img alt="5.png" src=".img/5.png" width="600"/>
 
-### Основные функции (Main functions)
+### Основные функции
 Реализованы только отмеченные
 - [x] Учет сотрудников
 - [x] Учет клиентов
@@ -33,20 +39,20 @@
 - [ ] Функция отправки оповещений по электронной почте при создании новой заявки
 - [ ] Функция создания новой заявки с помощью письма электронной почты
 
-### Модули (Modules)
+### Модули
 - Backend (Hibernate, Postgres)
 - Frontend (Vaadin UI)
 
 Взаимодействие модулей между собой осуществляется по gRPC (HTTP-2)
 
-### Статусы светофоров (Color-coded statuses)
+### Статусы светофоров
 - ![Синий](https://img.shields.io/badge/-Синий-4a6fa5) Новая заявка (NEW)
 - ![Зеленый](https://img.shields.io/badge/-Зеленый-4a8f5b) Пришло время начать выполнение (IN PROGRESS)
 - ![Желтый](https://img.shields.io/badge/-Желтый-b8952e) Пришло время проконтролировать начальную стадию (FIRST CONTROL)
 - ![Красный](https://img.shields.io/badge/-Красный-a94a4a) Пришло время проконтролировать завершающую стадию (SECOND CONTROL)
 - ![Серый](https://img.shields.io/badge/-Серый-7a7a7a) Работа по заявке окончена (COMPLETED)
 
-### Требования для запуска (Environmental Requirements)
+### Требования для запуска
 Перед началом убедитесь, что установлено:
 
 | Инструмент     | Версия                            | Проверка               |
@@ -58,7 +64,7 @@
 | Node.js        | 20+ (для локальной сборки Vaadin) | node -v                |
 | Git            | любая                             | git --version          |
 
-### Запуск приложения на локальной машине (Running the Application)
+### Запуск приложения на локальной машине
 
 Откройте терминал и выполните команды для запуска приложения.
 
@@ -133,7 +139,7 @@ mindmap
       🌐/dashboard
 ```
 
-### gRPC эндпоинты бэкенда (Backend gRPC endpoints)
+### gRPC эндпоинты бэкенда
 ```mermaid
 %%{init: { 'mindmap': { 'maxNodeWidth': 500 } }}%%
 mindmap
@@ -166,6 +172,6 @@ mindmap
         getAllOrders
 ```
 
-### Схема базы данных (Database map)
+### Схема базы данных
 
 <img alt="db_map.png" src=".img/db_map.png" width="500"/>
