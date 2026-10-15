@@ -12,9 +12,13 @@
 ![Static Badge](https://img.shields.io/badge/Docker-blue)
 ![Static Badge](https://img.shields.io/badge/Crossplatform-8512cb)
 
+---
+
 <span>
 <a href="./README.md">Русский</a> | English
 </span>
+
+---
 
 Distributed web application SPA + API for managing orders, clients, employees, as well as implementing three-stage deadline control.
 

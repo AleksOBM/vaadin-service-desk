@@ -12,9 +12,13 @@
 ![Static Badge](https://img.shields.io/badge/Docker-blue)
 ![Static Badge](https://img.shields.io/badge/Crossplatform-8512cb)
 
+---
+
 <span>
 Русский | <a href="./README.en.md">English</a>
 </span>
+
+---
 
 Распределённое веб-приложение SPA + API для учёта заказов, клиентов, сотрудников, а также осуществления трёхступенчатого контроля дедлайнов.
 
