@@ -4,8 +4,8 @@ import com.example.vsd.grpc.services.admin.AdminAgentControllerGrpc.AdminAgentCo
 import com.example.vsd.grpc.services.admin.AdminClientControllerGrpc.AdminClientControllerBlockingStub;
 import com.example.vsd.grpc.services.admin.AdminOrderControllerGrpc.AdminOrderControllerBlockingStub;
 import com.example.vsd.grpc.services.admin.AdminRecycleControllerGrpc.AdminRecycleControllerBlockingStub;
-import com.example.vsd.grpc.services.user.UserControllerGrpc.UserControllerBlockingStub;
 import com.example.vsd.grpc.services.free.FreeControllerGrpc.FreeControllerBlockingStub;
+import com.example.vsd.grpc.services.user.UserControllerGrpc.UserControllerBlockingStub;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.component.page.ColorScheme;
@@ -30,13 +30,13 @@ import org.springframework.grpc.client.ImportGrpcClients;
 @ImportGrpcClients(
 		target = "backend-service",
 		types = {
-		AdminAgentControllerBlockingStub.class,
-		AdminClientControllerBlockingStub.class,
-		AdminOrderControllerBlockingStub.class,
-		AdminRecycleControllerBlockingStub.class,
-		UserControllerBlockingStub.class,
-		FreeControllerBlockingStub.class
-})
+				AdminAgentControllerBlockingStub.class,
+				AdminClientControllerBlockingStub.class,
+				AdminOrderControllerBlockingStub.class,
+				AdminRecycleControllerBlockingStub.class,
+				UserControllerBlockingStub.class,
+				FreeControllerBlockingStub.class
+		})
 public class ServiceDeskFrontend implements AppShellConfigurator {
 	static void main(String[] args) {
 		SpringApplication.run(ServiceDeskFrontend.class, args);

@@ -17,6 +17,8 @@ import java.util.function.Consumer;
 public class BaseDialog<T> extends Dialog {
 
 	private final Button saveButton = new Button("Сохранить");
+
+	@SuppressWarnings("FieldCanBeLocal")
 	private final Button cancelButton = new Button("Отмена");
 
 	private final BeanValidationBinder<T> binder;
@@ -78,4 +80,3 @@ public class BaseDialog<T> extends Dialog {
 		}
 	}
 }
-

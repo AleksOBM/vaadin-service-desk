@@ -16,37 +16,37 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PROTECTED)
 public class BaseView extends VerticalLayout {
 
-    TextField filterText = new TextField();
-    Button createButton = new Button();
-    Button updateButton = new Button();
-    Button deleteButton = new Button();
-    int entitiesCount;
+	TextField filterText = new TextField();
+	Button createButton = new Button();
+	Button updateButton = new Button();
+	Button deleteButton = new Button();
+	int entitiesCount;
 
-    public BaseView(String title) {
-        filterText.setPlaceholder("Поиск");
-        filterText.setPrefixComponent(new Icon(VaadinIcon.SEARCH));
-        filterText.setClearButtonVisible(true);
-        filterText.setValueChangeMode(ValueChangeMode.LAZY);
+	public BaseView(String title) {
+		filterText.setPlaceholder("Поиск");
+		filterText.setPrefixComponent(new Icon(VaadinIcon.SEARCH));
+		filterText.setClearButtonVisible(true);
+		filterText.setValueChangeMode(ValueChangeMode.LAZY);
 
-        createButton.setTooltipText("Создать");
-        createButton.setIcon(new Icon(VaadinIcon.PLUS));
-        createButton.addThemeVariants(ButtonVariant.TERTIARY);
+		createButton.setTooltipText("Создать");
+		createButton.setIcon(new Icon(VaadinIcon.PLUS));
+		createButton.addThemeVariants(ButtonVariant.TERTIARY);
 
-        updateButton.setTooltipText("Редактировать");
-        updateButton.setIcon(new Icon(VaadinIcon.WRENCH));
-        updateButton.addThemeVariants(ButtonVariant.TERTIARY);
-        updateButton.setEnabled(false);
+		updateButton.setTooltipText("Редактировать");
+		updateButton.setIcon(new Icon(VaadinIcon.WRENCH));
+		updateButton.addThemeVariants(ButtonVariant.TERTIARY);
+		updateButton.setEnabled(false);
 
-        deleteButton.setTooltipText("Удалить");
-        deleteButton.setIcon(new Icon(VaadinIcon.TRASH));
-        deleteButton.addThemeVariants(ButtonVariant.TERTIARY);
-        deleteButton.setEnabled(false);
+		deleteButton.setTooltipText("Удалить");
+		deleteButton.setIcon(new Icon(VaadinIcon.TRASH));
+		deleteButton.addThemeVariants(ButtonVariant.TERTIARY);
+		deleteButton.setEnabled(false);
 
-        var toolbar = new BaseToolbar(title, filterText, createButton, updateButton, deleteButton);
-        toolbar.addClassName("toolbar");
-        setSpacing(false);
-        getStyle().setOverflow(Style.Overflow.HIDDEN);
+		var toolbar = new BaseToolbar(title, filterText, createButton, updateButton, deleteButton);
+		toolbar.addClassName("toolbar");
+		setSpacing(false);
+		getStyle().setOverflow(Style.Overflow.HIDDEN);
 
-        add(toolbar);
-    }
+		add(toolbar);
+	}
 }

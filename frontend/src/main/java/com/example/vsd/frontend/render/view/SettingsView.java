@@ -23,39 +23,36 @@ import com.vaadin.flow.spring.annotation.SpringComponent;
 @RouteScope
 public class SettingsView extends BaseView {
 
-    // todo: реализовать смену темы, добавить другие настройки
-    // todo: расставить подсказки TooltipText на кнопках
+	private final MailService mailService;
 
-    private final MailService mailService;
+	EmailField targetEmailField = new EmailField("Почта для отчетов");
+	EmailField homeEmailField = new EmailField("Почта для приложения");
+	TextField homeMailHostField = new TextField("Хост почты приложения");
+	TextField homeMailPortField = new TextField("Порт почты приложения");
+	PasswordField passwordField = new PasswordField("Пароль почты приложения");
+	Checkbox mailSmtpAuth = new Checkbox("mail smtp auth");
+	Checkbox mailSmtpStartTls = new Checkbox("mail smtp starttls");
+	VerticalLayout layout = new VerticalLayout();
+	MailEntity mailEntity;
 
-    EmailField targetEmailField = new EmailField("Почта для отчетов");
-    EmailField homeEmailField = new EmailField("Почта для приложения");
-    TextField homeMailHostField = new TextField("Хост почты приложения");
-    TextField homeMailPortField = new TextField("Порт почты приложения");
-    PasswordField passwordField = new PasswordField("Пароль почты приложения");
-    Checkbox mailSmtpAuth = new Checkbox("mail smtp auth");
-    Checkbox mailSmtpStartTls = new Checkbox("mail smtp starttls");
-    VerticalLayout layout = new VerticalLayout();
-    MailEntity mailEntity;
+	public SettingsView(MailService mailService) {
+		super("Настройки");
+		this.mailService = mailService;
+		super.filterText.setVisible(false);
+		createButton.setIcon(new Icon(VaadinIcon.ENTER_ARROW));
+		createButton.setEnabled(false);
+		updateButton.setEnabled(true);
+		deleteButton.setEnabled(true);
 
-    public SettingsView(MailService mailService) {
-        super("Настройки");
-        this.mailService = mailService;
-        super.filterText.setVisible(false);
-        createButton.setIcon(new Icon(VaadinIcon.ENTER_ARROW));
-        createButton.setEnabled(false);
-        updateButton.setEnabled(true);
-        deleteButton.setEnabled(true);
+		mailEntity = mailService.getMailEntity().orElse(MailEntity.builder().build());
 
-        mailEntity = mailService.getMailEntity().orElse(MailEntity.builder().build());
+		setValues();
+		configureLayout();
+		configureActions();
+		add(layout);
+	}
 
-        setValues();
-        configureLayout();
-        configureActions();
-        add(layout);
-    }
-
-    private void setValues() {
+	private void setValues() {
 //        if (mailEntity == null) {
 //            return;
 //        }
@@ -66,42 +63,42 @@ public class SettingsView extends BaseView {
 //        passwordField.setValue(mailEntity.getAppMailPassword());
 //        mailSmtpAuth.setValue(mailEntity.getMailSmtpAuth());
 //        mailSmtpStartTls.setValue(mailEntity.getMailSmtpStartTls());
-    }
+	}
 
-    private void configureActions() {
-        updateButton.addClickListener(event -> {
-            if (layout.isEnabled()) {
-                layout.setEnabled(false);
-            } else {
-                layout.setEnabled(true);
-                createButton.setEnabled(true);
-            }
-        });
+	private void configureActions() {
+		updateButton.addClickListener(event -> {
+			if (layout.isEnabled()) {
+				layout.setEnabled(false);
+			} else {
+				layout.setEnabled(true);
+				createButton.setEnabled(true);
+			}
+		});
 
-        createButton.addClickListener(event -> {
-            createEntity();
-            layout.setEnabled(false);
-        });
-    }
+		createButton.addClickListener(event -> {
+			createEntity();
+			layout.setEnabled(false);
+		});
+	}
 
-    private void configureLayout() {
-        layout.add(
-                targetEmailField,
-                homeEmailField,
-                homeMailHostField,
-                homeMailPortField,
-                passwordField,
-                mailSmtpAuth,
-                mailSmtpStartTls
-        );
+	private void configureLayout() {
+		layout.add(
+				targetEmailField,
+				homeEmailField,
+				homeMailHostField,
+				homeMailPortField,
+				passwordField,
+				mailSmtpAuth,
+				mailSmtpStartTls
+		);
 
-        layout.setEnabled(false);
-        layout.getStyle().setMarginTop("20px");
-        layout.setSizeFull();
-    }
+		layout.setEnabled(false);
+		layout.getStyle().setMarginTop("20px");
+		layout.setSizeFull();
+	}
 
-    private void createEntity() {
-        mailEntity = MailEntity.builder()
+	private void createEntity() {
+		mailEntity = MailEntity.builder()
 //                .id(1L)
 //                .appMail(homeEmailField.getValue())
 //                .targetMail(targetEmailField.getValue())
@@ -110,7 +107,7 @@ public class SettingsView extends BaseView {
 //                .appMailPort(homeMailPortField.getValue())
 //                .mailSmtpAuth(mailSmtpAuth.getValue())
 //                .mailSmtpStartTls(mailSmtpStartTls.getValue())
-                .build();
-        mailService.saveMailEntity(mailEntity);
-    }
+				.build();
+		mailService.saveMailEntity(mailEntity);
+	}
 }

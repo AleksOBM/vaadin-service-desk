@@ -16,40 +16,40 @@ import org.springframework.util.StreamUtils;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-@Route(value = "about",  layout = MainLayout.class)
+@Route(value = "about", layout = MainLayout.class)
 @RouteAlias(value = "", layout = MainLayout.class)
 @Menu(order = 7, icon = "vaadin:info-circle", title = "О программе")
 @SpringComponent
 @RouteScope
 public class AboutView extends BaseView {
 
-    public AboutView() {
-        super("О программе");
+	public AboutView() {
+		super("О программе");
 
-        super.createButton.setVisible(false);
-        super.updateButton.setVisible(false);
-        super.deleteButton.setVisible(false);
-        super.filterText.setVisible(false);
+		super.createButton.setVisible(false);
+		super.updateButton.setVisible(false);
+		super.deleteButton.setVisible(false);
+		super.filterText.setVisible(false);
 
-        Markdown markdown = new Markdown(getMarkdownText());
-        Scroller scroller = new Scroller(markdown);
-        scroller.setWidthFull();
+		Markdown markdown = new Markdown(getMarkdownText());
+		Scroller scroller = new Scroller(markdown);
+		scroller.setWidthFull();
 
-        add(scroller);
-    }
+		add(scroller);
+	}
 
-    private @NonNull String getMarkdownText() {
-        String fileName = "static/about.md";
-        try {
-            ClassPathResource resource = new ClassPathResource(fileName);
-            return StreamUtils.copyToString(
-                    resource.getInputStream(), StandardCharsets.UTF_8
-            );
-        } catch (IOException e) {
-            return """
-                    # Service desk
-                    <font color="#953734">Sorry, content not found.</font>
-                    """;
-        }
-    }
+	private @NonNull String getMarkdownText() {
+		String fileName = "static/about.md";
+		try {
+			ClassPathResource resource = new ClassPathResource(fileName);
+			return StreamUtils.copyToString(
+					resource.getInputStream(), StandardCharsets.UTF_8
+			);
+		} catch (IOException e) {
+			return """
+					# Service desk
+					<font color="#953734">Sorry, content not found.</font>
+					""";
+		}
+	}
 }

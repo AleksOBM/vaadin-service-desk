@@ -15,7 +15,7 @@ import lombok.experimental.UtilityClass;
 public class OrderMapper {
 
 	public OrderProto toCreatedProto(@NonNull Order order) {
-		OrderProto.Builder builder =  OrderProto.newBuilder()
+		OrderProto.Builder builder = OrderProto.newBuilder()
 				.setName(order.getName())
 				.setDescription(order.getDescription())
 				.setStartLine(TimestampUtils.toDate(order.getStartLine()))

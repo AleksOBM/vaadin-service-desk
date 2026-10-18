@@ -1,11 +1,11 @@
 package com.example.vsd.frontend.render.view;
 
-import com.example.vsd.frontend.render.dialog.ClientDialog;
 import com.example.vsd.frontend.grpc.client.ClientService;
 import com.example.vsd.frontend.model.Client;
+import com.example.vsd.frontend.render.dialog.ClientDialog;
+import com.example.vsd.frontend.render.notification.NotificationSupport;
 import com.example.vsd.frontend.render.template.BaseDialog;
 import com.example.vsd.frontend.render.template.BaseView;
-import com.example.vsd.frontend.render.notification.NotificationSupport;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;

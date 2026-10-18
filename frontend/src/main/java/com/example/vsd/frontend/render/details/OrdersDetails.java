@@ -4,12 +4,16 @@ import com.example.vsd.frontend.model.Order;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.jspecify.annotations.NonNull;
 
 import java.time.format.DateTimeFormatter;
 import java.util.stream.Stream;
 
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class OrdersDetails extends FormLayout {
+
 	TextArea descriptionField = new TextArea("Описание");
 	TextField startLineField = new TextField("Дата старта");
 	TextField firstControlLineField = new TextField("Контроль запуска");

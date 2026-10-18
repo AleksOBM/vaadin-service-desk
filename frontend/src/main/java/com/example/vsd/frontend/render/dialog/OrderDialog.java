@@ -11,63 +11,66 @@ import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 
 import java.util.Collection;
 
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class OrderDialog extends BaseDialog.EntityDialog {
-    private final Collection<Client> clients;
-    private final Collection<Agent> agents;
+	Collection<Client> clients;
+	Collection<Agent> agents;
 
-    // Элементы диалога байндятся по названиям полей класса
-    private final TextField name = new TextField("Название");
-    private final TextArea description = new TextArea("Описание");
-    private final ComboBox<Client> client = new ComboBox<>("Клиент");
-    private final ComboBox<Agent> agent = new ComboBox<>("Сотрудник");
-    private final DatePicker startLine = new DatePicker("Дата начала");
-    private final DatePicker deadLine = new DatePicker("Дедлайн");
+	// Элементы диалога байндятся по названиям полей класса
+	TextField name = new TextField("Название");
+	TextArea description = new TextArea("Описание");
+	ComboBox<Client> client = new ComboBox<>("Клиент");
+	ComboBox<Agent> agent = new ComboBox<>("Сотрудник");
+	DatePicker startLine = new DatePicker("Дата начала");
+	DatePicker deadLine = new DatePicker("Дедлайн");
 
-    private final Checkbox completedCheckbox = new Checkbox("Отметка о выполнении");
+	private final Checkbox completedCheckbox = new Checkbox("Отметка о выполнении");
 
-    public OrderDialog(Collection<Client> clients, Collection<Agent> agents) {
-        this.clients = clients;
-        this.agents = agents;
-        configureFields();
-    }
+	public OrderDialog(Collection<Client> clients, Collection<Agent> agents) {
+		this.clients = clients;
+		this.agents = agents;
+		configureFields();
+	}
 
-    private void configureFields() {
-        name.setRequired(true);
+	private void configureFields() {
+		name.setRequired(true);
 
-        startLine.setI18n(new DatePicker.DatePickerI18n().setFirstDayOfWeek(1));
-        startLine.setRequired(true);
+		startLine.setI18n(new DatePicker.DatePickerI18n().setFirstDayOfWeek(1));
+		startLine.setRequired(true);
 
-        deadLine.setI18n(new DatePicker.DatePickerI18n().setFirstDayOfWeek(1));
-        deadLine.setRequired(true);
+		deadLine.setI18n(new DatePicker.DatePickerI18n().setFirstDayOfWeek(1));
+		deadLine.setRequired(true);
 
-        client.setItems(clients);
-        client.setItemLabelGenerator(Client::getName);
-        client.setRequired(true);
+		client.setItems(clients);
+		client.setItemLabelGenerator(Client::getName);
+		client.setRequired(true);
 
-        agent.setItems(agents);
-        agent.setItemLabelGenerator(Agent::getName);
-        agent.setRequired(true);
-        description.setMinHeight(7, Unit.EM);
+		agent.setItems(agents);
+		agent.setItemLabelGenerator(Agent::getName);
+		agent.setRequired(true);
+		description.setMinHeight(7, Unit.EM);
 
-        add(
-                name,
-                description,
-                client,
-                agent,
-                startLine,
-                deadLine,
-                completedCheckbox
-        );
-    }
+		add(
+				name,
+				description,
+				client,
+				agent,
+				startLine,
+				deadLine,
+				completedCheckbox
+		);
+	}
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public void bind(Binder<?> binder) {
-        Binder<Order> b = (Binder<Order>) binder;
-        b.forField(completedCheckbox)
-                .bind(Order::isCompleted, Order::setCompleted);
-    }
+	@SuppressWarnings("unchecked")
+	@Override
+	public void bind(Binder<?> binder) {
+		Binder<Order> b = (Binder<Order>) binder;
+		b.forField(completedCheckbox)
+				.bind(Order::isCompleted, Order::setCompleted);
+	}
 }
