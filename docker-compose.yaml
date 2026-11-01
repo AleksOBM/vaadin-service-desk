@@ -1,7 +1,18 @@
 volumes:
   vsd_db_data:
+  vsd_serts:
 
 services:
+
+  cert-generator:
+    image: alpine/openssl:3.3.2
+    entrypoint: /bin/sh
+    volumes:
+      - vsd_serts:/certs
+      - ./gen-certs.sh:/gen-certs.sh:ro
+    command: /gen-certs.sh
+    restart: "no"
+
   db:
     image: postgres:17
     ports:
@@ -31,11 +42,17 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/service-desk
       - SPRING_DATASOURCE_USERNAME=dbuser
       - SPRING_DATASOURCE_PASSWORD=12345
+      - SSL_CERT_PATH=file:/app/.secrets/server.crt
+      - SSL_KEY_PATH=file:/app/.secrets/server.key
+    volumes:
+      - vsd_serts:/app/.secrets:ro
     depends_on:
       db:
         condition: service_healthy
+      cert-generator:
+        condition: service_completed_successfully
     healthcheck:
-      test: ["CMD", "/usr/local/bin/grpc_health_probe", "-addr=localhost:9091"]
+      test: ["CMD", "/usr/local/bin/grpc_health_probe", "-addr=localhost:9091", "-tls", "-tls-no-verify"]
       interval: 5s
       timeout: 3s
       retries: 20
@@ -51,9 +68,14 @@ services:
       - BACKEND_HOST=backend
       - BACKEND_PORT=9091
       - SERVER_PORT=8080
+      - SSL_CERT_PATH=file:/app/.secrets/server.crt
+    volumes:
+      - vsd_serts:/app/.secrets:ro
     depends_on:
       backend:
         condition: service_healthy
+      cert-generator:
+        condition: service_completed_successfully
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/"]
       interval: 10s

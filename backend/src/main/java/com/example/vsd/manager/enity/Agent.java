@@ -28,6 +28,9 @@ public class Agent extends BaseEntity implements TypedEntity {
     @Column(name = "agent_name", length = 50, nullable = false, unique = true)
     String name;
 
+    @NotBlank(message = "Пароль обязателен")
+    String passwordHash;
+
     @Builder.Default
     @OneToMany(mappedBy = "agent")
     List<Order> orders = new LinkedList<>();

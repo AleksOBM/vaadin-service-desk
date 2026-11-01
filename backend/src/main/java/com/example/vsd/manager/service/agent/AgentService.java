@@ -1,6 +1,8 @@
 package com.example.vsd.manager.service.agent;
 
 import com.example.vsd.grpc.messages.AgentProto;
+import com.example.vsd.grpc.messages.LoginRequest;
+import com.example.vsd.grpc.messages.LoginResponse;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -21,4 +23,6 @@ public interface AgentService {
 	void restoreAgent(Long agentId);
 
 	void setAgentDeleted(long agentId);
+
+	LoginResponse loginAgent(String username, String password);
 }

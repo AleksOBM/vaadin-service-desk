@@ -5,7 +5,7 @@ spring:
     log-startup-info: false
   output:
     ansi:
-      enabled: ALWAYS
+      enabled: always
   jackson:
     serialization:
       INDENT_OUTPUT: true
@@ -15,6 +15,9 @@ spring:
       port: 9091
       health:
         enabled: true
+      ssl:
+        enabled: true
+        bundle: "grpc-server"
 
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -43,8 +46,27 @@ spring:
     init:
       mode: never
 
+  ssl:
+    bundle:
+      pem:
+        grpc-server:
+          keystore:
+            certificate: "${SSL_CERT_PATH:file:./.secrets/server.crt}"
+            private-key: "${SSL_KEY_PATH:file:./.secrets/server.key}"
+
+security:
+  jwt:
+    secret: ${JWT_SECRET:wX5uIrf5Y7y47tUyftfVbFV5lfXyA/D+G4yh5le9m6c=}
+vsd:
+  admin:
+    password: ${ADMIN_PASSWORD:admin}
+
 logging:
   level:
     com.example.vsd.manager: debug
     org:
       springframework: info
+#      springframework.grpc: debug
+#    io.grpc: debug
+#    io.grpc.InternalChannelz: error
+#    io.grpc.netty.TcpMetrics: error

@@ -14,6 +14,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.RouteScope;
 import com.vaadin.flow.spring.annotation.SpringComponent;
+import jakarta.annotation.security.PermitAll;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +22,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 import java.util.List;
 
+@PermitAll
+@RouteScope
+@SpringComponent
 @Route("agents")
 @PageTitle("Agent List")
 @Menu(order = 4, icon = "vaadin:user", title = "Сотрудники")
-@SpringComponent
-@RouteScope
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AgentsView extends BaseView {
 

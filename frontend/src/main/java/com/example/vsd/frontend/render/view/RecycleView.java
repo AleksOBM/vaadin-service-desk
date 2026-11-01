@@ -17,6 +17,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.RouteScope;
 import com.vaadin.flow.spring.annotation.SpringComponent;
+import jakarta.annotation.security.RolesAllowed;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
@@ -25,12 +26,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-@Route("recycle")
-@PageTitle("Recycle")
-@Menu(order = 5, icon = "vaadin:recycle", title = "Корзина")
-@SpringComponent
 @Slf4j
 @RouteScope
+@SpringComponent
+@Route("recycle")
+@PageTitle("Recycle")
+@RolesAllowed("ROLE_ADMIN")
+@Menu(order = 5, icon = "vaadin:recycle", title = "Корзина")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class RecycleView extends BaseView {
 

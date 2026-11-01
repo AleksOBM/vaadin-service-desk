@@ -6,11 +6,12 @@
 ![Static Badge](https://img.shields.io/badge/PostgreSQL-17-blue)
 ![Static Badge](https://img.shields.io/badge/Hibernate-4e7a62)
 ![Static Badge](https://img.shields.io/badge/Flyway-CC0202)
-![Static Badge](https://img.shields.io/badge/Protobuf-blue)
 ![Static Badge](https://img.shields.io/badge/gRPC-4e7a62)
+![Static Badge](https://img.shields.io/badge/Protobuf-blue)
+![Static Badge](https://img.shields.io/badge/Spring_Security-487d1f)
+![Static Badge](https://img.shields.io/badge/SSL-8512cb)
 ![Static Badge](https://img.shields.io/badge/Maven-orange)
 ![Static Badge](https://img.shields.io/badge/Docker-blue)
-![Static Badge](https://img.shields.io/badge/Crossplatform-8512cb)
 
 ---
 
@@ -44,7 +45,7 @@
 - [x] Учет заявок от клиентов и какой сотрудник ведет заявку
 - [x] Корзина для удаленных элементов с возможностью восстановления
 - [x] Светофоры для обозначения статуса заказа
-- [ ] Роли админ / пользователь и форма входа 
+- [x] Роли админ / пользователь и форма входа 
 - [ ] Дашборд со статистикой заявок
 - [ ] Функция отправки оповещений по электронной почте при создании новой заявки
 - [ ] Функция создания новой заявки с помощью письма электронной почты

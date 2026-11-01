@@ -6,11 +6,12 @@
 ![Static Badge](https://img.shields.io/badge/PostgreSQL-17-blue)
 ![Static Badge](https://img.shields.io/badge/Hibernate-4e7a62)
 ![Static Badge](https://img.shields.io/badge/Flyway-CC0202)
-![Static Badge](https://img.shields.io/badge/Protobuf-blue)
 ![Static Badge](https://img.shields.io/badge/gRPC-4e7a62)
+![Static Badge](https://img.shields.io/badge/Protobuf-blue)
+![Static Badge](https://img.shields.io/badge/Spring_Security-487d1f)
+![Static Badge](https://img.shields.io/badge/SSL-8512cb)
 ![Static Badge](https://img.shields.io/badge/Maven-orange)
 ![Static Badge](https://img.shields.io/badge/Docker-blue)
-![Static Badge](https://img.shields.io/badge/Crossplatform-8512cb)
 
 ---
 
@@ -44,7 +45,7 @@ Only the checked ones have been implemented
 - [x] Management of client orders and which employee is handling the order
 - [x] Recycle bin for deleted items with the ability to restore
 - [x] Traffic lights to indicate order status
-- [ ] Admin / user roles and login form
+- [x] Admin / user roles and login form
 - [ ] Dashboard with orders statistics
 - [ ] Function for sending email notifications when a new order is created
 - [ ] Function for creating a new order via email

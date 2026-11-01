@@ -28,6 +28,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.RouteScope;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.theme.lumo.LumoIcon;
+import jakarta.annotation.security.PermitAll;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,11 +36,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 import java.util.List;
 
+@PermitAll
+@RouteScope
+@SpringComponent
 @Route("orders")
 @PageTitle("Order List")
 @Menu(order = 2, icon = "vaadin:calendar-briefcase", title = "Заявки")
-@SpringComponent
-@RouteScope
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class OrdersView extends BaseView {
 
@@ -201,7 +203,7 @@ public class OrdersView extends BaseView {
 						        ></vaadin-icon>
 						    </vaadin-button>
 						""")
-				.withFunction("toggleDetails",  // ← Другое имя, не handleClick
+				.withFunction("toggleDetails",
 						order -> {
 							grid.setDetailsVisible(order, !grid.isDetailsVisible(order));
 							grid.select(order);

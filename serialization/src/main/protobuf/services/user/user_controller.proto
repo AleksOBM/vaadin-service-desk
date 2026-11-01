@@ -13,4 +13,12 @@ option java_outer_classname = "UserControllerProto";
 service UserController {
   rpc saveOrder (sd.messages.OrderProto) returns (google.protobuf.Empty);
   rpc setOrderDeleted (google.protobuf.Int64Value) returns (google.protobuf.Empty);
+
+  rpc getAllClients (google.protobuf.Empty) returns (sd.messages.GetClientsResponse);
+  rpc getAllAgents (google.protobuf.Empty) returns (sd.messages.GetAgentsResponse);
+  rpc getAllOrders (google.protobuf.Empty) returns (sd.messages.GetOrdersResponse);
+
+  rpc findClients (google.protobuf.StringValue) returns (sd.messages.GetClientsResponse);
+  rpc findAgents (google.protobuf.StringValue) returns (sd.messages.GetAgentsResponse);
+  rpc findOrders (google.protobuf.StringValue) returns (sd.messages.GetOrdersResponse);
 }

@@ -4,7 +4,7 @@ import com.example.vsd.frontend.mapper.ClientMapper;
 import com.example.vsd.frontend.model.Client;
 import com.example.vsd.grpc.messages.GetClientsResponse;
 import com.example.vsd.grpc.services.admin.AdminClientControllerGrpc.AdminClientControllerBlockingStub;
-import com.example.vsd.grpc.services.free.FreeControllerGrpc.FreeControllerBlockingStub;
+import com.example.vsd.grpc.services.user.UserControllerGrpc.UserControllerBlockingStub;
 import com.google.protobuf.Empty;
 import com.google.protobuf.Int64Value;
 import com.google.protobuf.StringValue;
@@ -24,12 +24,12 @@ import java.util.List;
 public class ClientService {
 
 	AdminClientControllerBlockingStub adminStub;
-	FreeControllerBlockingStub freeStub;
+	UserControllerBlockingStub userStub;
 
 	public List<Client> getContent(String text) {
 		GetClientsResponse response;
 		try {
-			response = freeStub.findClients(StringValue.of(text));
+			response = userStub.findClients(StringValue.of(text));
 			log.debug("Found {} agents by text '{}'", text, response.getClientsList().size());
 		} catch (StatusRuntimeException e) {
 			log.error("Error while fetching agents by text '{}'", text, e);
@@ -52,7 +52,7 @@ public class ClientService {
 	public List<Client> getAllClients() {
 		GetClientsResponse response;
 		try {
-			response = freeStub.getAllClients(Empty.getDefaultInstance());
+			response = userStub.getAllClients(Empty.getDefaultInstance());
 			log.debug("Found {} clients", response.getClientsList().size());
 		} catch (StatusRuntimeException e) {
 			log.error("Error while fetching agents", e);

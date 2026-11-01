@@ -4,7 +4,7 @@ import com.example.vsd.frontend.mapper.AgentMapper;
 import com.example.vsd.frontend.model.Agent;
 import com.example.vsd.grpc.messages.GetAgentsResponse;
 import com.example.vsd.grpc.services.admin.AdminAgentControllerGrpc.AdminAgentControllerBlockingStub;
-import com.example.vsd.grpc.services.free.FreeControllerGrpc.FreeControllerBlockingStub;
+import com.example.vsd.grpc.services.user.UserControllerGrpc.UserControllerBlockingStub;
 import com.google.protobuf.Empty;
 import com.google.protobuf.Int64Value;
 import com.google.protobuf.StringValue;
@@ -24,12 +24,12 @@ import java.util.List;
 public class AgentService {
 
 	AdminAgentControllerBlockingStub adminStub;
-	FreeControllerBlockingStub freeStub;
+	UserControllerBlockingStub userStub;
 
 	public List<Agent> getContent(String text) {
 		GetAgentsResponse response;
 		try {
-			response = freeStub.findAgents(StringValue.of(text));
+			response = userStub.findAgents(StringValue.of(text));
 			log.debug("Found {} agents by text '{}'", text, response.getAgentsList().size());
 		} catch (StatusRuntimeException e) {
 			log.error("Error while fetching agents by text '{}'", text, e);
@@ -43,7 +43,7 @@ public class AgentService {
 	public List<Agent> getAllAgents() {
 		GetAgentsResponse response;
 		try {
-			response = freeStub.getAllAgents(Empty.getDefaultInstance());
+			response = userStub.getAllAgents(Empty.getDefaultInstance());
 			log.debug("All agents has getting success");
 		} catch (StatusRuntimeException e) {
 			log.error("Failed to get all agents", e);

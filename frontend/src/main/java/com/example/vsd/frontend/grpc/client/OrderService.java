@@ -4,7 +4,6 @@ import com.example.vsd.frontend.mapper.OrderMapper;
 import com.example.vsd.frontend.model.Order;
 import com.example.vsd.grpc.messages.GetOrdersResponse;
 import com.example.vsd.grpc.messages.OrderProto;
-import com.example.vsd.grpc.services.free.FreeControllerGrpc.FreeControllerBlockingStub;
 import com.example.vsd.grpc.services.user.UserControllerGrpc.UserControllerBlockingStub;
 import com.google.protobuf.Empty;
 import com.google.protobuf.Int64Value;
@@ -26,12 +25,11 @@ import java.util.List;
 public class OrderService {
 
 	UserControllerBlockingStub userStub;
-	FreeControllerBlockingStub freeStub;
 
 	public List<Order> getContent(String text) {
 		GetOrdersResponse response;
 		try {
-			response = freeStub.findOrders(StringValue.of(text));
+			response = userStub.findOrders(StringValue.of(text));
 			log.debug("Found {} orders by text '{}'", response.getOrdersList().size(), text);
 		} catch (StatusRuntimeException e) {
 			log.error("Error while fetching orders by text '{}'", text, e);
@@ -45,7 +43,7 @@ public class OrderService {
 	public List<Order> getAllOrders() {
 		GetOrdersResponse response;
 		try {
-			response = freeStub.getAllOrders(Empty.getDefaultInstance());
+			response = userStub.getAllOrders(Empty.getDefaultInstance());
 			log.debug("Found all orders");
 		} catch (StatusRuntimeException e) {
 			log.error("Error while fetching all orders", e);

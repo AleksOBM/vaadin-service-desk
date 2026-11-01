@@ -14,16 +14,18 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.RouteScope;
 import com.vaadin.flow.spring.annotation.SpringComponent;
+import jakarta.annotation.security.PermitAll;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Collection;
 
+@PermitAll
+@RouteScope
+@SpringComponent
 @Route("clients")
 @PageTitle("Client List")
 @Menu(order = 3, icon = "vaadin:user-star", title = "Клиенты")
-@SpringComponent
-@RouteScope
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ClientsView extends BaseView {
 

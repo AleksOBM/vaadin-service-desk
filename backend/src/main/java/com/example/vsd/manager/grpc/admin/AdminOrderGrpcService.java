@@ -1,6 +1,7 @@
-package com.example.vsd.manager.controller.admin;
+package com.example.vsd.manager.grpc.admin;
 
 import com.example.vsd.grpc.services.admin.AdminOrderControllerGrpc.AdminOrderControllerImplBase;
+import com.example.vsd.manager.security.AdminOnly;
 import com.example.vsd.manager.service.order.OrderServiceImpl;
 import com.google.protobuf.Empty;
 import com.google.protobuf.Int64Value;
@@ -15,13 +16,15 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.grpc.server.service.GrpcService;
 
 @Slf4j
+@AdminOnly
 @GrpcService
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class AdminOrderGrpcController extends AdminOrderControllerImplBase {
+public class AdminOrderGrpcService extends AdminOrderControllerImplBase {
 
 	OrderServiceImpl orderService;
 
+	@Override
 	public void restoreOrder(@NonNull Int64Value request,
 	                         StreamObserver<Empty> responseObserver) {
 		log.debug("""
@@ -45,6 +48,7 @@ public class AdminOrderGrpcController extends AdminOrderControllerImplBase {
 		}
 	}
 
+	@Override
 	public void deleteOrderPermanently(@NonNull Int64Value request,
 	                                   StreamObserver<Empty> responseObserver) {
 		log.debug("""

@@ -1,12 +1,30 @@
-server.port: ${SERVER_PORT:8080}
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    session:
+      persistent: false
 
 spring:
+  ssl:
+    bundle:
+      pem:
+        backend-trust: # Имя бандла
+          truststore:
+            certificate: "${SSL_CERT_PATH:file:./.secrets/server.crt}"
   grpc:
     client:
       channel:
         backend-service:
           target: static://${BACKEND_HOST:localhost}:${BACKEND_PORT:9091}
+          ssl:
+            enabled: true
+            bundle: "backend-trust" # Ссылка на имя бандла выше
+            # authority-override: localhost
 
 logging:
   level:
     com.example.vsd.frontend: debug
+#    com.vaadin.flow.server.auth: debug
+#    org.springframework.security: debug
+#    io.grpc: debug
+#    io.grpc.netty: debug
