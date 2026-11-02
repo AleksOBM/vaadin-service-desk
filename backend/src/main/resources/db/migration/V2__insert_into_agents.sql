@@ -1,7 +1,19 @@
-INSERT INTO agents (agent_name, creation_date, last_updated, deleted)
-VALUES  ('Чарльз Ксавьер', now(), now(), false),
-        ('Скотт Саммерс', now(), now(), false),
-        ('Роберт Дрейк', now(), now(), false),
-        ('Уоррен Уортингтон III', now(), now(), false),
-        ('Генри Маккой', now(), now(), false),
-        ('Джин Грей-Саммерс', now(), now(), false);
+INSERT INTO agents (agent_name, password_hash, creation_date, last_updated, deleted)
+VALUES  (   'Чарльз Ксавьер',
+            '$2a$12$eSB1BTHAObQ8kMOmLg.JaO4iOiIQBi1Ov8a/OZdNFnp3/NdMgSgpa',
+            now(), now(), false),
+        (   'Скотт Саммерс',
+            '$2a$12$aX7yCNTm9CCKbSYYaVJuY.aKp9633dQqyfN9L.kujgIMai3A0hXSC',
+            now(), now(), false),
+        (   'Роберт Дрейк',
+            '$2a$12$7ELdYJ4/bc/qGE6/4z24I.XcIJ27m.zgmKfSlVn186bKLcIxNpp3q',
+            now(), now(), false),
+        (   'Уоррен Уортингтон III',
+            '$2a$12$MGc5zdZRe2ZN.2iIZbopJ.Mrjot0KNuPfIx6CNXZD21uhMfDxFzLK',
+            now(), now(), false),
+        (   'Генри Маккой',
+            '$2a$12$sYgPBInsHi3mKqyO.Tm8ze2M20i9wCAn/sVXvm4H4MnyjGpbUXQIG',
+            now(), now(), false),
+        (   'Джин Грей-Саммерс',
+            '$2a$12$RTMu7FwGSMVlN4z1LL0G9emO7jljpphMLzusjb9QE4MbnVv/Abaly',
+            now(), now(), false);

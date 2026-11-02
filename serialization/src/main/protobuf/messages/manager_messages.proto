@@ -38,10 +38,11 @@ enum OrderStatusProto {
 message AgentProto {
   optional int64 id = 1;
   optional string name = 2;
-  optional string service_desk_number = 3;
-  optional google.protobuf.Timestamp creation_date = 4;
-  optional google.protobuf.Timestamp lastUpdated = 5;
-  optional bool deleted = 6;
+  optional string password = 3;
+  optional string service_desk_number = 4;
+  optional google.protobuf.Timestamp creation_date = 5;
+  optional google.protobuf.Timestamp lastUpdated = 6;
+  optional bool deleted = 7;
 }
 
 message ClientProto {
@@ -75,4 +76,15 @@ message GetOrdersResponse {
 
 message GetRecycleResponse {
   repeated BaseEntityProto recycles = 1;
+}
+
+message LoginRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  string access_token = 1;
+  int64 expires_in = 2;
+  repeated string authorities = 3;
 }

@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <properties>
-        <vaadin.version>25.2.8</vaadin.version>
+        <vaadin.version>25.2.9</vaadin.version>
     </properties>
 
     <dependencyManagement>
@@ -61,11 +61,6 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>org.parttio</groupId>
-            <artifactId>line-awesome</artifactId>
-            <version>2.1.0</version>
-        </dependency>
-        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
@@ -89,6 +84,21 @@
             <groupId>org.snakeyaml</groupId>
             <artifactId>snakeyaml-engine</artifactId>
             <version>3.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-census</artifactId>
+        </dependency>
+
+        <!-- Авторизация -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
         </dependency>
     </dependencies>
 

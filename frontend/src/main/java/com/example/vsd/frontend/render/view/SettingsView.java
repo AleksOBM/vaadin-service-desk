@@ -15,12 +15,15 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.RouteScope;
 import com.vaadin.flow.spring.annotation.SpringComponent;
+import jakarta.annotation.security.RolesAllowed;
 
+@RouteScope
+@SpringComponent
 @Route("settings")
 @PageTitle("Settings")
+@RolesAllowed("ROLE_ADMIN")
 @Menu(order = 6, icon = "vaadin:tools", title = "Настройки")
-@SpringComponent
-@RouteScope
+
 public class SettingsView extends BaseView {
 
 	private final MailService mailService;

@@ -37,4 +37,6 @@ public interface AgentRepository extends
 	boolean checkDeleted(@NonNull Long id);
 
 	boolean existsByName(String name);
+
+	Optional<Agent> findByNameAndDeletedFalse(String username);
 }

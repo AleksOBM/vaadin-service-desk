@@ -1,8 +1,9 @@
-package com.example.vsd.manager.controller.admin;
+package com.example.vsd.manager.grpc.admin;
 
 import com.example.vsd.grpc.messages.BaseEntityProto;
 import com.example.vsd.grpc.messages.GetRecycleResponse;
 import com.example.vsd.grpc.services.admin.AdminRecycleControllerGrpc.AdminRecycleControllerImplBase;
+import com.example.vsd.manager.security.AdminOnly;
 import com.example.vsd.manager.service.recycle.RecycleService;
 import com.google.protobuf.Empty;
 import com.google.protobuf.StringValue;
@@ -20,13 +21,15 @@ import java.util.Collection;
 import java.util.List;
 
 @Slf4j
+@AdminOnly
 @GrpcService
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class AdminRecycleGrpcController extends AdminRecycleControllerImplBase {
+public class AdminRecycleGrpcService extends AdminRecycleControllerImplBase {
 
 	RecycleService recycleService;
 
+	@Override
 	public void getFullRecycle(Empty request,
 	                           StreamObserver<GetRecycleResponse> responseObserver) {
 		log.debug("""
@@ -47,6 +50,7 @@ public class AdminRecycleGrpcController extends AdminRecycleControllerImplBase {
 		}
 	}
 
+	@Override
 	public void findRecycle(@NonNull StringValue request,
 	                        StreamObserver<GetRecycleResponse> responseObserver) {
 		log.debug("""

@@ -2,15 +2,17 @@
 
 ![Static Badge](https://img.shields.io/badge/Java-25-green)
 ![Static Badge](https://img.shields.io/badge/Spring_Boot-4.1.1-green)
-![Static Badge](https://img.shields.io/badge/Vaadin-25.2.8-blue)
+![Static Badge](https://img.shields.io/badge/Vaadin-25.2.9-blue)
 ![Static Badge](https://img.shields.io/badge/PostgreSQL-17-blue)
 ![Static Badge](https://img.shields.io/badge/Hibernate-4e7a62)
 ![Static Badge](https://img.shields.io/badge/Flyway-CC0202)
-![Static Badge](https://img.shields.io/badge/Protobuf-blue)
 ![Static Badge](https://img.shields.io/badge/gRPC-4e7a62)
+![Static Badge](https://img.shields.io/badge/Protobuf-blue)
+![Static Badge](https://img.shields.io/badge/Spring_Security-487d1f)
+![Static Badge](https://img.shields.io/badge/SSL-8512cb)
+![Static Badge](https://img.shields.io/badge/HTTPS-a54a4a)
 ![Static Badge](https://img.shields.io/badge/Maven-orange)
 ![Static Badge](https://img.shields.io/badge/Docker-blue)
-![Static Badge](https://img.shields.io/badge/Crossplatform-8512cb)
 
 ---
 
@@ -44,7 +46,7 @@ Only the checked ones have been implemented
 - [x] Management of client orders and which employee is handling the order
 - [x] Recycle bin for deleted items with the ability to restore
 - [x] Traffic lights to indicate order status
-- [ ] Admin / user roles and login form
+- [x] Admin / user roles and login form
 - [ ] Dashboard with orders statistics
 - [ ] Function for sending email notifications when a new order is created
 - [ ] Function for creating a new order via email
@@ -101,7 +103,7 @@ docker compose up --build -d
 
 **4. Usage**
 
-Open your browser at the page http://localhost:8080
+Open your browser at the page https://localhost:8080
 
 **5. Stop**
 
@@ -128,6 +130,18 @@ docker compose up -d
 ```bash
 docker compose down -v --rmi all
 ```
+
+### ⚠️ Browser Certificate Warning
+
+When you first open the page, the browser will display a **"Your connection is not private"** warning.
+
+**This is expected when running on a local network.**
+The project uses a self-signed certificate, which browsers do not trust by default.
+However, the traffic is still encrypted.
+
+**What to do:** click "Advanced" → "Proceed to localhost (unsafe)".
+
+For deployment on the public internet, a certificate from a trusted CA is used, and the warning will not appear.
 
 ### Frontend REST endpoints
 ```mermaid

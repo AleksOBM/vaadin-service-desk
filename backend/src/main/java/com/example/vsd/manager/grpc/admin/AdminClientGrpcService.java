@@ -1,7 +1,8 @@
-package com.example.vsd.manager.controller.admin;
+package com.example.vsd.manager.grpc.admin;
 
 import com.example.vsd.grpc.messages.ClientProto;
 import com.example.vsd.grpc.services.admin.AdminClientControllerGrpc.AdminClientControllerImplBase;
+import com.example.vsd.manager.security.AdminOnly;
 import com.example.vsd.manager.service.client.ClientService;
 import com.google.protobuf.Empty;
 import com.google.protobuf.Int64Value;
@@ -16,10 +17,11 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.grpc.server.service.GrpcService;
 
 @Slf4j
+@AdminOnly
 @GrpcService
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class AdminClientGrpcController extends AdminClientControllerImplBase {
+public class AdminClientGrpcService extends AdminClientControllerImplBase {
 
 	ClientService clientService;
 
@@ -97,6 +99,7 @@ public class AdminClientGrpcController extends AdminClientControllerImplBase {
 		}
 	}
 
+	@Override
 	public void setClientDeleted(@NonNull Int64Value request,
 	                             StreamObserver<Empty> responseObserver) {
 		log.debug("""

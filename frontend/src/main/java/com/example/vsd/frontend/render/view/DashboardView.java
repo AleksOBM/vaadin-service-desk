@@ -10,11 +10,17 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Menu;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.spring.annotation.RouteScope;
+import com.vaadin.flow.spring.annotation.SpringComponent;
+import jakarta.annotation.security.PermitAll;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 
+@PermitAll
+@RouteScope
+@SpringComponent
 @Route(value = "dashboard")
 @PageTitle("Dashboard")
 @Menu(order = 1, icon = "vaadin:dashboard", title = "Диаграмма")

@@ -1,11 +1,13 @@
-package com.example.vsd.manager.controller.free;
+package com.example.vsd.manager.grpc.user;
 
 import com.example.vsd.grpc.messages.*;
-import com.example.vsd.grpc.services.free.FreeControllerGrpc.FreeControllerImplBase;
+import com.example.vsd.grpc.services.user.UserControllerGrpc.UserControllerImplBase;
+import com.example.vsd.manager.security.AgentOrAdminOnly;
 import com.example.vsd.manager.service.agent.AgentService;
 import com.example.vsd.manager.service.client.ClientService;
 import com.example.vsd.manager.service.order.OrderService;
 import com.google.protobuf.Empty;
+import com.google.protobuf.Int64Value;
 import com.google.protobuf.StringValue;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
@@ -21,16 +23,61 @@ import java.util.List;
 
 @Slf4j
 @GrpcService
+@AgentOrAdminOnly
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class FreeGrpcController extends FreeControllerImplBase {
+public class UserGrpcService extends UserControllerImplBase {
 
-	ClientService clientService;
-	AgentService agentService;
 	OrderService orderService;
+	AgentService agentService;
+	ClientService clientService;
 
+	@Override
+	public void saveOrder(@NonNull OrderProto request,
+	                      StreamObserver<Empty> responseObserver) {
+
+		writeSaveOrderLog(request);
+
+		try {
+			orderService.saveOrder(request);
+			responseObserver.onNext(Empty.getDefaultInstance());
+			responseObserver.onCompleted();
+
+		} catch (Exception e) {
+			log.debug(e.getMessage(), e);
+			responseObserver.onError(
+					new StatusRuntimeException(Status.fromThrowable(e))
+			);
+		}
+	}
+
+	@Override
+	public void setOrderDeleted(@NonNull Int64Value request,
+	                            StreamObserver<Empty> responseObserver) {
+		log.debug("""
+						Получен gRPC запрос: setOrderDeleted
+						{
+							"id": {}
+						}""",
+				request.getValue()
+		);
+
+		try {
+			orderService.setOrderDeleted(request.getValue());
+			responseObserver.onNext(Empty.getDefaultInstance());
+			responseObserver.onCompleted();
+
+		} catch (Exception e) {
+			log.debug(e.getMessage(), e);
+			responseObserver.onError(
+					new StatusRuntimeException(Status.fromThrowable(e))
+			);
+		}
+	}
+
+	@Override
 	public void getAllClients(Empty request,
-	                       StreamObserver<GetClientsResponse> responseObserver) {
+	                          StreamObserver<GetClientsResponse> responseObserver) {
 		log.debug("""
 				Получен gRPC запрос: getClients""");
 
@@ -49,8 +96,9 @@ public class FreeGrpcController extends FreeControllerImplBase {
 		}
 	}
 
+	@Override
 	public void getAllAgents(Empty request,
-	                      StreamObserver<GetAgentsResponse> responseObserver) {
+	                         StreamObserver<GetAgentsResponse> responseObserver) {
 		log.debug("""
 				Получен gRPC запрос: getAgents""");
 
@@ -69,8 +117,9 @@ public class FreeGrpcController extends FreeControllerImplBase {
 		}
 	}
 
+	@Override
 	public void getAllOrders(Empty request,
-	                      StreamObserver<GetOrdersResponse> responseObserver) {
+	                         StreamObserver<GetOrdersResponse> responseObserver) {
 		log.debug("""
 				Получен gRPC запрос: getOrders""");
 
@@ -89,6 +138,7 @@ public class FreeGrpcController extends FreeControllerImplBase {
 		}
 	}
 
+	@Override
 	public void findClients(@NonNull StringValue request,
 	                        StreamObserver<GetClientsResponse> responseObserver) {
 		log.debug("""
@@ -112,6 +162,7 @@ public class FreeGrpcController extends FreeControllerImplBase {
 		}
 	}
 
+	@Override
 	public void findAgents(@NonNull StringValue request,
 	                       StreamObserver<GetAgentsResponse> responseObserver) {
 		log.debug("""
@@ -135,6 +186,7 @@ public class FreeGrpcController extends FreeControllerImplBase {
 		}
 	}
 
+	@Override
 	public void findOrders(@NonNull StringValue request,
 	                       StreamObserver<GetOrdersResponse> responseObserver) {
 		log.debug("""
@@ -156,6 +208,38 @@ public class FreeGrpcController extends FreeControllerImplBase {
 					new StatusRuntimeException(Status.fromThrowable(e))
 			);
 		}
+	}
+
+	private void writeSaveOrderLog(@NonNull OrderProto request) {
+		log.debug("""
+						Получен gRPC запрос: saveOrder
+						{
+							"id": {}
+							"name": "{}",
+							"description": "{}",
+							"startLine": "{}"
+							"deadLine": "{}"
+							"completedDate": "{}"
+							"client": {
+								"id": {},
+								"name": {}
+							},
+							"agent": {
+								"id": {},
+								"name": {}
+							}
+						}""",
+				request.getId(),
+				request.getName(),
+				request.getDescription(),
+				request.getStartLine(),
+				request.getDeadLine(),
+				request.getCompletedDate(),
+				request.getClient().getId(),
+				request.getClient().getName(),
+				request.getAgent().getId(),
+				request.getAgent().getName()
+		);
 	}
 
 }

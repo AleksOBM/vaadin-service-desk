@@ -1,7 +1,8 @@
-package com.example.vsd.manager.controller.admin;
+package com.example.vsd.manager.grpc.admin;
 
 import com.example.vsd.grpc.messages.AgentProto;
 import com.example.vsd.grpc.services.admin.AdminAgentControllerGrpc.AdminAgentControllerImplBase;
+import com.example.vsd.manager.security.AdminOnly;
 import com.example.vsd.manager.service.agent.AgentService;
 import com.google.protobuf.Empty;
 import com.google.protobuf.Int64Value;
@@ -16,10 +17,11 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.grpc.server.service.GrpcService;
 
 @Slf4j
+@AdminOnly
 @GrpcService
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class AdminAgentGrpcController extends AdminAgentControllerImplBase {
+public class AdminAgentGrpcService extends AdminAgentControllerImplBase {
 
 	AgentService agentService;
 
@@ -72,7 +74,8 @@ public class AdminAgentGrpcController extends AdminAgentControllerImplBase {
 	}
 
 	@Override
-	public void deleteAgentPermanently(@NonNull Int64Value request, StreamObserver<Empty> responseObserver) {
+	public void deleteAgentPermanently(@NonNull Int64Value request,
+	                                   StreamObserver<Empty> responseObserver) {
 
 		log.debug("""
 						Получен gRPC запрос: deleteAgentPermanently
@@ -95,6 +98,7 @@ public class AdminAgentGrpcController extends AdminAgentControllerImplBase {
 		}
 	}
 
+	@Override
 	public void setAgentDeleted(@NonNull Int64Value request,
 	                            StreamObserver<Empty> responseObserver) {
 		log.debug("""

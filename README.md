@@ -2,15 +2,17 @@
 
 ![Static Badge](https://img.shields.io/badge/Java-25-green)
 ![Static Badge](https://img.shields.io/badge/Spring_Boot-4.1.1-green)
-![Static Badge](https://img.shields.io/badge/Vaadin-25.2.8-blue)
+![Static Badge](https://img.shields.io/badge/Vaadin-25.2.9-blue)
 ![Static Badge](https://img.shields.io/badge/PostgreSQL-17-blue)
 ![Static Badge](https://img.shields.io/badge/Hibernate-4e7a62)
 ![Static Badge](https://img.shields.io/badge/Flyway-CC0202)
-![Static Badge](https://img.shields.io/badge/Protobuf-blue)
 ![Static Badge](https://img.shields.io/badge/gRPC-4e7a62)
+![Static Badge](https://img.shields.io/badge/Protobuf-blue)
+![Static Badge](https://img.shields.io/badge/Spring_Security-487d1f)
+![Static Badge](https://img.shields.io/badge/SSL-8512cb)
+![Static Badge](https://img.shields.io/badge/HTTPS-a54a4a)
 ![Static Badge](https://img.shields.io/badge/Maven-orange)
 ![Static Badge](https://img.shields.io/badge/Docker-blue)
-![Static Badge](https://img.shields.io/badge/Crossplatform-8512cb)
 
 ---
 
@@ -44,7 +46,7 @@
 - [x] Учет заявок от клиентов и какой сотрудник ведет заявку
 - [x] Корзина для удаленных элементов с возможностью восстановления
 - [x] Светофоры для обозначения статуса заказа
-- [ ] Роли админ / пользователь и форма входа 
+- [x] Роли админ / пользователь и форма входа 
 - [ ] Дашборд со статистикой заявок
 - [ ] Функция отправки оповещений по электронной почте при создании новой заявки
 - [ ] Функция создания новой заявки с помощью письма электронной почты
@@ -101,7 +103,7 @@ docker compose up --build -d
 
 **4. Использование**
 
-Откройте браузер на странице http://localhost:8080
+Откройте браузер на странице https://localhost:8080
 
 **5. Остановка**
 
@@ -128,6 +130,18 @@ docker compose up -d
 ```bash
 docker compose down -v --rmi all
 ```
+
+### ⚠️ Предупреждение браузера о сертификате
+
+При первом открытии страницы браузер покажет предупреждение **«Подключение не защищено»**.
+
+**Это нормально для работы в локальной сети.**  
+Проект использует самоподписанный сертификат, которому браузеры по умолчанию не доверяют.
+При этом трафик всё равно шифруется.
+
+**Что делать:** нажмите «Дополнительно» → «Перейти на localhost (небезопасно)».
+
+Для работы в глобальной сети необходимо использовать сертификат от доверенного CA, тогда предупреждения не будет.
 
 ### REST эндпоинты фронтенда
 ```mermaid
