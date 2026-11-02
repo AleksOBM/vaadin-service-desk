@@ -147,6 +147,8 @@ docker compose down -v --rmi all
 ```mermaid
 mindmap
   root((Frontend))
+    LoginView
+      🌐/login
     AboutView
       🌐/about
     AgentsView
@@ -187,13 +189,14 @@ mindmap
       🌐UserController
         saveOrder
         setOrderDeleted
-      🌐FreeController
         findAgents
         findClients
         findOrders
         getAllAgents
         getAllClients
         getAllOrders
+      🌐FreeController
+        login
 ```
 
 ### Схема базы данных

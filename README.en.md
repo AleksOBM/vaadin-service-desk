@@ -147,6 +147,8 @@ For deployment on the public internet, a certificate from a trusted CA is used, 
 ```mermaid
 mindmap
   root((Frontend))
+    LoginView
+      🌐/login
     AboutView
       🌐/about
     AgentsView
@@ -187,13 +189,14 @@ mindmap
       🌐UserController
         saveOrder
         setOrderDeleted
-      🌐FreeController
         findAgents
         findClients
         findOrders
         getAllAgents
         getAllClients
         getAllOrders
+      🌐FreeController
+        login
 ```
 
 ### Database map
