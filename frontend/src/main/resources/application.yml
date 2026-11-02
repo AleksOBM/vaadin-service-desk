@@ -3,6 +3,9 @@ server:
   servlet:
     session:
       persistent: false
+  ssl:
+    enabled: true
+    bundle: "frontend-https" # Имя бандла ниже
 
 spring:
   ssl:
@@ -11,6 +14,10 @@ spring:
         backend-trust: # Имя бандла
           truststore:
             certificate: "${SSL_CERT_PATH:file:./.secrets/server.crt}"
+        frontend-https:
+          keystore:
+            certificate: "${SSL_CERT_PATH:file:./.secrets/server.crt}"
+            private-key: "${SSL_KEY_PATH:file:./.secrets/server.key}"
   grpc:
     client:
       channel:
@@ -23,7 +30,7 @@ spring:
 
 logging:
   level:
-    com.example.vsd.frontend: debug
+    com.example.vsd.frontend: info
 #    com.vaadin.flow.server.auth: debug
 #    org.springframework.security: debug
 #    io.grpc: debug

@@ -63,7 +63,7 @@ vsd:
 
 logging:
   level:
-    com.example.vsd.manager: debug
+    com.example.vsd.manager: info
     org:
       springframework: info
 #      springframework.grpc: debug
