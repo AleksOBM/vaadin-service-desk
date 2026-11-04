@@ -56,12 +56,7 @@ public class AgentsView extends BaseView {
 				agent -> {
 					agentService.saveAgent(agent);
 					NotificationSupport.showSuccess("Сотрудник добавлен.");
-					String text = filterText.getValue();
-					if (text == null || text.isBlank()) {
-						grid.setItems(agentService.getAllAgents());
-					} else {
-						getGridData();
-					}
+					getGridData();
 				});
 		dialog.setEntity(new Agent());
 		dialog.open();
@@ -82,15 +77,8 @@ public class AgentsView extends BaseView {
 					agentService.saveAgent(agent);
 					NotificationSupport.showSuccess("Сотрудник изменен.");
 
-					// Получаем текст из поля поиска
-					String text = filterText.getValue();
-
 					// Обновляем таблицу после изменения данных
-					if (text == null || text.isBlank()) {
-						grid.setItems(agentService.getAllAgents());
-					} else {
-						getGridData();
-					}
+					getGridData();
 				});
 
 		// Добавляем данные в диалог
@@ -147,15 +135,14 @@ public class AgentsView extends BaseView {
 		Collection<Agent> content = agentService.getAllAgents();
 		grid.setItems(content);
 
-		// Строка итогов
 		entitiesCount = content.size();
-		updateFooter();
+		updateViewTitle();
 
 		return grid;
 	}
 
-	private void updateFooter() {
-		grid.getColumns().getFirst().setFooter(String.format("Всего %s", entitiesCount));
+	private void updateViewTitle() {
+		setViewTitle(String.format("Сотрудники %s", entitiesCount));
 	}
 
 	private void getGridData() {
@@ -175,8 +162,7 @@ public class AgentsView extends BaseView {
 		// Обновление данных таблицы
 		grid.setItems(content);
 
-		// Обновляем строку итогов
 		entitiesCount = content.size();
-		updateFooter();
+		updateViewTitle();
 	}
 }

@@ -55,12 +55,7 @@ public class ClientsView extends BaseView {
 				client -> {
 					clientService.saveClient(client);
 					NotificationSupport.showSuccess("Клиент добавлен.");
-					String text = filterText.getValue();
-					if (text == null || text.isBlank()) {
-						grid.setItems(clientService.getAllClients());
-					} else {
-						getGridData();
-					}
+					getGridData();
 				});
 		dialog.setEntity(new Client());
 		dialog.open();
@@ -75,12 +70,7 @@ public class ClientsView extends BaseView {
 				client -> {
 					clientService.saveClient(client);
 					NotificationSupport.showSuccess("Клиент изменен.");
-					String text = filterText.getValue();
-					if (text == null || text.isBlank()) {
-						grid.setItems(clientService.getAllClients());
-					} else {
-						getGridData();
-					}
+					getGridData();
 				});
 		dialog.setEntity(oldClient);
 		dialog.open();
@@ -118,12 +108,12 @@ public class ClientsView extends BaseView {
 		Collection<Client> content = clientService.getAllClients();
 		grid.setItems(content);
 		entitiesCount = content.size();
-		updateFooter();
+		updateViewTitle();
 		return grid;
 	}
 
-	private void updateFooter() {
-		grid.getColumns().getFirst().setFooter(String.format("Всего %s", entitiesCount));
+	private void updateViewTitle() {
+		setViewTitle(String.format("Клиенты %s", entitiesCount));
 	}
 
 	private void getGridData() {
@@ -136,6 +126,6 @@ public class ClientsView extends BaseView {
 		}
 		grid.setItems(content);
 		entitiesCount = content.size();
-		updateFooter();
+		updateViewTitle();
 	}
 }

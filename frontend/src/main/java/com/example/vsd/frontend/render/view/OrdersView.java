@@ -173,8 +173,6 @@ public class OrdersView extends BaseView {
 		GridSortOrder<Order> sortOrder3 = new GridSortOrder<>(sdColumn, SortDirection.ASCENDING);
 		grid.sort(List.of(sortOrder1, sortOrder2, sortOrder3));
 
-		updateFooter();
-
 		grid.addSelectionListener(event -> {
 			boolean enabled = event.getFirstSelectedItem().isPresent();
 			updateButton.setEnabled(enabled);
@@ -220,20 +218,17 @@ public class OrdersView extends BaseView {
 		Collection<Order> content = orderService.getContent(text);
 		entitiesCount = content.size();
 		grid.setItems(content);
-		updateFooter();
+		updateViewTitle();
 	}
 
 	public void updateGrid() {
 		List<Order> content = orderService.getAllOrders();
 		grid.setItems(content);
 		entitiesCount = content.size();
-		updateFooter();
+		updateViewTitle();
 	}
 
-	private void updateFooter() {
-		grid.getColumns().stream().skip(1).findFirst()
-				.orElseThrow().setFooter(
-						String.format("Всего %s", entitiesCount)
-				);
+	private void updateViewTitle() {
+		setViewTitle(String.format("Заявки %s", entitiesCount));
 	}
 }

@@ -20,6 +20,7 @@ public class BaseView extends VerticalLayout {
 	Button createButton = new Button();
 	Button updateButton = new Button();
 	Button deleteButton = new Button();
+	BaseToolbar toolbar;
 	int entitiesCount;
 
 	public BaseView(String title) {
@@ -42,11 +43,15 @@ public class BaseView extends VerticalLayout {
 		deleteButton.addThemeVariants(ButtonVariant.TERTIARY);
 		deleteButton.setEnabled(false);
 
-		var toolbar = new BaseToolbar(title, filterText, createButton, updateButton, deleteButton);
+		toolbar = new BaseToolbar(title, filterText, createButton, updateButton, deleteButton);
 		toolbar.addClassName("toolbar");
 		setSpacing(false);
 		getStyle().setOverflow(Style.Overflow.HIDDEN);
 
 		add(toolbar);
+	}
+
+	protected void setViewTitle(String title) {
+		toolbar.setViewTitle(title);
 	}
 }

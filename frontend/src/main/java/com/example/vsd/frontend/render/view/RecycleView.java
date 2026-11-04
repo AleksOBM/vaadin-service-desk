@@ -123,9 +123,8 @@ public class RecycleView extends BaseView {
 		grid.sort(List.of(sortOrder));
 	}
 
-	private void updateFooter() {
-		grid.getColumns().stream().findFirst()
-				.orElseThrow().setFooter(String.format("Всего %s", entitiesCount));
+	private void updateViewTitle() {
+		setViewTitle(String.format("Корзина %s", entitiesCount));
 	}
 
 	private void getGridData() {
@@ -138,7 +137,7 @@ public class RecycleView extends BaseView {
 		}
 		grid.setItems(content);
 		entitiesCount = content.size();
-		updateFooter();
+		updateViewTitle();
 	}
 
 	private void deleteForever(BaseEntity entity) {

@@ -12,6 +12,8 @@ import org.jspecify.annotations.Nullable;
 
 public final class BaseToolbar extends Composite<HorizontalLayout> {
 
+	private final H1 title;
+
 	public BaseToolbar(@Nullable String viewTitle, Component... components) {
 		var toolbar = getContent();
 		toolbar.setPadding(false);
@@ -23,7 +25,7 @@ public final class BaseToolbar extends Composite<HorizontalLayout> {
 		var drawerToggle = new DrawerToggle();
 		drawerToggle.addClassNames(LumoUtility.Margin.NONE);
 
-		var title = new H1(viewTitle);
+		title = new H1(viewTitle);
 		title.addClassNames(LumoUtility.FontSize.XLARGE, LumoUtility.Margin.NONE, LumoUtility.FontWeight.LIGHT);
 
 		var toggleAndTitle = new HorizontalLayout(drawerToggle, title);
@@ -36,6 +38,10 @@ public final class BaseToolbar extends Composite<HorizontalLayout> {
 			actions.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
 			toolbar.add(actions);
 		}
+	}
+
+	public void setViewTitle(String viewTitle) {
+		title.setText(viewTitle);
 	}
 
 	@NonNull

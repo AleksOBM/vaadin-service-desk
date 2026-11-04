@@ -13,7 +13,7 @@ import java.util.List;
 //@NpmPackage(value = "chart.js", version = "4.4.1")
 public class ServiceDeskChart extends Div {
 // todo
-    public enum Type { LINE, BAR;}
+    public enum Type { LINE, BAR}
     private final Type type;
 
     private String[] labels = new String[0];
