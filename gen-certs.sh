@@ -17,6 +17,6 @@ openssl req -x509 -newkey rsa:4096 -nodes \
     -out "$CERT_FILE" \
     -days 3650 \
     -subj "/CN=localhost" \
-    -addext "subjectAltName=DNS:backend,DNS:localhost"
+    -addext "subjectAltName=DNS:localhost,DNS:backend,IP:127.0.0.1"
 
 echo "Сертификаты успешно созданы."

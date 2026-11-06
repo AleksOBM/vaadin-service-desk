@@ -91,6 +91,18 @@
             <artifactId>grpc-census</artifactId>
         </dependency>
 
+        <!-- Дашборд -->
+        <dependency>
+            <groupId>com.github.appreciated</groupId>
+            <artifactId>apexcharts</artifactId>
+            <version>25.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.vaadin.addons.flowingcode</groupId>
+            <artifactId>year-month-calendar</artifactId>
+            <version>4.6.2</version>
+        </dependency>
+
         <!-- Авторизация -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -198,6 +210,13 @@
         <repository>
             <id>Vaadin Directory</id>
             <url>https://maven.vaadin.com/vaadin-addons</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>apexcharts</id>
+            <url>https://jitpack.io/</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
