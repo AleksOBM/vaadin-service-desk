@@ -17,11 +17,12 @@ RUN --mount=type=cache,target=/root/.m2 \
 
 COPY . .
 
-ENV NODE_OPTIONS --max-old-space-size=2048
+ENV NODE_OPTIONS --max-old-space-size=1024
 
 RUN --mount=type=cache,target=/root/.m2 \
     --mount=type=cache,target=/root/.npm \
-    mvn -B clean package -DskipTests -pl frontend -am
+    mvn -B clean package -DskipTests -pl frontend -am \
+    -Djava.util.concurrent.ForkJoinPool.common.parallelism=4
 
 FROM eclipse-temurin:25-jre-alpine
 
