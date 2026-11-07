@@ -37,19 +37,17 @@ Distributed web application SPA + API for managing orders, clients, employees, a
 
 </details>
 
-The interface theme adapts to the theme of your browser.
-
-**Unfortunately, there is no English version yet.**
+The interface theme adapts to your browser's theme.
 
 ### Main functions
-Only the checked ones have been implemented
+Only the checked features have been implemented:
 - [x] Employee management
 - [x] Client management
 - [x] Management of client orders and which employee is handling the order
 - [x] Recycle bin for deleted items with the ability to restore
 - [x] Traffic lights to indicate order status
 - [x] Admin / user roles and login form
-- [ ] Dashboard with orders statistics
+- [x] Dashboard with order statistics
 - [ ] Function for sending email notifications when a new order is created
 - [ ] Function for creating a new order via email
 
@@ -66,7 +64,10 @@ Modules interact with each other via gRPC (HTTP-2)
 - ![Red](https://img.shields.io/badge/-Red-a94a4a) It's time to check the final stage (SECOND CONTROL)
 - ![Gray](https://img.shields.io/badge/-Gray-7a7a7a) The work on the request is finished (COMPLETED)
 
-### Environmental Requirements
+In the calendar, a purple marker indicates the deadline:
+- ![Purple](https://img.shields.io/badge/-Purple-8b5cf6) Deadline (DEADLINE)
+
+### Requirements
 Before you begin, make sure the following is installed:
 
 | Tool           | Version                              | Check                  |
@@ -76,9 +77,9 @@ Before you begin, make sure the following is installed:
 | JDK            | 25                                   | java -version          |
 | Maven          | 3.9+                                 | mvn -version           |
 | Node.js        | 20+ (for local assembling of Vaadin) | node -v                |
-| Git            | любая                                | git --version          |
+| Git            | any                                  | git --version          |
 
-### Running the Application on local host
+### Running the Application Locally
 
 Open a terminal and run the commands to start the application.
 
@@ -96,18 +97,109 @@ cd vaadin-service-desk
 
 **3. Launch**
 
-The first launch will take a long time, 5-15 min.
+The first launch will take a while (5-15 minutes).
 An internet connection is required to download third-party libraries and images.
 
 ```bash
 docker compose up --build -d
 ```
 
-**4. Usage**
+**4. Configure the certificate (optional)**
 
-Open your browser at the page https://localhost:8080
+The access certificate is already available. Export it using your browser and add it to the trusted certificates.
 
-**5. Stop**
+<details>
+
+<summary>How to do this</summary>
+
+4.1 After starting the application, open Chrome at https://localhost:8080.
+
+<details>
+<summary>A warning page will appear</summary>
+<img alt="screen_1.png" src=".img/cert/screen_1.png" width="400"/>
+</details>
+
+4.2 Click the warning, then click "Certificate details".
+
+<details>
+<summary>The certificate viewer will appear</summary>
+<img alt="screen_1.png" src=".img/cert/screen_2.png" width="400"/>
+<img alt="screen_1.png" src=".img/cert/screen_3.png" width="400"/>
+</details>
+
+4.3 In the certificate details, open the "Details" tab and click "Export" at the bottom.
+
+<details>
+<summary>A file save dialog will appear</summary>
+<img alt="screen_1.png" src=".img/cert/screen_4.png" width="400"/>
+<img alt="screen_1.png" src=".img/cert/screen_5.png" width="400"/>
+<img alt="screen_1.png" src=".img/cert/screen_6.png" width="400"/>
+</details>
+
+4.4 Add the exported certificate to your browser's trusted certificates.
+
+4.4.1 Enter this address in the address bar:
+`chrome://certificate-manager/localcerts/usercerts`
+
+<details>
+<summary>The certificate manager will appear</summary>
+<img alt="screen_1.png" src=".img/cert/screen_7.png" width="400"/>
+</details>
+
+4.4.2 Click "Import".
+
+<details>
+<summary>A file selection dialog will appear</summary>
+<img alt="screen_1.png" src=".img/cert/screen_8.png" width="400"/>
+</details>
+
+4.4.3 Select the certificate file and click "Open".
+
+<details>
+<summary>The certificate has been imported; you can delete the file</summary>
+<img alt="screen_1.png" src=".img/cert/screen_9.png" width="400"/>
+</details>
+
+4.5 Restart Chrome.
+
+</details>
+
+**5. Use the application**
+
+**If the certificate is configured**
+
+Open your browser at https://localhost:8080.
+
+<details>
+<summary>View</summary>
+<img alt="screen_1.png" src=".img/screen_5.png" width="400"/>
+</details>
+
+**If the certificate is not configured**
+
+Open your browser at https://localhost:8080 and ignore the browser's certificate warning.
+
+<details>
+<summary>Ignore the browser's certificate warning</summary>
+
+When you first open the page, the browser will display a **"Your connection is not private"** warning.
+
+<details>
+<summary>View</summary>
+<img alt="screen_6.png" src=".img/screen_6.png" width="400"/>
+</details>
+
+**This is expected when running on a local network.**
+
+The project uses a self-signed certificate, which browsers do not trust by default.
+However, the traffic is still encrypted.
+
+**What to do:** click "Advanced" → "Proceed to localhost (unsafe)".
+
+For deployment on the public internet, use a certificate issued by a trusted CA to avoid this warning.
+</details>
+
+**6. Stop**
 
 Keeping the data
 
@@ -121,29 +213,17 @@ Without keeping the data
 docker compose down -v
 ```
 
-**6. Relaunch**
+**7. Relaunch**
 
 ```bash
 docker compose up -d
 ```
 
-**7. Complete removal**
+**8. Complete removal**
 
 ```bash
 docker compose down -v --rmi all
 ```
-
-### ⚠️ Browser Certificate Warning
-
-When you first open the page, the browser will display a **"Your connection is not private"** warning.
-
-**This is expected when running on a local network.**
-The project uses a self-signed certificate, which browsers do not trust by default.
-However, the traffic is still encrypted.
-
-**What to do:** click "Advanced" → "Proceed to localhost (unsafe)".
-
-For deployment on the public internet, a certificate from a trusted CA is used, and the warning will not appear.
 
 ### Frontend REST endpoints
 ```mermaid

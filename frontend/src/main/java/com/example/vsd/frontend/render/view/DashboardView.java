@@ -1,82 +1,173 @@
 package com.example.vsd.frontend.render.view;
 
-import com.example.vsd.frontend.render.chart.ServiceDeskChart;
-import com.example.vsd.frontend.grpc.client.DashboardService;
+import com.example.vsd.frontend.grpc.client.OrderService;
+import com.example.vsd.frontend.model.Order;
 import com.example.vsd.frontend.render.template.BaseView;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Unit;
-import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.flowingcode.addons.ycalendar.MonthCalendar;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dependency.JsModule;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.router.Menu;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.RouteScope;
 import com.vaadin.flow.spring.annotation.SpringComponent;
+import elemental.json.Json;
+import elemental.json.JsonArray;
+import elemental.json.JsonObject;
 import jakarta.annotation.security.PermitAll;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.TextStyle;
+import java.util.Locale;
 
 @PermitAll
 @RouteScope
 @SpringComponent
 @Route(value = "dashboard")
 @PageTitle("Dashboard")
-@Menu(order = 1, icon = "vaadin:dashboard", title = "Диаграмма")
+@JsModule("./scripts/dashboard-calendar.js")
+@Menu(order = 1, icon = "vaadin:dashboard", title = "Календарь")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class DashboardView extends BaseView {
 
-	// todo: добавить диаграмму метрик, календарь и/или диаграмму Ганта
+	OrderService orderService;
 
-	DashboardService dashboardService;
-	ServiceDeskChart chart = new ServiceDeskChart(ServiceDeskChart.Type.LINE);
-
-	public DashboardView(DashboardService dashboardService) {
+	@SuppressWarnings("unused")
+	public DashboardView(OrderService orderService) {
 		super("Дашборд");
-		addClassName("dashboard-view");
-		this.dashboardService = dashboardService;
-		this.filterText.setVisible(false);
-		this.createButton.setVisible(false);
-		this.deleteButton.setVisible(false);
-		this.updateButton.setVisible(false);
+		this.orderService = orderService;
+		filterText.setVisible(false);
+		createButton.setVisible(false);
+		updateButton.setVisible(false);
+		deleteButton.setVisible(false);
+		setSizeFull();
+		getStyle().set("min-width", "0").set("min-height", "0");
 
-//        add(chartsRow());
-//        refresh();
+		Div calendarWrapper = new Div();
+		calendarWrapper.addClassName("calendar-wrapper");
+		calendarWrapper.setWidthFull();
+		calendarWrapper.getStyle()
+				.set("flex-grow", "1")
+				.set("min-width", "0")
+				.set("min-height", "0")
+				.set("container-type", "size");
+		MonthCalendar calendar = new MonthCalendar(YearMonth.now());
+		HorizontalLayout yearNavigation = new HorizontalLayout();
+		yearNavigation.addClassName("calendar-navigation");
+		yearNavigation.setDefaultVerticalComponentAlignment(
+				HorizontalLayout.Alignment.CENTER);
+		IntegerField yearField = new IntegerField();
+		yearField.setStepButtonsVisible(true);
+		yearField.setStep(1);
+		yearField.setValue(calendar.getYearMonth().getYear());
+		yearField.setWidth("8rem");
+		yearField.addClassName("calendar-year-field");
+
+		HorizontalLayout monthNavigation = new HorizontalLayout();
+		monthNavigation.addClassNames("calendar-navigation", "month-navigation");
+		monthNavigation.setDefaultVerticalComponentAlignment(
+				HorizontalLayout.Alignment.CENTER);
+		Button previousMonth = new Button(VaadinIcon.ANGLE_LEFT.create());
+		previousMonth.setAriaLabel("Предыдущий месяц");
+		Button nextMonth = new Button(VaadinIcon.ANGLE_RIGHT.create());
+		nextMonth.setAriaLabel("Следующий месяц");
+		Div monthLabel = new Div();
+		monthLabel.addClassName("calendar-month-label");
+		monthNavigation.add(previousMonth, monthLabel, nextMonth);
+		HorizontalLayout toolbarNavigation = new HorizontalLayout(monthNavigation, yearNavigation);
+		toolbarNavigation.addClassName("calendar-toolbar-navigation");
+		toolbarNavigation.setDefaultVerticalComponentAlignment(
+				HorizontalLayout.Alignment.CENTER);
+		toolbarNavigation.setWrap(true);
+		yearNavigation.getStyle().set("padding-bottom", "0");
+
+		Runnable updateNavigation = () -> {
+			YearMonth yearMonth = calendar.getYearMonth();
+			yearField.setValue(yearMonth.getYear());
+			monthLabel.setText(yearMonth.getMonth()
+					.getDisplayName(TextStyle.FULL_STANDALONE, Locale.forLanguageTag("ru")));
+		};
+		previousMonth.addClickListener(event -> {
+			calendar.setYearMonth(calendar.getYearMonth().minusMonths(1));
+			updateNavigation.run();
+		});
+		nextMonth.addClickListener(event -> {
+			calendar.setYearMonth(calendar.getYearMonth().plusMonths(1));
+			updateNavigation.run();
+		});
+		yearField.addValueChangeListener(event -> {
+			Integer year = event.getValue();
+			if (year != null) {
+				calendar.setYearMonth(YearMonth.of(year, calendar.getMonth()));
+				updateNavigation.run();
+			}
+		});
+		yearNavigation.add(yearField);
+		updateNavigation.run();
+		getToolbar().getContent().add(toolbarNavigation);
+
+		calendar.addAttachListener(event -> calendar.getElement().executeJs(
+				"window.dashboardCalendar.initialize(this, $0)", getCalendarOrders().toJson()));
+		calendar.setSizeFull();
+		calendar.getStyle()
+				.set("min-width", "0")
+				.set("max-width", "100%")
+				.set("overflow-y", "auto")
+				.set("overflow-x", "hidden")
+				.set("--__month-calendar-header-display", "none");
+		calendar.setClassNameGenerator(date -> {
+			if (date.equals(LocalDate.now())) {
+				return "today";
+			}
+			return date.getDayOfWeek().getValue() >= 6 ? "weekend" : null;
+		});
+		calendarWrapper.add(calendar);
+		add(calendarWrapper);
+		setFlexGrow(1, calendarWrapper);
 	}
 
-	private Component chartsRow() {
-		chart.setWidthFull();
-		chart.setHeight(320, Unit.PIXELS);
+	private JsonArray getCalendarOrders() {
+		JsonArray entries = Json.createArray();
+		int index = 0;
+		for (Order order : orderService.getAllOrders()) {
+			if (order.isCompleted() || order.getClient() == null || order.getClient().getName() == null
+					|| order.getStatus() == null) {
+				continue;
+			}
 
-		VerticalLayout left = new VerticalLayout(new Span("График"), chart);
-		left.setPadding(false);
-		left.setSpacing(true);
-		left.setWidthFull();
-
-		VerticalLayout row = new VerticalLayout(left);
-		row.setWidthFull();
-		row.setSpacing(true);
-		row.setFlexGrow(1, left);
-
-		return row;
+			index = addCalendarOrder(entries, index, order, order.getStartLine(),
+					"in_progress");
+			index = addCalendarOrder(entries, index, order, order.getFirstControlLine(),
+					"first_control");
+			index = addCalendarOrder(entries, index, order, order.getSeondControlLine(),
+					"second_control");
+			index = addCalendarOrder(entries, index, order, order.getDeadLine(),
+					"deadline");
+		}
+		return entries;
 	}
 
-	private void refresh() {
-		LocalDate today = LocalDate.now();
+	private int addCalendarOrder(JsonArray entries,
+	                             int index,
+	                             Order order,
+	                             LocalDate date,
+	                             String eventStatus) {
+		if (date == null) {
+			return index;
+		}
 
-		// todo
-//        DashboardKpis kpis = dashboardService.getKpis(today);
-//        revenueToday.setText(formatMoney(kpis.revenueToday()));
-//        revenueThisMonth.setText(formatMoney(kpis.revenueThisMonth()));
-//        salesToday.setText(String.valueOf(kpis.salesCountToday()));
-//        lowStockCount.setText(String.valueOf(kpis.lowStockProductCount()));
-//
-//        SalesSeries salesSeries = dashboardService.getDailySalesSeries(today.minusDays(13), today);
-//        salesLineChart.setSeries(
-//                salesSeries.labels(),
-//                "Revenue",
-//                salesSeries.values()
-//        );
+		JsonObject entry = Json.createObject();
+		entry.put("date", date.toString());
+		entry.put("client", order.getClient().getName());
+		entry.put("status", eventStatus);
+		entries.set(index, entry);
+		return index + 1;
 	}
 }
