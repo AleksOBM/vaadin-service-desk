@@ -5,6 +5,8 @@ import com.example.vsd.grpc.services.user.UserControllerGrpc.UserControllerImplB
 import com.example.vsd.manager.security.AgentOrAdminOnly;
 import com.example.vsd.manager.service.agent.AgentService;
 import com.example.vsd.manager.service.client.ClientService;
+import com.example.vsd.manager.service.mail.MailConfigService;
+import com.example.vsd.manager.service.mail.MailSenderService;
 import com.example.vsd.manager.service.order.OrderService;
 import com.google.protobuf.Empty;
 import com.google.protobuf.Int64Value;
@@ -18,7 +20,10 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.grpc.server.service.GrpcService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
@@ -31,6 +36,8 @@ public class UserGrpcService extends UserControllerImplBase {
 	OrderService orderService;
 	AgentService agentService;
 	ClientService clientService;
+	MailConfigService mailConfigService;
+	MailSenderService mailSenderService;
 
 	@Override
 	public void saveOrder(@NonNull OrderProto request,
@@ -39,7 +46,12 @@ public class UserGrpcService extends UserControllerImplBase {
 		writeSaveOrderLog(request);
 
 		try {
-			orderService.saveOrder(request);
+			boolean newOrder = !request.hasId();
+			String creator = newOrder ? getCreatorName() : null;
+			OrderProto savedOrder = orderService.saveOrder(request);
+			if (newOrder) {
+				sendOrderCreatedNotification(savedOrder, creator);
+			}
 			responseObserver.onNext(Empty.getDefaultInstance());
 			responseObserver.onCompleted();
 
@@ -49,6 +61,58 @@ public class UserGrpcService extends UserControllerImplBase {
 					new StatusRuntimeException(Status.fromThrowable(e))
 			);
 		}
+	}
+
+	private String getCreatorName() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication == null || !authentication.isAuthenticated()) {
+			throw new IllegalStateException("Authenticated user is required to create an order");
+		}
+		return authentication.getName();
+	}
+
+	private void sendOrderCreatedNotification(OrderProto order, String creator) {
+		String notificationRecipient;
+		try {
+			notificationRecipient = mailConfigService.get().notificationRecipient();
+		} catch (IllegalStateException e) {
+			log.warn("Mail config not initialized, skipping email for request {}", order.getId());
+			return;
+		}
+
+		try {
+			if (notificationRecipient == null || notificationRecipient.isBlank()) {
+				log.warn("notificationRecipient not configured, skipping email for request {}",
+						order.getId());
+				return;
+			}
+			String body = """
+					Создана новая заявка.
+					Создатель: %s
+					Работа: %s
+					Описание: %s
+					Клиент: %s
+					Ответственный: %s
+					Дата начала: %s
+					Дедлайн: %s
+					""".formatted(
+					creator,
+					order.getName(),
+					order.getDescription(),
+					order.hasClient() ? order.getClient().getName() : "",
+					order.hasAgent() ? order.getAgent().getName() : "",
+					order.hasStartLine() ? formatDate(order.getStartLine()) : "",
+					order.hasDeadLine() ? formatDate(order.getDeadLine()) : ""
+			);
+			mailSenderService.send(notificationRecipient,
+					order.getServiceDeskNumber(), body);
+		} catch (Exception e) {
+			log.warn("Failed to send order-created email for request {}", order.getId(), e);
+		}
+	}
+
+	private String formatDate(com.google.type.Date date) {
+		return LocalDate.of(date.getYear(), date.getMonth(), date.getDay()).toString();
 	}
 
 	@Override

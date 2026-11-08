@@ -7,14 +7,15 @@ import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.theme.lumo.LumoUtility;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 public final class BaseToolbar extends Composite<HorizontalLayout> {
 
 	private final H1 title;
+	private HorizontalLayout actions;
 
-	public BaseToolbar(@Nullable String viewTitle, Component... components) {
+	public BaseToolbar(@Nullable String viewTitle, @Nonnull Component... components) {
 		var toolbar = getContent();
 		toolbar.setPadding(false);
 		toolbar.setSpacing(true);
@@ -34,20 +35,22 @@ public final class BaseToolbar extends Composite<HorizontalLayout> {
 		toolbar.setFlexGrow(1, toggleAndTitle);
 
 		if (components.length > 0) {
-			var actions = new HorizontalLayout(components);
+			actions = new HorizontalLayout(components);
 			actions.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
 			toolbar.add(actions);
 		}
+	}
+
+	public void addActionBefore(Component component, Component before) {
+		int index = actions.indexOf(before);
+		if (index < 0) {
+			throw new IllegalArgumentException("The reference component is not a toolbar action");
+		}
+		actions.addComponentAtIndex(index, component);
 	}
 
 	public void setViewTitle(String viewTitle) {
 		title.setText(viewTitle);
 	}
 
-	@NonNull
-	public static Component group(Component... components) {
-		var group = new HorizontalLayout(components);
-		group.setWrap(true);
-		return group;
-	}
 }

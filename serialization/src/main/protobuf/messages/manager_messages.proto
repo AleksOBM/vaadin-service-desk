@@ -88,3 +88,28 @@ message LoginResponse {
   int64 expires_in = 2;
   repeated string authorities = 3;
 }
+
+message UpdateConfigRequest {
+  string email = 1;
+  string password = 2;
+  string notification_recipient = 3;
+  bool reset_password = 4;
+  string smtp_host = 5;
+  int32 smtp_port = 6;
+  bool smtp_auth = 7;
+  bool smtp_ssl = 8;
+}
+
+message UpdateConfigResponse {
+  bool success = 1;
+}
+
+message GetMailConfigResponse {
+  string notification_recipient = 1;
+  string email = 2;
+  bool password_configured = 3;
+  string smtp_host = 4;
+  int32 smtp_port = 5;
+  bool smtp_auth = 6;
+  bool smtp_ssl = 7;
+}

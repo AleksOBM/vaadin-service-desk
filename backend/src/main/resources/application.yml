@@ -9,7 +9,6 @@ spring:
   jackson:
     serialization:
       INDENT_OUTPUT: true
-
   grpc:
     server:
       port: 9091
@@ -56,7 +55,12 @@ spring:
 
 security:
   jwt:
+    # TODO: remove default before prod, pass via env JWT_SECRET
     secret: ${JWT_SECRET:wX5uIrf5Y7y47tUyftfVbFV5lfXyA/D+G4yh5le9m6c=}
+  mail:
+    # TODO: remove default before prod, pass via env MAIL_ENCRYPTION_KEY
+    encryption-key: ${MAIL_ENCRYPTION_KEY:9fK2mQ7vX1pL4sR8tY6nB3cD5hJ0aZ2wE7uI9oP1kM8=}
+
 vsd:
   admin:
     password: ${ADMIN_PASSWORD:admin}
