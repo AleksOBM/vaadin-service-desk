@@ -17,6 +17,10 @@ spring:
     exclude:
       - org.springframework.boot.micrometer.metrics.autoconfigure.ssl.SslMetricsAutoConfiguration
 
+vsd:
+  smtp:
+    timeout-millis: 1500
+
 security:
   jwt:
     secret: ${TEST_JWT_SECRET:dGVzdC1zZWNyZXQtdGVzdC1zZWNyZXQtdGVzdC1zZWNyZXQ=}

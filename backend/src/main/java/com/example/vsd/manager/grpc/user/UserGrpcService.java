@@ -2,6 +2,7 @@ package com.example.vsd.manager.grpc.user;
 
 import com.example.vsd.grpc.messages.*;
 import com.example.vsd.grpc.services.user.UserControllerGrpc.UserControllerImplBase;
+import com.example.vsd.manager.model.MailMessage;
 import com.example.vsd.manager.security.AgentOrAdminOnly;
 import com.example.vsd.manager.service.agent.AgentService;
 import com.example.vsd.manager.service.client.ClientService;
@@ -104,8 +105,12 @@ public class UserGrpcService extends UserControllerImplBase {
 					order.hasStartLine() ? formatDate(order.getStartLine()) : "",
 					order.hasDeadLine() ? formatDate(order.getDeadLine()) : ""
 			);
-			mailSenderService.send(notificationRecipient,
-					order.getServiceDeskNumber(), body);
+
+			mailSenderService.send(MailMessage.builder()
+							.to(notificationRecipient)
+							.subject(order.getServiceDeskNumber())
+							.text(body)
+							.build());
 		} catch (Exception e) {
 			log.warn("Failed to send order-created email for request {}", order.getId(), e);
 		}

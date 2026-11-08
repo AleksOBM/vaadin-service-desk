@@ -26,8 +26,15 @@ class MailSenderServiceTest {
 	}
 
 	private JavaMailSenderImpl createSender(boolean ssl) {
-		MailSenderService service = new MailSenderService(mock(MailConfigService.class));
-		return service.createSender(new MailCredentials("sender@example.com", "password",
-				"recipient@example.com", "localhost", 1025, false, ssl));
+		MailSenderService service = new MailSenderService("1500", mock(MailConfigService.class));
+		return service.createSender(MailCredentials.builder()
+				.email("sender@example.com")
+				.password("password")
+				.notificationRecipient("recipient@example.com")
+				.smtpHost("localhost")
+				.smtpPort(1025)
+				.smtpAuth(false)
+				.smtpSsl(ssl)
+				.build());
 	}
 }

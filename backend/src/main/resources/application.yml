@@ -64,6 +64,8 @@ security:
 vsd:
   admin:
     password: ${ADMIN_PASSWORD:admin}
+  smtp:
+    timeout-millis: 1500
 
 logging:
   level:

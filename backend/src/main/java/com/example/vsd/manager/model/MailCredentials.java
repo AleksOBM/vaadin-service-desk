@@ -1,5 +1,8 @@
 package com.example.vsd.manager.model;
 
+import lombok.Builder;
+
+@Builder
 public record MailCredentials(
 		String email,
 		String password,

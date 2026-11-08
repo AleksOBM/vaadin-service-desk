@@ -2,9 +2,14 @@ package com.example.vsd.manager.service.mail;
 
 import com.example.vsd.manager.converter.EncryptedStringConverter;
 import com.example.vsd.manager.enity.MailConfig;
+import com.example.vsd.manager.model.MailConfigUpdateData;
 import com.example.vsd.manager.model.MailCredentials;
 import com.example.vsd.manager.repository.MailConfigRepository;
 import jakarta.annotation.PostConstruct;
+import lombok.AccessLevel;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -12,14 +17,12 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class MailConfigService {
 
-	private final MailConfigRepository mailConfigRepository;
-	private final AtomicReference<MailCredentials> cache = new AtomicReference<>();
-
-	public MailConfigService(MailConfigRepository mailConfigRepository) {
-		this.mailConfigRepository = mailConfigRepository;
-	}
+	MailConfigRepository mailConfigRepository;
+	AtomicReference<MailCredentials> cache = new AtomicReference<>();
 
 	@PostConstruct
 	public void load() {
@@ -80,24 +83,24 @@ public class MailConfigService {
 		return credentials != null && credentials.smtpSsl();
 	}
 
-	public void update(String newEmail, String newPassword, String newNotificationRecipient) {
-		update(newEmail, newPassword, newNotificationRecipient, false);
-	}
-
-	public void update(String newEmail, String newPassword, String newNotificationRecipient,
-	                   boolean resetPassword) {
+	public void update(@NonNull MailConfigUpdateData updateData) {
 		MailCredentials current = cache.get();
-		String smtpHost = current == null ? "localhost" : current.smtpHost();
-		int smtpPort = current == null ? 1025 : current.smtpPort();
-		boolean smtpAuth = current != null && current.smtpAuth();
-		boolean smtpSsl = current != null && current.smtpSsl();
-		update(newEmail, newPassword, newNotificationRecipient, resetPassword,
-				smtpHost, smtpPort, smtpAuth, smtpSsl);
-	}
-
-	public void update(String newEmail, String newPassword, String newNotificationRecipient,
-	                   boolean resetPassword, String smtpHost, int smtpPort,
-	                   boolean smtpAuth, boolean smtpSsl) {
+		String currentSmtpHost = current == null ? "localhost" : current.smtpHost();
+		int currentSmtpPort = current == null ? 1025 : current.smtpPort();
+		boolean currentSmtpAuth = current != null && current.smtpAuth();
+		boolean currentSmtpSsl = current != null && current.smtpSsl();
+		String smtpHost = updateData.smtpHost() == null
+				? currentSmtpHost
+				: updateData.smtpHost();
+		int smtpPort = updateData.smtpPort() == null
+				? currentSmtpPort
+				: updateData.smtpPort();
+		boolean smtpAuth = updateData.smtpAuth() == null
+				? currentSmtpAuth
+				: updateData.smtpAuth();
+		boolean smtpSsl = updateData.smtpSsl() == null
+				? currentSmtpSsl
+				: updateData.smtpSsl();
 		if (smtpHost == null || smtpHost.isBlank()) {
 			throw new IllegalArgumentException("SMTP host is required");
 		}
@@ -105,18 +108,18 @@ public class MailConfigService {
 			throw new IllegalArgumentException("SMTP port must be between 1 and 65535");
 		}
 		MailConfig config = mailConfigRepository.findFirstByOrderByIdAsc().orElseGet(MailConfig::new);
-		boolean passwordProvided = newPassword != null && !newPassword.isBlank()
-				&& !"********".equals(newPassword);
-		if (resetPassword && !passwordProvided) {
+		boolean passwordProvided = updateData.password() != null && !updateData.password().isBlank()
+				&& !"********".equals(updateData.password());
+		if (updateData.resetPassword() && !passwordProvided) {
 			throw new IllegalArgumentException("New mail app password is required after changing sender email");
 		}
 		if (passwordProvided) {
-			config.setPasswordEncrypted(newPassword);
+			config.setPasswordEncrypted(updateData.password());
 		} else if (config.getPasswordEncrypted() == null || config.getPasswordEncrypted().isBlank()) {
 			throw new IllegalArgumentException("Mail app password is required");
 		}
-		config.setEmailEncrypted(newEmail);
-		config.setNotificationRecipient(newNotificationRecipient);
+		config.setEmailEncrypted(updateData.email());
+		config.setNotificationRecipient(updateData.notificationRecipient());
 		config.setSmtpHost(smtpHost.trim());
 		config.setSmtpPort(smtpPort);
 		config.setSmtpAuth(smtpAuth);
@@ -125,16 +128,20 @@ public class MailConfigService {
 		load();
 	}
 
-	private MailCredentials toCredentials(MailConfig config) {
-		return new MailCredentials(config.getEmailEncrypted(), config.getPasswordEncrypted(),
-				config.getNotificationRecipient(),
-				config.getSmtpHost() == null ? "localhost" : config.getSmtpHost(),
-				config.getSmtpPort() == null ? 1025 : config.getSmtpPort(),
-				Boolean.TRUE.equals(config.getSmtpAuth()),
-				Boolean.TRUE.equals(config.getSmtpSsl()));
+	@NonNull
+	private MailCredentials toCredentials(@NonNull MailConfig config) {
+		return MailCredentials.builder()
+				.email(config.getEmailEncrypted())
+				.password(config.getPasswordEncrypted())
+				.notificationRecipient(config.getNotificationRecipient())
+				.smtpHost(config.getSmtpHost() == null ? "localhost" : config.getSmtpHost())
+				.smtpPort(config.getSmtpPort() == null ? 1025 : config.getSmtpPort())
+				.smtpAuth(Boolean.TRUE.equals(config.getSmtpAuth()))
+				.smtpSsl(Boolean.TRUE.equals(config.getSmtpSsl()))
+				.build();
 	}
 
-	private boolean hasDemoSeed(MailConfig config) {
+	private boolean hasDemoSeed(@NonNull MailConfig config) {
 		boolean emailSeed = isDemoSeed(config.getEmailEncrypted());
 		boolean passwordSeed = isDemoSeed(config.getPasswordEncrypted());
 		boolean recipientSeed = isDemoSeed(config.getNotificationRecipient());
@@ -151,7 +158,8 @@ public class MailConfigService {
 		return value != null && value.startsWith(EncryptedStringConverter.DEMO_SEED_PREFIX);
 	}
 
-	private String removeDemoSeedPrefix(String value) {
+	@NonNull
+	private String removeDemoSeedPrefix(@NonNull String value) {
 		return value.substring(EncryptedStringConverter.DEMO_SEED_PREFIX.length());
 	}
 }

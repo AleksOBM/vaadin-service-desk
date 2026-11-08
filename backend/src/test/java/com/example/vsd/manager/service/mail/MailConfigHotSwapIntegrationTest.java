@@ -4,7 +4,9 @@ import com.example.vsd.grpc.messages.OrderProto;
 import com.example.vsd.grpc.messages.UpdateConfigRequest;
 import com.example.vsd.grpc.services.admin.AdminMailControllerGrpc;
 import com.example.vsd.grpc.services.user.UserControllerGrpc;
+import com.example.vsd.manager.model.MailConfigUpdateData;
 import com.example.vsd.manager.model.MailCredentials;
+import com.example.vsd.manager.model.MailMessage;
 import com.example.vsd.manager.repository.MailConfigRepository;
 import com.google.protobuf.Empty;
 import com.google.type.Date;
@@ -116,13 +118,33 @@ class MailConfigHotSwapIntegrationTest {
 
 	@Test
 	void changingSenderEmailKeepsExistingPasswordWhenMaskIsSubmitted() {
-		mailConfigService.update(OLD_EMAIL, OLD_PASSWORD, OLD_NOTIFICATION_RECIPIENT);
+		mailConfigService.update(MailConfigUpdateData.builder()
+				.email(OLD_EMAIL)
+				.password(OLD_PASSWORD)
+				.notificationRecipient(OLD_NOTIFICATION_RECIPIENT)
+				.resetPassword(false)
+				.build());
 
-		mailConfigService.update(NEW_EMAIL, "********", NEW_NOTIFICATION_RECIPIENT,
-				false, "localhost", 1025, false, false);
+		mailConfigService.update(MailConfigUpdateData.builder()
+				.email(NEW_EMAIL)
+				.password("********")
+				.notificationRecipient(NEW_NOTIFICATION_RECIPIENT)
+				.smtpHost("localhost")
+				.smtpPort(1025)
+				.smtpAuth(false)
+				.smtpSsl(false)
+				.resetPassword(false)
+				.build());
 
-		assertEquals(new MailCredentials(NEW_EMAIL, OLD_PASSWORD, NEW_NOTIFICATION_RECIPIENT,
-						"localhost", 1025, false, false),
+		assertEquals(MailCredentials.builder()
+						.email(NEW_EMAIL)
+						.password(OLD_PASSWORD)
+						.notificationRecipient(NEW_NOTIFICATION_RECIPIENT)
+						.smtpHost("localhost")
+						.smtpPort(1025)
+						.smtpAuth(false)
+						.smtpSsl(false)
+						.build(),
 				mailConfigService.get());
 	}
 
@@ -133,25 +155,41 @@ class MailConfigHotSwapIntegrationTest {
 		assertEquals("", emptyConfig.getEmail());
 		assertFalse(emptyConfig.getPasswordConfigured());
 
-		mailConfigService.update(OLD_EMAIL, OLD_PASSWORD, OLD_NOTIFICATION_RECIPIENT);
+		mailConfigService.update(MailConfigUpdateData.builder()
+				.email(OLD_EMAIL)
+				.password(OLD_PASSWORD)
+				.notificationRecipient(OLD_NOTIFICATION_RECIPIENT)
+				.resetPassword(false)
+				.build());
 		var configuredMail = adminMailStub.getMailConfig(Empty.getDefaultInstance());
 		assertEquals(OLD_EMAIL, configuredMail.getEmail());
 		assertTrue(configuredMail.getPasswordConfigured());
 
 		String rawPasswordBefore = rawStoredPassword();
 		List<MailCredentials> credentialsUsedForSending = new ArrayList<>();
-		doAnswer(invocation -> {
+		doAnswer(_ -> {
 			credentialsUsedForSending.add(mailConfigService.get());
 			return null;
-		}).when(mailSenderService).send(anyString(), anyString(), anyString());
+		}).when(mailSenderService).send(any(MailMessage.class));
 
 		ApplicationContext contextBefore = applicationContext;
 
 		stub.saveOrder(createOrder("before update"));
-		verify(mailSenderService).send(eq(OLD_NOTIFICATION_RECIPIENT),
-				matches("SD-\\d{8}"), contains("Создатель: test-agent"));
-		assertEquals(new MailCredentials(OLD_EMAIL, OLD_PASSWORD, OLD_NOTIFICATION_RECIPIENT,
-						"localhost", 1025, false, false),
+
+		verify(mailSenderService).send(argThat(message ->
+				OLD_NOTIFICATION_RECIPIENT.equals(message.to())
+						&& message.subject().matches("SD-\\d{8}")
+						&& message.text().contains("Создатель: test-agent")));
+
+		assertEquals(MailCredentials.builder()
+						.email(OLD_EMAIL)
+						.password(OLD_PASSWORD)
+						.notificationRecipient(OLD_NOTIFICATION_RECIPIENT)
+						.smtpHost("localhost")
+						.smtpPort(1025)
+						.smtpAuth(false)
+						.smtpSsl(false)
+						.build(),
 				credentialsUsedForSending.getFirst());
 
 		assertThrows(StatusRuntimeException.class,
@@ -196,13 +234,31 @@ class MailConfigHotSwapIntegrationTest {
 		assertEquals(1, mailConfigRepository.count());
 
 		stub.saveOrder(createOrder("after update"));
-		verify(mailSenderService).send(eq(NEW_NOTIFICATION_RECIPIENT),
-				matches("SD-\\d{8}"), contains("Создатель: test-agent"));
+
+		verify(mailSenderService).send(argThat(message ->
+				NEW_NOTIFICATION_RECIPIENT.equals(message.to())
+						&& message.subject().matches("SD-\\d{8}")
+						&& message.text().contains("Создатель: test-agent")));
+
 		assertEquals(List.of(
-						new MailCredentials(OLD_EMAIL, OLD_PASSWORD, OLD_NOTIFICATION_RECIPIENT,
-								"localhost", 1025, false, false),
-						new MailCredentials(NEW_EMAIL, NEW_PASSWORD, NEW_NOTIFICATION_RECIPIENT,
-								"smtp.example.com", 2525, true, false)),
+						MailCredentials.builder()
+								.email(OLD_EMAIL)
+								.password(OLD_PASSWORD)
+								.notificationRecipient(OLD_NOTIFICATION_RECIPIENT)
+								.smtpHost("localhost")
+								.smtpPort(1025)
+								.smtpAuth(false)
+								.smtpSsl(false)
+								.build(),
+						MailCredentials.builder()
+								.email(NEW_EMAIL)
+								.password(NEW_PASSWORD)
+								.notificationRecipient(NEW_NOTIFICATION_RECIPIENT)
+								.smtpHost("smtp.example.com")
+								.smtpPort(2525)
+								.smtpAuth(true)
+								.smtpSsl(false)
+								.build()),
 				credentialsUsedForSending);
 
 		adminMailStub.updateConfig(UpdateConfigRequest.newBuilder()
@@ -215,8 +271,15 @@ class MailConfigHotSwapIntegrationTest {
 				.setSmtpAuth(true)
 				.setSmtpSsl(false)
 				.build());
-		assertEquals(new MailCredentials(OLD_EMAIL, "replacement-app-password", OLD_NOTIFICATION_RECIPIENT,
-						"smtp.example.com", 2525, true, false),
+		assertEquals(MailCredentials.builder()
+						.email(OLD_EMAIL)
+						.password("replacement-app-password")
+						.notificationRecipient(OLD_NOTIFICATION_RECIPIENT)
+						.smtpHost("smtp.example.com")
+						.smtpPort(2525)
+						.smtpAuth(true)
+						.smtpSsl(false)
+						.build(),
 				mailConfigService.get());
 
 		Long firstOrderId = jdbcTemplate.queryForObject(
@@ -232,18 +295,26 @@ class MailConfigHotSwapIntegrationTest {
 	@Test
 	void encryptsDemoMailSeedWhenLoadingConfiguration() {
 		jdbcTemplate.update("""
-				insert into sd_mail_test.mail_config
-					(email_encrypted, password_encrypted, notification_recipient)
-				values (?, ?, ?)
-				""",
+						insert into sd_mail_test.mail_config
+							(email_encrypted, password_encrypted, notification_recipient)
+						values (?, ?, ?)
+						""",
 				"demo-seed:sender@example.com",
 				"demo-seed:test-password-123",
 				"demo-seed:recipient@example.com");
 
 		mailConfigService.load();
 
-		assertEquals(new MailCredentials("sender@example.com", "test-password-123",
-				"recipient@example.com", "localhost", 1025, false, false), mailConfigService.get());
+		assertEquals(MailCredentials.builder()
+						.email("sender@example.com")
+						.password("test-password-123")
+						.notificationRecipient("recipient@example.com")
+						.smtpHost("localhost")
+						.smtpPort(1025)
+						.smtpAuth(false)
+						.smtpSsl(false)
+						.build(),
+				mailConfigService.get());
 		assertNotEquals("test-password-123", rawStoredPassword());
 		assertFalse(rawStoredPassword().startsWith("demo-seed:"));
 	}
