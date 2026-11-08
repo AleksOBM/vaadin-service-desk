@@ -1,20 +1,20 @@
 package com.example.vsd.frontend.render.view;
 
 import com.example.vsd.frontend.grpc.client.MailService;
-import com.example.vsd.frontend.model.MailEntity;
+import com.example.vsd.frontend.render.notification.NotificationSupport;
 import com.example.vsd.frontend.render.template.BaseView;
-import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.PasswordField;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Menu;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.RouteScope;
 import com.vaadin.flow.spring.annotation.SpringComponent;
+import io.grpc.StatusRuntimeException;
 import jakarta.annotation.security.RolesAllowed;
 
 @RouteScope
@@ -23,94 +23,97 @@ import jakarta.annotation.security.RolesAllowed;
 @PageTitle("Settings")
 @RolesAllowed("ROLE_ADMIN")
 @Menu(order = 6, icon = "vaadin:tools", title = "Настройки")
-
 public class SettingsView extends BaseView {
 
 	private final MailService mailService;
 
-	EmailField targetEmailField = new EmailField("Почта для отчетов");
-	EmailField homeEmailField = new EmailField("Почта для приложения");
-	TextField homeMailHostField = new TextField("Хост почты приложения");
-	TextField homeMailPortField = new TextField("Порт почты приложения");
-	PasswordField passwordField = new PasswordField("Пароль почты приложения");
-	Checkbox mailSmtpAuth = new Checkbox("mail smtp auth");
-	Checkbox mailSmtpStartTls = new Checkbox("mail smtp starttls");
-	VerticalLayout layout = new VerticalLayout();
-	MailEntity mailEntity;
+	private final EmailField senderEmail = new EmailField("Базовый почтовый ящик");
+	private final EmailField notificationRecipient = new EmailField("Целевой почтовый ящик");
+	private final PasswordField appPassword = new PasswordField("Пароль приложения");
 
+	@SuppressWarnings("unused")
 	public SettingsView(MailService mailService) {
-		super("Настройки");
+		super("Настройки почты");
 		this.mailService = mailService;
-		super.filterText.setVisible(false);
-		createButton.setIcon(new Icon(VaadinIcon.ENTER_ARROW));
-		createButton.setEnabled(false);
+
+		filterText.setVisible(false);
+		createButton.setVisible(false);
+		deleteButton.setVisible(false);
+		updateButton.setTooltipText("Сохранить настройки почты");
+		updateButton.setIcon(new Icon(VaadinIcon.CHECK));
 		updateButton.setEnabled(true);
-		deleteButton.setEnabled(true);
+		updateButton.addClickListener(event -> saveConfiguration());
 
-		mailEntity = mailService.getMailEntity().orElse(MailEntity.builder().build());
-
-		setValues();
-		configureLayout();
-		configureActions();
-		add(layout);
+		configureFields();
+		add(createLayout());
+		loadConfiguration();
 	}
 
-	private void setValues() {
-//        if (mailEntity == null) {
-//            return;
-//        }
-//        targetEmailField.setValue(mailEntity.getTargetMail());
-//        homeEmailField.setValue(mailEntity.getAppMail());
-//        homeMailHostField.setValue(mailEntity.getAppMailHost());
-//        homeMailPortField.setValue(mailEntity.getAppMailPort());
-//        passwordField.setValue(mailEntity.getAppMailPassword());
-//        mailSmtpAuth.setValue(mailEntity.getMailSmtpAuth());
-//        mailSmtpStartTls.setValue(mailEntity.getMailSmtpStartTls());
+	private void configureFields() {
+		senderEmail.setRequiredIndicatorVisible(true);
+		senderEmail.setErrorMessage("Укажите корректный адрес почты");
+		senderEmail.setWidthFull();
+		senderEmail.setMaxWidth(25, Unit.EM);
+
+		notificationRecipient.setRequiredIndicatorVisible(true);
+		notificationRecipient.setErrorMessage("Укажите корректный адрес получателя уведомлений");
+		notificationRecipient.setWidthFull();
+		notificationRecipient.setMaxWidth(25, Unit.EM);
+
+		appPassword.setRequiredIndicatorVisible(true);
+		appPassword.setPlaceholder("Введите пароль приложения");
+		appPassword.setWidthFull();
+		appPassword.setMaxWidth(25, Unit.EM);
+
 	}
 
-	private void configureActions() {
-		updateButton.addClickListener(event -> {
-			if (layout.isEnabled()) {
-				layout.setEnabled(false);
-			} else {
-				layout.setEnabled(true);
-				createButton.setEnabled(true);
-			}
-		});
-
-		createButton.addClickListener(event -> {
-			createEntity();
-			layout.setEnabled(false);
-		});
-	}
-
-	private void configureLayout() {
-		layout.add(
-				targetEmailField,
-				homeEmailField,
-				homeMailHostField,
-				homeMailPortField,
-				passwordField,
-				mailSmtpAuth,
-				mailSmtpStartTls
+	private VerticalLayout createLayout() {
+		VerticalLayout layout = new VerticalLayout(
+				senderEmail,
+				notificationRecipient,
+				appPassword
 		);
-
-		layout.setEnabled(false);
-		layout.getStyle().setMarginTop("20px");
-		layout.setSizeFull();
+		layout.setPadding(true);
+		layout.setSpacing(true);
+		layout.setWidthFull();
+		return layout;
 	}
 
-	private void createEntity() {
-		mailEntity = MailEntity.builder()
-//                .id(1L)
-//                .appMail(homeEmailField.getValue())
-//                .targetMail(targetEmailField.getValue())
-//                .appMailHost(homeMailHostField.getValue())
-//                .appMailPassword(passwordField.getValue())
-//                .appMailPort(homeMailPortField.getValue())
-//                .mailSmtpAuth(mailSmtpAuth.getValue())
-//                .mailSmtpStartTls(mailSmtpStartTls.getValue())
-				.build();
-		mailService.saveMailEntity(mailEntity);
+	private void saveConfiguration() {
+		if (senderEmail.isEmpty() || senderEmail.isInvalid()) {
+			senderEmail.setInvalid(true);
+			NotificationSupport.showError("Проверьте адрес почтового ящика");
+			return;
+		}
+		if (notificationRecipient.isEmpty() || notificationRecipient.isInvalid()) {
+			notificationRecipient.setInvalid(true);
+			NotificationSupport.showError("Проверьте адрес получателя уведомлений");
+			return;
+		}
+		if (appPassword.isEmpty()) {
+			NotificationSupport.showError("Введите пароль приложения");
+			return;
+		}
+
+		try {
+			if (mailService.updateConfig(senderEmail.getValue().trim(), appPassword.getValue(),
+					notificationRecipient.getValue().trim())) {
+				appPassword.clear();
+				NotificationSupport.showSuccess("Настройки почты сохранены");
+			} else {
+				NotificationSupport.showError("Не удалось сохранить настройки почты");
+			}
+		} catch (StatusRuntimeException e) {
+			NotificationSupport.showError("Не удалось сохранить настройки почты");
+		}
 	}
+
+	private void loadConfiguration() {
+		try {
+			notificationRecipient.setValue(mailService.getNotificationRecipient());
+		} catch (StatusRuntimeException e) {
+			NotificationSupport.showError("Не удалось загрузить настройки почты");
+		}
+	}
+
 }

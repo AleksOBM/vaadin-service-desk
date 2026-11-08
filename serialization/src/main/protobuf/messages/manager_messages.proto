@@ -88,3 +88,17 @@ message LoginResponse {
   int64 expires_in = 2;
   repeated string authorities = 3;
 }
+
+message UpdateConfigRequest {
+  string email = 1;
+  string password = 2;
+  string notification_recipient = 3;
+}
+
+message UpdateConfigResponse {
+  bool success = 1;
+}
+
+message GetMailConfigResponse {
+  string notification_recipient = 1;
+}

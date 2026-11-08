@@ -1,10 +1,7 @@
 package com.example.vsd.frontend.config;
 
 import com.example.vsd.frontend.security.JwtClientInterceptor;
-import com.example.vsd.grpc.services.admin.AdminAgentControllerGrpc;
-import com.example.vsd.grpc.services.admin.AdminClientControllerGrpc;
-import com.example.vsd.grpc.services.admin.AdminOrderControllerGrpc;
-import com.example.vsd.grpc.services.admin.AdminRecycleControllerGrpc;
+import com.example.vsd.grpc.services.admin.*;
 import com.example.vsd.grpc.services.free.FreeControllerGrpc;
 import com.example.vsd.grpc.services.user.UserControllerGrpc;
 import org.springframework.context.annotation.Bean;
@@ -15,7 +12,6 @@ import org.springframework.grpc.client.GrpcChannelFactory;
 import java.util.List;
 
 @Configuration
-//@ImportGrpcClients(target = "backend-service", basePackages = "com.example.vsd.grpc.services")
 public class GrpcClientConfig {
 
 	private static final String CHANNEL = "backend-service";
@@ -33,6 +29,14 @@ public class GrpcClientConfig {
 			GrpcChannelFactory channelFactory,
 			JwtClientInterceptor interceptor) {
 		return AdminClientControllerGrpc.newBlockingStub(
+				channelFactory.createChannel(CHANNEL, options(interceptor)));
+	}
+
+	@Bean
+	public AdminMailControllerGrpc.AdminMailControllerBlockingStub adminMailStub(
+			GrpcChannelFactory channelFactory,
+			JwtClientInterceptor interceptor) {
+		return AdminMailControllerGrpc.newBlockingStub(
 				channelFactory.createChannel(CHANNEL, options(interceptor)));
 	}
 

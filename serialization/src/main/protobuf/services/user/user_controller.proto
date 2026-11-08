@@ -21,4 +21,5 @@ service UserController {
   rpc findClients (google.protobuf.StringValue) returns (sd.messages.GetClientsResponse);
   rpc findAgents (google.protobuf.StringValue) returns (sd.messages.GetAgentsResponse);
   rpc findOrders (google.protobuf.StringValue) returns (sd.messages.GetOrdersResponse);
+
 }

@@ -36,14 +36,15 @@ public class OrderServiceImpl implements OrderService {
 	private final ClientRepository clientRepository;
 
 	@Override
-	public void saveOrder(@NonNull OrderProto proto) {
+	public OrderProto saveOrder(@NonNull OrderProto proto) {
 		if (proto.hasId()) {
 			var response = updateOrder(proto);
 			printOrderResponseLog(response);
-			return;
+			return response;
 		}
 		var response = createOrder(proto);
 		printOrderResponseLog(response);
+		return response;
 	}
 
 	@Override

@@ -14,7 +14,7 @@ public interface OrderService {
 	@Transactional(readOnly = true)
 	List<OrderProto> findOrders(String text);
 
-	void saveOrder(OrderProto proto);
+	OrderProto saveOrder(OrderProto proto);
 
 	void setOrderDeleted(Long orderId);
 

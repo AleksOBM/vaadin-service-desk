@@ -22,13 +22,13 @@
 
 ---
 
-Distributed web application SPA + API for managing orders, clients, employees, as well as implementing three-stage deadline control.
+Distributed SPA + API web application for managing orders, clients, employees, and implementing a three-stage deadline control system.
 
 ### UI screenshots
 
 <details>
 
-<summary>Look</summary>
+<summary>View</summary>
 
 <img alt="screen_1.png" src=".img/screen_1.png" width="600"/>
 <img alt="screen_2.png" src=".img/screen_2.png" width="600"/>
@@ -37,51 +37,51 @@ Distributed web application SPA + API for managing orders, clients, employees, a
 
 </details>
 
-The interface theme adapts to your browser's theme.
+The interface theme automatically follows your browser theme.
 
-### Main functions
-Only the checked features have been implemented:
+### Main features
+Only the following features have been implemented:
 - [x] Employee management
 - [x] Client management
-- [x] Management of client orders and which employee is handling the order
-- [x] Recycle bin for deleted items with the ability to restore
-- [x] Traffic lights to indicate order status
-- [x] Admin / user roles and login form
-- [x] Dashboard with order statistics
-- [ ] Function for sending email notifications when a new order is created
-- [ ] Function for creating a new order via email
+- [x] Tracking customer requests and the employee assigned to each request
+- [x] Recycle bin for deleted items with restore support
+- [x] Traffic-light indicators for order status
+- [x] Admin/user roles and login form
+- [x] Dashboard with request statistics
+- [x] Email notification sending when a new request is created
+- [ ] Creating a new request via email
 
 ### Modules
-- Backend (Hibernate, Postgres)
+- Backend (Hibernate, PostgreSQL)
 - Frontend (Vaadin UI)
 
-Modules interact with each other via gRPC (HTTP-2)
+The modules interact with each other via gRPC (HTTP/2).
 
-### Color-coded statuses
-- ![Blue](https://img.shields.io/badge/-Blue-4a6fa5) New order request (NEW)
-- ![Green](https://img.shields.io/badge/-Green-4a8f5b) It's time to start working on it (IN PROGRESS)
-- ![Yellow](https://img.shields.io/badge/-Yellow-b8952e) It's time to check the initial stage (FIRST CONTROL)
-- ![Red](https://img.shields.io/badge/-Red-a94a4a) It's time to check the final stage (SECOND CONTROL)
-- ![Gray](https://img.shields.io/badge/-Gray-7a7a7a) The work on the request is finished (COMPLETED)
+### Traffic-light status indicators
+- ![Blue](https://img.shields.io/badge/-Blue-4a6fa5) New request (NEW)
+- ![Green](https://img.shields.io/badge/-Green-4a8f5b) Time to start work (IN PROGRESS)
+- ![Yellow](https://img.shields.io/badge/-Yellow-b8952e) Time to check the initial stage (FIRST CONTROL)
+- ![Red](https://img.shields.io/badge/-Red-a94a4a) Time to check the final stage (SECOND CONTROL)
+- ![Gray](https://img.shields.io/badge/-Gray-7a7a7a) Work on the request is complete (COMPLETED)
 
-In the calendar, a purple marker indicates the deadline:
+Additional color used in the calendar:
 - ![Purple](https://img.shields.io/badge/-Purple-8b5cf6) Deadline (DEADLINE)
 
 ### Requirements
-Before you begin, make sure the following is installed:
+Before starting, make sure the following tools are installed:
 
-| Tool           | Version                              | Check                  |
-|----------------|--------------------------------------|------------------------|
-| Docker Desktop | 4.x+                                 | docker --version       |
-| Docker Compose | v2+                                  | docker compose version |
-| JDK            | 25                                   | java -version          |
-| Maven          | 3.9+                                 | mvn -version           |
-| Node.js        | 20+ (for local assembling of Vaadin) | node -v                |
-| Git            | any                                  | git --version          |
+| Tool | Version | Check |
+|------|---------|-------|
+| Docker Desktop | 4.x+ | docker --version |
+| Docker Compose | v2+ | docker compose version |
+| JDK | 25 | java -version |
+| Maven | 3.9+ | mvn -version |
+| Node.js | 20+ (for local Vaadin builds) | node -v |
+| Git | any | git --version |
 
-### Running the Application Locally
+### Running the application locally
 
-Open a terminal and run the commands to start the application.
+Open a terminal and run the following commands:
 
 **1. Clone the project**
 
@@ -95,10 +95,10 @@ git clone https://github.com/AleksOBM/vaadin-service-desk.git
 cd vaadin-service-desk
 ```
 
-**3. Launch**
+**3. Start the application**
 
-The first launch will take a while (5-15 minutes).
-An internet connection is required to download third-party libraries and images.
+The first launch may take 5–15 minutes.
+Internet access is required to download dependencies and container images.
 
 ```bash
 docker compose up --build -d
@@ -106,7 +106,7 @@ docker compose up --build -d
 
 **4. Configure the certificate (optional)**
 
-The access certificate is already available. Export it using your browser and add it to the trusted certificates.
+The access certificate is already included; export it through the browser and add it to the trusted certificates.
 
 <details>
 
@@ -119,10 +119,10 @@ The access certificate is already available. Export it using your browser and ad
 <img alt="screen_1.png" src=".img/cert/screen_1.png" width="400"/>
 </details>
 
-4.2 Click the warning, then click "Certificate details".
+4.2 Click the warning, then select "Certificate details".
 
 <details>
-<summary>The certificate viewer will appear</summary>
+<summary>The certificate viewer will open</summary>
 <img alt="screen_1.png" src=".img/cert/screen_2.png" width="400"/>
 <img alt="screen_1.png" src=".img/cert/screen_3.png" width="400"/>
 </details>
@@ -142,7 +142,7 @@ The access certificate is already available. Export it using your browser and ad
 `chrome://certificate-manager/localcerts/usercerts`
 
 <details>
-<summary>The certificate manager will appear</summary>
+<summary>The certificate manager will open</summary>
 <img alt="screen_1.png" src=".img/cert/screen_7.png" width="400"/>
 </details>
 
@@ -156,7 +156,7 @@ The access certificate is already available. Export it using your browser and ad
 4.4.3 Select the certificate file and click "Open".
 
 <details>
-<summary>The certificate has been imported; you can delete the file</summary>
+<summary>The certificate has been imported; you may delete the file afterward</summary>
 <img alt="screen_1.png" src=".img/cert/screen_9.png" width="400"/>
 </details>
 
@@ -164,7 +164,7 @@ The access certificate is already available. Export it using your browser and ad
 
 </details>
 
-**5. Use the application**
+**5. Using the application**
 
 **If the certificate is configured**
 
@@ -177,10 +177,10 @@ Open your browser at https://localhost:8080.
 
 **If the certificate is not configured**
 
-Open your browser at https://localhost:8080 and ignore the browser's certificate warning.
+Open your browser at https://localhost:8080.
 
 <details>
-<summary>Ignore the browser's certificate warning</summary>
+<summary>Ignore the browser certificate warning</summary>
 
 When you first open the page, the browser will display a **"Your connection is not private"** warning.
 
@@ -189,41 +189,49 @@ When you first open the page, the browser will display a **"Your connection is n
 <img alt="screen_6.png" src=".img/screen_6.png" width="400"/>
 </details>
 
-**This is expected when running on a local network.**
+**This is normal for local network use.**
 
 The project uses a self-signed certificate, which browsers do not trust by default.
-However, the traffic is still encrypted.
+Traffic is still encrypted.
 
 **What to do:** click "Advanced" → "Proceed to localhost (unsafe)".
 
-For deployment on the public internet, use a certificate issued by a trusted CA to avoid this warning.
+For public internet deployment, use a certificate issued by a trusted CA to avoid this warning.
 </details>
 
 **6. Stop**
 
-Keeping the data
+Keep the data:
 
 ```bash
 docker compose down
 ```
 
-Without keeping the data
+Without saving data:
 
 ```bash
 docker compose down -v
 ```
 
-**7. Relaunch**
+**7. Start again**
 
 ```bash
 docker compose up -d
 ```
 
-**8. Complete removal**
+**8. Remove everything completely**
 
 ```bash
 docker compose down -v --rmi all
 ```
+
+### Security configuration (for IT specialists)
+
+[Instructions here](.docs/secrets.md)
+
+### Email and automatic sending configuration (for administrators)
+
+[Instructions here](.docs/mail_instructions.md)
 
 ### Frontend REST endpoints
 ```mermaid
@@ -281,6 +289,6 @@ mindmap
         login
 ```
 
-### Database map
+### Database schema
 
 <img alt="db_map.png" src=".img/db_map.png" width="500"/>

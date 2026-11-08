@@ -1,0 +1,24 @@
+# test-only keys, do not reuse in prod
+spring:
+  grpc:
+    server:
+      port: 0
+      ssl:
+        enabled: false
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/service-desk?currentSchema=sd_mail_test
+  jpa:
+    properties:
+      hibernate:
+        default_schema: sd_mail_test
+  flyway:
+    schemas: sd_mail_test
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.micrometer.metrics.autoconfigure.ssl.SslMetricsAutoConfiguration
+
+security:
+  jwt:
+    secret: ${TEST_JWT_SECRET:dGVzdC1zZWNyZXQtdGVzdC1zZWNyZXQtdGVzdC1zZWNyZXQ=}
+  mail:
+    encryption-key: ${TEST_MAIL_ENCRYPTION_KEY:MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=}

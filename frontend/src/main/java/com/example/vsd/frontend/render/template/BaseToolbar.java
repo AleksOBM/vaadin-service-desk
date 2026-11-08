@@ -7,14 +7,14 @@ import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.theme.lumo.LumoUtility;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 public final class BaseToolbar extends Composite<HorizontalLayout> {
 
 	private final H1 title;
 
-	public BaseToolbar(@Nullable String viewTitle, Component... components) {
+	public BaseToolbar(@Nullable String viewTitle, @Nonnull Component... components) {
 		var toolbar = getContent();
 		toolbar.setPadding(false);
 		toolbar.setSpacing(true);
@@ -44,10 +44,4 @@ public final class BaseToolbar extends Composite<HorizontalLayout> {
 		title.setText(viewTitle);
 	}
 
-	@NonNull
-	public static Component group(Component... components) {
-		var group = new HorizontalLayout(components);
-		group.setWrap(true);
-		return group;
-	}
 }
