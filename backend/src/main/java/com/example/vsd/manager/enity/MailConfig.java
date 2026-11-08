@@ -1,12 +1,7 @@
 package com.example.vsd.manager.enity;
 
 import com.example.vsd.manager.converter.EncryptedStringConverter;
-import jakarta.persistence.Convert;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,18 +18,26 @@ import java.time.Instant;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MailConfig {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	Long id;
 
-    @Convert(converter = EncryptedStringConverter.class)
-    String emailEncrypted;
+	@Convert(converter = EncryptedStringConverter.class)
+	String emailEncrypted;
 
-    @Convert(converter = EncryptedStringConverter.class)
-    String passwordEncrypted;
+	@Convert(converter = EncryptedStringConverter.class)
+	String passwordEncrypted;
 
-    @Convert(converter = EncryptedStringConverter.class)
-    String notificationRecipient;
+	@Convert(converter = EncryptedStringConverter.class)
+	String notificationRecipient;
 
-    Instant updatedAt;
+	String smtpHost;
+
+	Integer smtpPort;
+
+	Boolean smtpAuth;
+
+	Boolean smtpSsl;
+
+	Instant updatedAt;
 }

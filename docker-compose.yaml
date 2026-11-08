@@ -78,7 +78,7 @@ services:
       cert-generator:
         condition: service_completed_successfully
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/"]
+      test: ["CMD", "curl", "-kfsS", "https://localhost:8080/"]
       interval: 10s
       timeout: 5s
       retries: 10

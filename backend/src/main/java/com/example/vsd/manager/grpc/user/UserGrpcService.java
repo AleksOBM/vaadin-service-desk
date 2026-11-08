@@ -23,6 +23,7 @@ import org.springframework.grpc.server.service.GrpcService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
@@ -100,14 +101,18 @@ public class UserGrpcService extends UserControllerImplBase {
 					order.getDescription(),
 					order.hasClient() ? order.getClient().getName() : "",
 					order.hasAgent() ? order.getAgent().getName() : "",
-					order.hasStartLine() ? order.getStartLine() : "",
-					order.hasDeadLine() ? order.getDeadLine() : ""
+					order.hasStartLine() ? formatDate(order.getStartLine()) : "",
+					order.hasDeadLine() ? formatDate(order.getDeadLine()) : ""
 			);
 			mailSenderService.send(notificationRecipient,
 					order.getServiceDeskNumber(), body);
 		} catch (Exception e) {
 			log.warn("Failed to send order-created email for request {}", order.getId(), e);
 		}
+	}
+
+	private String formatDate(com.google.type.Date date) {
+		return LocalDate.of(date.getYear(), date.getMonth(), date.getDay()).toString();
 	}
 
 	@Override

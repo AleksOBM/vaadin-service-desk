@@ -23,6 +23,11 @@ class MailConfigPersistenceTest {
 		MailConfig config = new MailConfig();
 		config.setEmailEncrypted("user@example.com");
 		config.setPasswordEncrypted("app-password-123");
+		config.setNotificationRecipient("test@example.com");
+		config.setSmtpHost("localhost");
+		config.setSmtpPort(1025);
+		config.setSmtpAuth(false);
+		config.setSmtpSsl(false);
 
 		entityManager.persist(config);
 		entityManager.flush();

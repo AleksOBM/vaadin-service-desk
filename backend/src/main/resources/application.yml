@@ -9,10 +9,6 @@ spring:
   jackson:
     serialization:
       INDENT_OUTPUT: true
-  mail:
-    host: ${MAIL_HOST:smtp.gmail.com}
-    port: ${MAIL_PORT:587}
-
   grpc:
     server:
       port: 9091

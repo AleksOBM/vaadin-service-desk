@@ -24,9 +24,15 @@ public class AdminMailGrpcService extends AdminMailControllerImplBase {
 
 	@Override
 	public void getMailConfig(@NonNull Empty request,
-	                         StreamObserver<GetMailConfigResponse> responseObserver) {
+	                          StreamObserver<GetMailConfigResponse> responseObserver) {
 		responseObserver.onNext(GetMailConfigResponse.newBuilder()
 				.setNotificationRecipient(mailConfigService.getNotificationRecipient())
+				.setEmail(mailConfigService.getEmail())
+				.setPasswordConfigured(mailConfigService.isPasswordConfigured())
+				.setSmtpHost(mailConfigService.getSmtpHost())
+				.setSmtpPort(mailConfigService.getSmtpPort())
+				.setSmtpAuth(mailConfigService.isSmtpAuth())
+				.setSmtpSsl(mailConfigService.isSmtpSsl())
 				.build());
 		responseObserver.onCompleted();
 	}
@@ -35,7 +41,9 @@ public class AdminMailGrpcService extends AdminMailControllerImplBase {
 	public void updateConfig(@NonNull UpdateConfigRequest request,
 	                         StreamObserver<UpdateConfigResponse> responseObserver) {
 		mailConfigService.update(request.getEmail(), request.getPassword(),
-				request.getNotificationRecipient());
+				request.getNotificationRecipient(), request.getResetPassword(),
+				request.getSmtpHost(), request.getSmtpPort(),
+				request.getSmtpAuth(), request.getSmtpSsl());
 		responseObserver.onNext(UpdateConfigResponse.newBuilder()
 				.setSuccess(true)
 				.build());

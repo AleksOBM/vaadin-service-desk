@@ -13,6 +13,7 @@ import jakarta.annotation.Nullable;
 public final class BaseToolbar extends Composite<HorizontalLayout> {
 
 	private final H1 title;
+	private HorizontalLayout actions;
 
 	public BaseToolbar(@Nullable String viewTitle, @Nonnull Component... components) {
 		var toolbar = getContent();
@@ -34,10 +35,18 @@ public final class BaseToolbar extends Composite<HorizontalLayout> {
 		toolbar.setFlexGrow(1, toggleAndTitle);
 
 		if (components.length > 0) {
-			var actions = new HorizontalLayout(components);
+			actions = new HorizontalLayout(components);
 			actions.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
 			toolbar.add(actions);
 		}
+	}
+
+	public void addActionBefore(Component component, Component before) {
+		int index = actions.indexOf(before);
+		if (index < 0) {
+			throw new IllegalArgumentException("The reference component is not a toolbar action");
+		}
+		actions.addComponentAtIndex(index, component);
 	}
 
 	public void setViewTitle(String viewTitle) {

@@ -34,6 +34,7 @@ Distributed SPA + API web application for managing orders, clients, employees, a
 <img alt="screen_2.png" src=".img/screen_2.png" width="600"/>
 <img alt="screen_3.png" src=".img/screen_3.png" width="600"/>
 <img alt="screen_4.png" src=".img/screen_4.png" width="600"/>
+<img alt="screen_9.png" src=".img/screen_9.png" width="600"/>
 
 </details>
 
@@ -56,6 +57,30 @@ Only the following features have been implemented:
 - Frontend (Vaadin UI)
 
 The modules interact with each other via gRPC (HTTP/2).
+
+### Users and roles
+
+The application has two roles: `ADMIN` and `AGENT`.
+- `admin` is a built-in user and the only user with the `ADMIN` role.
+- Every employee added to the application receives the `AGENT` role. Agents cannot access settings or edit clients and other employees.
+
+For simplicity, passwords are the same as usernames.
+
+### Automatic email notifications for new requests
+
+When any user creates a request, an email is automatically sent from the configured sender address to the configured recipient.
+
+<details>
+<summary>Example email</summary>
+<img alt="screen_1.png" src=".img/screen_7.png" width="400"/>
+</details>
+
+<details>
+<summary>Settings screen</summary>
+<img alt="screen_8.png" src=".img/screen_8.png" width="400"/>
+</details>
+
+Configure email addresses, SMTP servers, and credentials in the Settings menu.
 
 ### Traffic-light status indicators
 - ![Blue](https://img.shields.io/badge/-Blue-4a6fa5) New request (NEW)
@@ -229,7 +254,7 @@ docker compose down -v --rmi all
 
 [Instructions here](.docs/secrets.md)
 
-### Email and automatic sending configuration (for administrators)
+### Email and automatic message sending configuration (for administrators)
 
 [Instructions here](.docs/mail_instructions.md)
 
