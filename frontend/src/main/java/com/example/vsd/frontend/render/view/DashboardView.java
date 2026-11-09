@@ -39,9 +39,8 @@ public class DashboardView extends BaseView {
 
 	OrderService orderService;
 
-	@SuppressWarnings("unused")
 	public DashboardView(OrderService orderService) {
-		super("Дашборд");
+		super("Календарь");
 		this.orderService = orderService;
 		filterText.setVisible(false);
 		createButton.setVisible(false);
@@ -50,6 +49,7 @@ public class DashboardView extends BaseView {
 		setSizeFull();
 		getStyle().set("min-width", "0").set("min-height", "0");
 
+		// Область календаря и навигация по месяцам и годам.
 		Div calendarWrapper = new Div();
 		calendarWrapper.addClassName("calendar-wrapper");
 		calendarWrapper.setWidthFull();
@@ -94,11 +94,13 @@ public class DashboardView extends BaseView {
 			monthLabel.setText(yearMonth.getMonth()
 					.getDisplayName(TextStyle.FULL_STANDALONE, Locale.forLanguageTag("ru")));
 		};
-		previousMonth.addClickListener(event -> {
+
+		// Синхронизируем подписи панели с выбранным периодом.
+		previousMonth.addClickListener(_ -> {
 			calendar.setYearMonth(calendar.getYearMonth().minusMonths(1));
 			updateNavigation.run();
 		});
-		nextMonth.addClickListener(event -> {
+		nextMonth.addClickListener(_ -> {
 			calendar.setYearMonth(calendar.getYearMonth().plusMonths(1));
 			updateNavigation.run();
 		});
@@ -113,8 +115,10 @@ public class DashboardView extends BaseView {
 		updateNavigation.run();
 		getToolbar().getContent().add(toolbarNavigation);
 
-		calendar.addAttachListener(event -> calendar.getElement().executeJs(
+		// Настраиваем календарь и выделение сегодняшнего дня и выходных.
+		calendar.addAttachListener(_ -> calendar.getElement().executeJs(
 				"window.dashboardCalendar.initialize(this, $0)", getCalendarOrders().toJson()));
+		calendar.addClassName("dashboard-calendar");
 		calendar.setSizeFull();
 		calendar.getStyle()
 				.set("min-width", "0")
@@ -133,6 +137,7 @@ public class DashboardView extends BaseView {
 		setFlexGrow(1, calendarWrapper);
 	}
 
+	// Подготавливаем контрольные даты заявок для отображения в календаре.
 	private JsonArray getCalendarOrders() {
 		JsonArray entries = Json.createArray();
 		int index = 0;
@@ -154,6 +159,7 @@ public class DashboardView extends BaseView {
 		return entries;
 	}
 
+	// Добавляем дату одного этапа заявки.
 	private int addCalendarOrder(JsonArray entries,
 	                             int index,
 	                             Order order,

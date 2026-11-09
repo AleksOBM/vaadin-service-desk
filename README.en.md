@@ -66,6 +66,15 @@ The application has two roles: `ADMIN` and `AGENT`.
 
 For simplicity, passwords are the same as usernames.
 
+### Dashboard calendar
+
+The calendar shows which requests need to be reviewed on each date. The color indicates the stage that should be in progress. Deadlines are marked in purple. Weekends are not relevant.
+
+<details>
+<summary>Calendar screenshot</summary>
+<img alt="Calendar screenshot" src=".img/screen_10.png" width="400"/>
+</details>
+
 ### Automatic email notifications for new requests
 
 When any user creates a request, an email is automatically sent from the configured sender address to the configured recipient.

@@ -21,6 +21,8 @@
   flex: 0 0 auto;
   flex-direction: column;
   width: 100% !important;
+  height: auto !important;
+  max-height: none;
   min-height: 0;
 }
 
@@ -35,7 +37,10 @@
 
 :host(#element) #days-container > tr {
   flex: 0 0 auto;
+  height: auto !important;
+  max-height: none;
   min-height: 5rem;
+  align-items: stretch;
 }
 
 :host(#element) #weekdays-container [part~='weekday'],
@@ -65,19 +70,26 @@
   text-align: left;
 }
 
-:host(#element) #days-container > tr:last-child > [part~='date'] {
+:host(#element) #days-container [part~='date'] {
   border-block-end: 1px solid var(--calendar-cell-border-color);
 }
 
 :host(#element) #weekdays-container [part~='weekday'],
 :host(#element) #days-container [part~='date'] {
   border-inline-start: 1px solid var(--calendar-cell-border-color);
+}
+
+:host(#element) #weekdays-container [part~='weekday'] {
   border-block-start: 1px solid var(--calendar-cell-border-color);
 }
 
 :host(#element) #weekdays-container [part~='weekday']:last-child,
 :host(#element) #days-container [part~='date']:last-child {
   border-inline-end: 1px solid var(--calendar-cell-border-color);
+}
+
+:host(#element) #days-container > tr:last-child > [part~='date']:last-child {
+  border-inline-end: 1px solid var(--calendar-cell-border-color) !important;
 }
 
 :host(#element) #days-container [part~='date'] {

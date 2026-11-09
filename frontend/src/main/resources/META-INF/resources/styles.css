@@ -15,12 +15,21 @@ vaadin-grid::part(selected-row-cell) {
 .calendar-wrapper {
     display: flex;
     flex-direction: column;
-    border: 1px solid var(--vaadin-border-color);
-    border-radius: 8px;
-    padding: 16px;
+    padding: 16px 4px;
     box-sizing: border-box;
     min-width: 0;
     min-height: 0;
+}
+
+fc-month-calendar,
+vaadin-month-calendar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+fc-month-calendar::-webkit-scrollbar,
+vaadin-month-calendar::-webkit-scrollbar {
+    display: none;
 }
 
 .calendar-navigation {

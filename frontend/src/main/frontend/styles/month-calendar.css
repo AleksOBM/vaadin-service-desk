@@ -6,17 +6,17 @@
   );
 }
 
-vaadin-month-calendar {
+:host(.dashboard-calendar) vaadin-month-calendar {
   height: 100%;
   min-height: 0;
 }
 
-vaadin-month-calendar::part(month-header) {
+:host(.dashboard-calendar) vaadin-month-calendar::part(month-header) {
   margin: 0 0 var(--vaadin-padding-s);
   overflow: visible;
 }
 
-vaadin-month-calendar::part(weekday) {
+:host(.dashboard-calendar) vaadin-month-calendar::part(weekday) {
   box-sizing: border-box;
   width: 14.285714%;
   min-width: 0;
@@ -33,22 +33,28 @@ vaadin-month-calendar::part(weekday) {
   font-weight: var(--aura-font-weight-semibold, 600);
 }
 
-vaadin-month-calendar::part(weekdays) {
+:host(.dashboard-calendar) vaadin-month-calendar::part(weekdays) {
   width: 100%;
   min-width: 0;
 }
 
-vaadin-month-calendar::part(date) {
+:host(.dashboard-calendar) vaadin-month-calendar::part(date) {
   box-sizing: border-box;
   width: 14.285714%;
   min-width: 0;
-  max-height: 4.5rem;
+  min-height: 5rem;
+  height: auto;
+  max-height: none;
   margin: 0;
   padding: 4px 6px;
   vertical-align: top;
   text-align: left;
   border: 0;
   border-inline-start: 1px solid var(--calendar-cell-border-color);
-  border-block-start: 1px solid var(--calendar-cell-border-color);
+  border-block-end: 1px solid var(--calendar-cell-border-color);
   border-radius: 0;
+}
+
+:host(.dashboard-calendar) vaadin-month-calendar::part(weekday):last-child {
+  border-inline-end: 1px solid var(--calendar-cell-border-color);
 }
