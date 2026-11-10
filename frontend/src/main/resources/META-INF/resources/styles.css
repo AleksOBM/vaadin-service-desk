@@ -78,6 +78,10 @@ vaadin-month-calendar::-webkit-scrollbar {
     box-sizing: border-box;
 }
 
+.username-box-interactive:hover {
+    background-color: color-mix(in srgb, var(--vaadin-background-color) 95%, var(--vaadin-text-color));
+}
+
 .username-label {
     font-weight: 500;
     overflow: hidden;

@@ -11,6 +11,7 @@ option java_package = "com.example.vsd.grpc.services.user";
 option java_outer_classname = "UserControllerProto";
 
 service UserController {
+  rpc changePassword (sd.messages.ChangePasswordRequest) returns (google.protobuf.Empty);
   rpc saveOrder (sd.messages.OrderProto) returns (google.protobuf.Empty);
   rpc setOrderDeleted (google.protobuf.Int64Value) returns (google.protobuf.Empty);
 

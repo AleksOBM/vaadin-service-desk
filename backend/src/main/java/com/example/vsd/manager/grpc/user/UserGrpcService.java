@@ -41,6 +41,17 @@ public class UserGrpcService extends UserControllerImplBase {
 	MailSenderService mailSenderService;
 
 	@Override
+	public void changePassword(@NonNull ChangePasswordRequest request,
+	                           @NonNull StreamObserver<Empty> responseObserver) {
+		agentService.changePassword(
+				getCreatorName(),
+				request.getCurrentPassword(),
+				request.getNewPassword());
+		responseObserver.onNext(Empty.getDefaultInstance());
+		responseObserver.onCompleted();
+	}
+
+	@Override
 	public void saveOrder(@NonNull OrderProto request,
 	                      StreamObserver<Empty> responseObserver) {
 
@@ -107,15 +118,16 @@ public class UserGrpcService extends UserControllerImplBase {
 			);
 
 			mailSenderService.send(MailMessage.builder()
-							.to(notificationRecipient)
-							.subject(order.getServiceDeskNumber())
-							.text(body)
-							.build());
+					.to(notificationRecipient)
+					.subject(order.getServiceDeskNumber())
+					.text(body)
+					.build());
 		} catch (Exception e) {
 			log.warn("Failed to send order-created email for request {}", order.getId(), e);
 		}
 	}
 
+	@NonNull
 	private String formatDate(com.google.type.Date date) {
 		return LocalDate.of(date.getYear(), date.getMonth(), date.getDay()).toString();
 	}

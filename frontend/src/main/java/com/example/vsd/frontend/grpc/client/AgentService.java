@@ -2,6 +2,7 @@ package com.example.vsd.frontend.grpc.client;
 
 import com.example.vsd.frontend.mapper.AgentMapper;
 import com.example.vsd.frontend.model.Agent;
+import com.example.vsd.grpc.messages.ChangePasswordRequest;
 import com.example.vsd.grpc.messages.GetAgentsResponse;
 import com.example.vsd.grpc.services.admin.AdminAgentControllerGrpc.AdminAgentControllerBlockingStub;
 import com.example.vsd.grpc.services.user.UserControllerGrpc.UserControllerBlockingStub;
@@ -70,6 +71,19 @@ public class AgentService {
 			log.debug("Agent with id {} has been marked as deleted", agentId);
 		} catch (StatusRuntimeException e) {
 			log.error("Failed to mark agent deleted with id={}", agentId, e);
+			throw e;
+		}
+	}
+
+	public void changePassword(String currentPassword, String newPassword) {
+		try {
+			var _ = userStub.changePassword(ChangePasswordRequest.newBuilder()
+					.setCurrentPassword(currentPassword)
+					.setNewPassword(newPassword)
+					.build());
+			log.debug("Password changed successfully");
+		} catch (StatusRuntimeException e) {
+			log.warn("Failed to change password: {}", e.getStatus(), e);
 			throw e;
 		}
 	}

@@ -59,7 +59,6 @@ public class AgentServiceImpl implements AgentService {
 		// если это новая запись
 		if (!proto.hasId()) {
 			var agent = AgentMapper.toEntity(proto);
-			// TODO: 01.11.2026 придумывать пароль при создании
 			agent.setPasswordHash(passwordEncoder.encode(proto.getName()));
 			agentRepository.save(agent);
 			return;
@@ -98,6 +97,27 @@ public class AgentServiceImpl implements AgentService {
 							.formatted(agentId));
 		}
 		agent.setDeleted(true);
+		agentRepository.save(agent);
+	}
+
+	@Override
+	public void changePassword(@NonNull String username, String currentPassword, String newPassword) {
+		if (username.isBlank() || username.equalsIgnoreCase("admin")) {
+			throw new IllegalArgumentException("Only agents can change their password");
+		}
+		if (currentPassword.isBlank() || newPassword.isBlank()) {
+			throw new ValidationException("Current and new passwords are required");
+		}
+
+		UserDetails user = detailsService.loadUserByUsername(username);
+		if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+			throw new BadCredentialsException("Текущий пароль указан неверно");
+		}
+
+		var agent = agentRepository.findByNameAndDeletedFalse(username)
+				.orElseThrow(() -> new NotFoundException(
+						"Сотрудник с именем %s не найден".formatted(username)));
+		agent.setPasswordHash(passwordEncoder.encode(newPassword));
 		agentRepository.save(agent);
 	}
 
