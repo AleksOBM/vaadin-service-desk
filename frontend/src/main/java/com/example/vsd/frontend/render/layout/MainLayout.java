@@ -74,8 +74,7 @@ public final class MainLayout extends AppLayout {
 							.anyMatch(authority -> {
 								String authorityAuthority = authority.getAuthority();
 								assert authorityAuthority != null;
-								return authorityAuthority
-										.equals("ROLE_ADMIN");
+								return authorityAuthority.equals("ROLE_ADMIN");
 							}))
 					.orElse(false);
 

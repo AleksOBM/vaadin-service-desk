@@ -14,9 +14,11 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.RouteScope;
 import com.vaadin.flow.spring.annotation.SpringComponent;
+import com.vaadin.flow.spring.security.AuthenticationContext;
 import jakarta.annotation.security.PermitAll;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
@@ -32,9 +34,20 @@ public class ClientsView extends BaseView {
 	ClientService clientService;
 	Grid<Client> grid = new Grid<>();
 
-	public ClientsView(ClientService clientService) {
+	public ClientsView(ClientService clientService, AuthenticationContext authContext) {
 		super("Клиенты");
 		this.clientService = clientService;
+		boolean isAdmin = authContext.getAuthenticatedUser(UserDetails.class)
+				.map(user -> user.getAuthorities().stream()
+						.anyMatch(authority -> {
+							String authorityAuthority = authority.getAuthority();
+							assert authorityAuthority != null;
+							return authorityAuthority.equals("ROLE_ADMIN");
+						}))
+				.orElse(false);
+		createButton.setVisible(isAdmin);
+		updateButton.setVisible(isAdmin);
+		deleteButton.setVisible(isAdmin);
 		addClassName("clients-view");
 		configureView();
 		add(getClientsGrid());

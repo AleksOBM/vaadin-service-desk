@@ -14,10 +14,12 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.RouteScope;
 import com.vaadin.flow.spring.annotation.SpringComponent;
+import com.vaadin.flow.spring.security.AuthenticationContext;
 import jakarta.annotation.security.PermitAll;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
@@ -35,9 +37,20 @@ public class AgentsView extends BaseView {
 	Grid<Agent> grid = new Grid<>();
 
 	@Autowired
-	public AgentsView(AgentService agentService) {
+	public AgentsView(AgentService agentService, AuthenticationContext authContext) {
 		super("Сотрудники");
 		this.agentService = agentService;
+		boolean isAdmin = authContext.getAuthenticatedUser(UserDetails.class)
+				.map(user -> user.getAuthorities().stream()
+						.anyMatch(authority -> {
+							String authorityAuthority = authority.getAuthority();
+							assert authorityAuthority != null;
+							return authorityAuthority.equals("ROLE_ADMIN");
+						}))
+				.orElse(false);
+		createButton.setVisible(isAdmin);
+		updateButton.setVisible(isAdmin);
+		deleteButton.setVisible(isAdmin);
 		addClassName("agents-view");
 		configureView();
 		add(getAgentsGrid());
