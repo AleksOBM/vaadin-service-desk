@@ -272,7 +272,7 @@ docker compose down -v --rmi all
 [Инструкция здесь](.docs/mail_instructions.md)
 
 
-### REST эндпоинты фронтенда
+### Маршруты фронтенда
 ```mermaid
 mindmap
   root((Frontend))
@@ -315,7 +315,11 @@ mindmap
       🌐AdminRecycleController
         findRecycle
         getFullRecycle
+      🌐AdminMailController
+        getMailConfig
+        updateConfig
       🌐UserController
+        changePassword
         saveOrder
         setOrderDeleted
         findAgents
