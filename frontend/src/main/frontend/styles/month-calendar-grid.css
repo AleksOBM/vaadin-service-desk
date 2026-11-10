@@ -96,6 +96,11 @@
   border-radius: 0;
 }
 
+:host(#element) #days-container [part~='date'][part~='selected'] {
+  color: #906535;
+  font-weight: 520;
+}
+
 :host(#element) [part~='date'].weekend {
   background-color: color-mix(
     in srgb,
@@ -116,6 +121,10 @@
   width: 100%;
   min-width: 0;
   overflow: visible;
+}
+
+:host(#element) #days-container [part~='date'][part~='selected'] .calendar-order-markers {
+  color: var(--vaadin-text-color);
 }
 
 :host(#element) #days-container .calendar-order-marker {

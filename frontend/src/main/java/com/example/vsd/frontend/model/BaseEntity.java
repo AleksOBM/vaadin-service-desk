@@ -20,6 +20,7 @@ public class BaseEntity {
 	String serviceDeskNumber;
 	LocalDateTime creationDate;
 	LocalDateTime lastUpdated;
+	String lastModifiedBy;
 	boolean deleted;
 
 	public boolean hasId() {

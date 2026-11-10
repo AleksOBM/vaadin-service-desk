@@ -10,6 +10,7 @@ CREATE TABLE orders (
     client_id bigint NOT NULL,
     creation_date timestamp(3) without time zone NOT NULL,
     last_updated timestamp(3) without time zone NOT NULL,
+    last_modified_by varchar(100),
     deleted boolean NOT NULL DEFAULT FALSE,
     CONSTRAINT orders_pkey PRIMARY KEY (id),
     CONSTRAINT orders_date_sequence_check CHECK (dead_line > start_line),

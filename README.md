@@ -35,6 +35,7 @@
 <img alt="screen_2.png" src=".img/screen_2.png" width="600"/>
 <img alt="screen_3.png" src=".img/screen_3.png" width="600"/>
 <img alt="screen_4.png" src=".img/screen_4.png" width="600"/>
+<img alt="screen_4.png" src=".img/screen_11.png" width="600"/>
 <img alt="screen_4.png" src=".img/screen_9.png" width="600"/>
 
 </details>

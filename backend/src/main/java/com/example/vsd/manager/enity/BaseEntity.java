@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 @Setter
 @SuperBuilder
 @MappedSuperclass
+@EntityListeners(LastModifiedByListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @FieldDefaults(level = AccessLevel.PROTECTED)
 public class BaseEntity {
@@ -33,6 +34,9 @@ public class BaseEntity {
 	@UpdateTimestamp
 	@Column(name = "last_updated", nullable = false)
 	LocalDateTime lastUpdated;
+
+	@Column(name = "last_modified_by", length = 100)
+	String lastModifiedBy;
 
 	boolean deleted;
 

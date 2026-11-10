@@ -4,6 +4,7 @@ CREATE TABLE clients (
     client_name varchar(70) NOT NULL,
     creation_date timestamp(3) without time zone NOT NULL,
     last_updated timestamp(3) without time zone NOT NULL,
+    last_modified_by varchar(100),
     deleted boolean NOT NULL DEFAULT FALSE,
     CONSTRAINT pk_clients PRIMARY KEY (id),
     CONSTRAINT uk_clients_name UNIQUE (client_name)

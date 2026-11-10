@@ -111,6 +111,11 @@ public class RecycleView extends BaseView {
 		Grid.Column<BaseEntity> nameColumn = grid.addColumn(BaseEntity::getName);
 		nameColumn.setHeader("Наименование");
 
+		grid.addColumn(entity -> entity.getLastModifiedBy() == null
+						|| entity.getLastModifiedBy().isBlank()
+						? "admin" : entity.getLastModifiedBy())
+				.setHeader("Кто удалил");
+
 		grid.getColumns().forEach(column -> {
 			column.setSortable(true);
 			column.setAutoWidth(true);

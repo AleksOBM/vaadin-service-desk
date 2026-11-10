@@ -61,6 +61,7 @@ message BaseEntityProto {
     AgentProto agent = 2;
     OrderProto order = 3;
   }
+  string last_modified_by = 4;
 }
 
 message GetClientsResponse {

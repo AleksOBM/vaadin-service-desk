@@ -16,7 +16,7 @@ import lombok.experimental.UtilityClass;
 public class RecycleMapper {
 
 	public BaseEntityProto toProto(@NonNull BaseEntity entity) {
-		return switch (entity) {
+		BaseEntityProto.Builder builder = switch (entity) {
 
 			case Client e -> BaseEntityProto.newBuilder()
 					.setClient(ClientProto.newBuilder()
@@ -26,8 +26,7 @@ public class RecycleMapper {
 							.setCreationDate(TimestampUtils.toTimestamp(e.getCreationDate()))
 							.setLastUpdated(TimestampUtils.toTimestamp(e.getLastUpdated()))
 							.setDeleted(entity.isDeleted())
-							.build())
-					.build();
+							.build());
 
 			case Agent a -> BaseEntityProto.newBuilder()
 					.setAgent(AgentProto.newBuilder()
@@ -37,8 +36,7 @@ public class RecycleMapper {
 							.setCreationDate(TimestampUtils.toTimestamp(a.getCreationDate()))
 							.setLastUpdated(TimestampUtils.toTimestamp(a.getLastUpdated()))
 							.setDeleted(entity.isDeleted())
-							.build())
-					.build();
+							.build());
 
 			case Order o -> BaseEntityProto.newBuilder()
 					.setOrder(OrderProto.newBuilder()
@@ -48,11 +46,13 @@ public class RecycleMapper {
 							.setCreationDate(TimestampUtils.toTimestamp(o.getCreationDate()))
 							.setLastUpdated(TimestampUtils.toTimestamp(o.getLastUpdated()))
 							.setDeleted(entity.isDeleted())
-							.build())
-					.build();
+							.build());
 
 			default -> throw new IllegalStateException("Unexpected value: " + entity);
 		};
+		return builder.setLastModifiedBy(
+						entity.getLastModifiedBy() == null ? "" : entity.getLastModifiedBy())
+				.build();
 	}
 
 }

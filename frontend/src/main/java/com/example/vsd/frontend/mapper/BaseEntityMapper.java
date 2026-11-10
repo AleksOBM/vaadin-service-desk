@@ -19,6 +19,7 @@ public final class BaseEntityMapper {
 					.serviceDeskNumber(proto.getClient().getServiceDeskNumber())
 					.creationDate(TimestampUtils.toLocalDateTime(proto.getClient().getCreationDate()))
 					.lastUpdated(TimestampUtils.toLocalDateTime(proto.getClient().getLastUpdated()))
+					.lastModifiedBy(proto.getLastModifiedBy())
 					.deleted(proto.getClient().getDeleted())
 					.build();
 			case AGENT -> BaseEntity.builder()
@@ -28,6 +29,7 @@ public final class BaseEntityMapper {
 					.serviceDeskNumber(proto.getAgent().getServiceDeskNumber())
 					.creationDate(TimestampUtils.toLocalDateTime(proto.getAgent().getCreationDate()))
 					.lastUpdated(TimestampUtils.toLocalDateTime(proto.getAgent().getLastUpdated()))
+					.lastModifiedBy(proto.getLastModifiedBy())
 					.deleted(proto.getAgent().getDeleted())
 					.build();
 			case ORDER -> BaseEntity.builder()
@@ -37,6 +39,7 @@ public final class BaseEntityMapper {
 					.serviceDeskNumber(proto.getOrder().getServiceDeskNumber())
 					.creationDate(TimestampUtils.toLocalDateTime(proto.getOrder().getCreationDate()))
 					.lastUpdated(TimestampUtils.toLocalDateTime(proto.getOrder().getLastUpdated()))
+					.lastModifiedBy(proto.getLastModifiedBy())
 					.deleted(proto.getOrder().getDeleted())
 					.build();
 			case PAYLOAD_NOT_SET -> throw new IllegalArgumentException("Illegal entity type");
