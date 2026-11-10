@@ -94,14 +94,14 @@ When any user creates a request, an email is automatically sent from the configu
 Configure email addresses, SMTP servers, and credentials in the Settings menu.
 
 ### Traffic-light status indicators
-- ![Blue](https://img.shields.io/badge/-Blue-4a6fa5) New request (NEW)
-- ![Green](https://img.shields.io/badge/-Green-4a8f5b) Time to start work (IN PROGRESS)
-- ![Yellow](https://img.shields.io/badge/-Yellow-b8952e) Time to check the initial stage (FIRST CONTROL)
-- ![Red](https://img.shields.io/badge/-Red-a94a4a) Time to check the final stage (SECOND CONTROL)
-- ![Gray](https://img.shields.io/badge/-Gray-7a7a7a) Work on the request is complete (COMPLETED)
+- ![Gray](https://img.shields.io/badge/-Gray-7a7a7a) The request is completed (COMPLETED); this status takes precedence over dates.
+- ![Purple](https://img.shields.io/badge/-Purple-8b5cf6) The current date is on or after the deadline (DEADLINE).
+- ![Red](https://img.shields.io/badge/-Red-a94a4a) The deadline has not been reached, but the second control date has (SECOND CONTROL).
+- ![Yellow](https://img.shields.io/badge/-Yellow-b8952e) Neither the deadline nor the second control date has been reached, but the first control date has (FIRST CONTROL).
+- ![Green](https://img.shields.io/badge/-Green-4a8f5b) The first control date has not been reached, but the request start date has (IN PROGRESS).
+- ![Blue](https://img.shields.io/badge/-Blue-4a6fa5) The current date is before the request start date (NEW).
 
-Additional color used in the calendar:
-- ![Purple](https://img.shields.io/badge/-Purple-8b5cf6) Deadline (DEADLINE)
+The table status is determined for the current date. In the calendar, each marker's color is determined for the date to which that marker is attached. Completed requests are not shown in the calendar.
 
 ### Requirements
 Before starting, make sure the following tools are installed:

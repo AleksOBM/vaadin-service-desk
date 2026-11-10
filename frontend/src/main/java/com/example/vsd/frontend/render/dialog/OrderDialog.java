@@ -4,6 +4,7 @@ import com.example.vsd.frontend.model.Agent;
 import com.example.vsd.frontend.model.Client;
 import com.example.vsd.frontend.model.Order;
 import com.example.vsd.frontend.render.template.BaseDialog;
+import com.example.vsd.serialization.model.OrderSchedule;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -45,6 +46,12 @@ public class OrderDialog extends BaseDialog.EntityDialog {
 
 		deadLine.setI18n(new DatePicker.DatePickerI18n().setFirstDayOfWeek(1));
 		deadLine.setRequired(true);
+		deadLine.setHelperText("Дедлайн должен быть позже даты начала и контрольных дат");
+		deadLine.setErrorMessage("Проверьте последовательность дат начала, контролей и дедлайна");
+		startLine.addValueChangeListener(_ ->
+				validateDateSequence());
+		deadLine.addValueChangeListener(_ ->
+				validateDateSequence());
 
 		client.setItems(clients);
 		client.setItemLabelGenerator(Client::getName);
@@ -72,5 +79,15 @@ public class OrderDialog extends BaseDialog.EntityDialog {
 		Binder<Order> b = (Binder<Order>) binder;
 		b.forField(completedCheckbox)
 				.bind(Order::isCompleted, Order::setCompleted);
+		b.withValidator(order -> OrderSchedule.isValid(order.getStartLine(), order.getDeadLine()),
+				"Проверьте последовательность дат начала, контролей и дедлайна");
+	}
+
+	private void validateDateSequence() {
+		if (startLine.getValue() == null || deadLine.getValue() == null) {
+			return;
+		}
+		boolean invalid = !OrderSchedule.isValid(startLine.getValue(), deadLine.getValue());
+		deadLine.setInvalid(invalid);
 	}
 }

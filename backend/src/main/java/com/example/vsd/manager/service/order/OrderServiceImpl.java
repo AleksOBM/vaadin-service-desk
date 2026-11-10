@@ -13,6 +13,7 @@ import com.example.vsd.manager.model.OrderUpdateData;
 import com.example.vsd.manager.repository.AgentRepository;
 import com.example.vsd.manager.repository.ClientRepository;
 import com.example.vsd.manager.repository.OrderRepository;
+import com.example.vsd.serialization.model.OrderSchedule;
 import com.example.vsd.serialization.timestamp.TimestampUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Period;
 import java.util.List;
 
 import static com.example.vsd.grpc.messages.OrderStatusProto.*;
@@ -77,11 +77,14 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	private OrderProto createOrder(@NonNull OrderProto proto) {
-		Order order = OrderMapper.toEntity(proto);
-
-		if (!order.getStartLine().isBefore(order.getDeadLine())) {
-			throw new IllegalArgumentException("Дата начала должна быть раньше даты окончания");
+		if (!proto.hasStartLine() || !proto.hasDeadLine()) {
+			throw new ValidationException("Дата начала и дедлайн обязательны");
 		}
+		validateOrderSchedule(
+				TimestampUtils.toLocalDate(proto.getStartLine()),
+				TimestampUtils.toLocalDate(proto.getDeadLine()));
+
+		Order order = OrderMapper.toEntity(proto);
 
 		var agentId = order.getAgent().getId();
 		if (agentId == null) {
@@ -140,10 +143,7 @@ public class OrderServiceImpl implements OrderService {
 				? TimestampUtils.toLocalDate(proto.getStartLine()) : oldOrder.getStartLine();
 		LocalDate deadLine = proto.hasDeadLine()
 				? TimestampUtils.toLocalDate(proto.getDeadLine()) : oldOrder.getDeadLine();
-
-		if (!startLine.isBefore(deadLine)) {
-			throw new IllegalArgumentException("Дата начала должна быть раньше даты окончания");
-		}
+		validateOrderSchedule(startLine, deadLine);
 
 		var agentId = proto.hasAgent() ? proto.getAgent().getId() : null;
 		Agent agent = agentId == null ? null : agentRepository.findById(agentId).orElseThrow(() ->
@@ -220,6 +220,8 @@ public class OrderServiceImpl implements OrderService {
 		// Определяем статус (порядок важен)
 		if (order.getCompletedDate() != null) {
 			return COMPLETED;
+		} else if (!date.isBefore(order.getDeadLine())) {
+			return DEADLINE;
 		} else if (order.getStartLine().isAfter(date)) {
 			return NEW;
 		} else if (firstControl.isAfter(date)) {
@@ -236,18 +238,29 @@ public class OrderServiceImpl implements OrderService {
 
 	@NonNull
 	private LocalDate getFirstControlLine(@NonNull Order order) {
-		int controlDaysCount = Math.round((float) getDaysCount(order) / 3);
-		return order.getStartLine().plus(Period.ofDays(controlDaysCount));
+		return OrderSchedule.getFirstControlDate(order.getStartLine(), order.getDeadLine());
 	}
 
 	@NonNull
 	private LocalDate getSecondControlLine(@NonNull Order order) {
-		int controlDaysCount = Math.round((float) getDaysCount(order) / 3);
-		return order.getDeadLine().minus(Period.ofDays(controlDaysCount));
+		return OrderSchedule.getSecondControlDate(order.getStartLine(), order.getDeadLine());
 	}
 
 	private int getDaysCount(@NonNull Order order) {
-		return Period.between(order.getStartLine(), order.getDeadLine()).getDays();
+		return OrderSchedule.getDaysCount(order.getStartLine(), order.getDeadLine());
+	}
+
+	private void validateOrderSchedule(LocalDate startDate, LocalDate deadline) {
+		if (startDate == null || deadline == null) {
+			throw new ValidationException("Дата начала и дедлайн обязательны");
+		}
+		if (!startDate.isBefore(deadline)) {
+			throw new IllegalArgumentException("Дата начала должна быть раньше дедлайна");
+		}
+		if (!OrderSchedule.isValid(startDate, deadline)) {
+			throw new IllegalArgumentException(
+					"Контрольные даты должны находиться между датой начала и дедлайном");
+		}
 	}
 
 	private void printOrderResponseLog(@NonNull OrderProto request) {
@@ -280,20 +293,27 @@ public class OrderServiceImpl implements OrderService {
 				request.getId(),
 				request.getName(),
 				request.getDescription(),
-				request.hasStartLine() ? TimestampUtils.toLocalDate(request.getStartLine()) : null,
-				request.hasDeadLine() ? TimestampUtils.toLocalDate(request.getDeadLine()) : null,
-				request.hasFirstControlLine() ? TimestampUtils.toLocalDate(request.getFirstControlLine()) : null,
-				request.hasSecondControlLine() ? TimestampUtils.toLocalDate(request.getSecondControlLine()) : null,
+				request.hasStartLine()
+						? TimestampUtils.toLocalDate(request.getStartLine()) : null,
+				request.hasDeadLine()
+						? TimestampUtils.toLocalDate(request.getDeadLine()) : null,
+				request.hasFirstControlLine()
+						? TimestampUtils.toLocalDate(request.getFirstControlLine()) : null,
+				request.hasSecondControlLine()
+						? TimestampUtils.toLocalDate(request.getSecondControlLine()) : null,
 				request.getDaysCount(),
-				request.hasCompletedDate() ? TimestampUtils.toLocalDateTime(request.getCompletedDate()) : null,
+				request.hasCompletedDate()
+						? TimestampUtils.toLocalDateTime(request.getCompletedDate()) : null,
 				request.getStatus(),
 				request.getClient().getId(),
 				request.getClient().getName(),
 				request.getAgent().getId(),
 				request.getAgent().getName(),
 				request.getServiceDeskNumber(),
-				request.hasCreationDate() ? TimestampUtils.toLocalDate(request.getCreationDate()) : null,
-				request.hasLastUpdated() ? TimestampUtils.toLocalDate(request.getLastUpdated()) : null,
+				request.hasCreationDate()
+						? TimestampUtils.toLocalDate(request.getCreationDate()) : null,
+				request.hasLastUpdated()
+						? TimestampUtils.toLocalDate(request.getLastUpdated()) : null,
 				request.getDeleted()
 		);
 	}

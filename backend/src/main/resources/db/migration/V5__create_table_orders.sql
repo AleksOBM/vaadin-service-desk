@@ -12,6 +12,7 @@ CREATE TABLE orders (
     last_updated timestamp(3) without time zone NOT NULL,
     deleted boolean NOT NULL DEFAULT FALSE,
     CONSTRAINT orders_pkey PRIMARY KEY (id),
+    CONSTRAINT orders_date_sequence_check CHECK (dead_line > start_line),
     CONSTRAINT fk_orders_client_id FOREIGN KEY (client_id)
         REFERENCES clients (id) MATCH SIMPLE
         ON UPDATE NO ACTION

@@ -33,6 +33,7 @@ enum OrderStatusProto {
   FIRST_CONTROL = 2;
   SECOND_CONTROL = 3;
   COMPLETED = 4;
+  DEADLINE = 5;
 }
 
 message AgentProto {

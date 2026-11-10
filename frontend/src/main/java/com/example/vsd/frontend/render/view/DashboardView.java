@@ -2,6 +2,7 @@ package com.example.vsd.frontend.render.view;
 
 import com.example.vsd.frontend.grpc.client.OrderService;
 import com.example.vsd.frontend.model.Order;
+import com.example.vsd.frontend.model.OrderStatus;
 import com.example.vsd.frontend.render.template.BaseView;
 import com.flowingcode.addons.ycalendar.MonthCalendar;
 import com.vaadin.flow.component.button.Button;
@@ -142,19 +143,16 @@ public class DashboardView extends BaseView {
 		JsonArray entries = Json.createArray();
 		int index = 0;
 		for (Order order : orderService.getAllOrders()) {
-			if (order.isCompleted() || order.getClient() == null || order.getClient().getName() == null
+			if (order.getCompletedDate() != null || order.isCompleted()
+					|| order.getClient() == null || order.getClient().getName() == null
 					|| order.getStatus() == null) {
 				continue;
 			}
 
-			index = addCalendarOrder(entries, index, order, order.getStartLine(),
-					"in_progress");
-			index = addCalendarOrder(entries, index, order, order.getFirstControlLine(),
-					"first_control");
-			index = addCalendarOrder(entries, index, order, order.getSeondControlLine(),
-					"second_control");
-			index = addCalendarOrder(entries, index, order, order.getDeadLine(),
-					"deadline");
+			index = addCalendarOrder(entries, index, order, order.getStartLine());
+			index = addCalendarOrder(entries, index, order, order.getFirstControlLine());
+			index = addCalendarOrder(entries, index, order, order.getSeondControlLine());
+			index = addCalendarOrder(entries, index, order, order.getDeadLine());
 		}
 		return entries;
 	}
@@ -163,8 +161,7 @@ public class DashboardView extends BaseView {
 	private int addCalendarOrder(JsonArray entries,
 	                             int index,
 	                             Order order,
-	                             LocalDate date,
-	                             String eventStatus) {
+	                             LocalDate date) {
 		if (date == null) {
 			return index;
 		}
@@ -172,7 +169,7 @@ public class DashboardView extends BaseView {
 		JsonObject entry = Json.createObject();
 		entry.put("date", date.toString());
 		entry.put("client", order.getClient().getName());
-		entry.put("status", eventStatus);
+		entry.put("status", OrderStatus.onDate(order, date).name().toLowerCase(Locale.ROOT));
 		entries.set(index, entry);
 		return index + 1;
 	}
