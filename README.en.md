@@ -64,7 +64,9 @@ The application has two roles: `ADMIN` and `AGENT`.
 - `admin` is a built-in user and the only user with the `ADMIN` role.
 - Every employee added to the application receives the `AGENT` role. Agents cannot access settings or edit clients and other employees.
 
-For simplicity, passwords are the same as usernames.
+Agents can change their own passwords. Existing tokens are not revoked immediately and may remain valid for up to one hour.
+For simplicity, new agents initially receive a password that matches their username.
+The administrator password can only be set through an environment variable. To change it, update the environment variable and restart the application.
 
 ### Dashboard calendar
 
@@ -311,6 +313,7 @@ mindmap
         findRecycle
         getFullRecycle
       🌐UserController
+        changePassword
         saveOrder
         setOrderDeleted
         findAgents
