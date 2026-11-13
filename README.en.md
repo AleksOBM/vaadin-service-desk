@@ -71,7 +71,14 @@ The administrator password can only be set through an environment variable. To c
 
 ### Dashboard calendar
 
-The calendar shows which requests need to be reviewed on each date. The color indicates the stage that should be in progress. Deadlines are marked in purple. Weekends are not relevant.
+The calendar shows which requests need to be reviewed on each date.  
+The dates of the first and second control are calculated automatically using the formulas:  
+```
+FirstControlDate = StartLine + (Deadline - StartLine) / 3
+SecondControlDate = DeadLine - (Deadline - StartLine) / 3
+```
+The color indicates the stage that should be in progress.  
+Deadlines are marked in purple. Weekends are not relevant.
 
 <details>
 <summary>Calendar screenshot</summary>
