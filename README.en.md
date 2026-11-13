@@ -148,6 +148,8 @@ Internet access is required to download dependencies and container images.
 docker compose up --build -d
 ```
 
+To access the app from other devices over the network, see [Safety Instructions](.docs/secrets.md)
+
 **4. Configure the certificate (optional)**
 
 The access certificate is already included; export it through the browser and add it to the trusted certificates.
